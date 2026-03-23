@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NewSites.com — AI-Powered Business Growth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6A2A;
+    --black: #080808;
+    --black-2: #111111;
+    --black-3: #1A1A1A;
+    --black-4: #242424;
+    --white: #F5F0E8;
+    --white-dim: #A89F8C;
+    --border: rgba(201,168,76,0.18);
+    --border-bright: rgba(201,168,76,0.45);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 4rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.88);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--white); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--white-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 0.55rem 1.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--black); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(201,168,76,0.09) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .hero-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4.5rem, 11vw, 10rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.35s forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--gold); }
+  .hero-sub {
+    max-width: 520px;
+    font-size: 1rem;
+    color: var(--white-dim);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.65s forwards;
+  }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 0.9rem 2.2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(245,240,232,0.25);
+    padding: 0.9rem 2.2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 5rem; flex-wrap: wrap; justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--white-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.3rem; }
+
+  /* SECTIONS */
+  section { padding: 7rem 4rem; }
+  .section-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 1.2rem;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-sub { color: var(--white-dim); max-width: 500px; font-size: 0.95rem; line-height: 1.8; }
+
+  /* HOW IT WORKS */
+  .how { background: var(--black-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .how-inner { max-width: 1100px; margin: 0 auto; }
+  .how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; margin-top: 4rem; }
+  .step { position: relative; padding-left: 1.5rem; border-left: 1px solid var(--border); }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--gold-dim);
+    line-height: 1;
+    margin-bottom: 0.8rem;
+  }
+  .step-title { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--white); }
+  .step-desc { font-size: 0.88rem; color: var(--white-dim); line-height: 1.75; }
+
+  /* PRICING */
+  .pricing { max-width: 1100px; margin: 0 auto; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; margin-top: 4rem; background: var(--border); }
+  .plan {
+    background: var(--black-2);
+    padding: 2.5rem 2rem;
+    position: relative;
+    transition: background 0.25s;
+  }
+  .plan:hover { background: var(--black-3); }
+  .plan.featured {
+    background: var(--black-3);
+    border-top: 2px solid var(--gold);
+  }
+  .plan-badge {
+    position: absolute;
+    top: -1px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--gold);
+    color: var(--black);
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 1rem;
+  }
+  .plan-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+  }
+  .plan-tagline { font-size: 0.8rem; color: var(--white-dim); margin-bottom: 1.8rem; }
+  .plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    margin-bottom: 0.4rem;
+  }
+  .plan-dollar { font-size: 1rem; color: var(--gold); margin-top: 0.4rem; }
+  .plan-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.8rem;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1;
+  }
+  .plan-period { font-size: 0.8rem; color: var(--white-dim); }
+  .plan-divider { border: none; border-top: 1px solid var(--border); margin: 1.8rem 0; }
+  .plan-features { list-style: none; margin-bottom: 2rem; }
+  .plan-features li {
+    font-size: 0.85rem;
+    color: var(--white-dim);
+    padding: 0.45rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    border-bottom: 1px solid rgba(201,168,76,0.06);
+  }
+  .plan-features li:last-child { border-bottom: none; }
+  .feat-check { color: var(--gold); font-size: 0.75rem; margin-top: 0.22rem; flex-shrink: 0; }
+  .feat-x { color: #444; font-size: 0.75rem; margin-top: 0.22rem; flex-shrink: 0; }
+  .feat-text-off { color: #444; }
+  .plan-btn {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    border: 1px solid var(--border-bright);
+    background: transparent;
+    color: var(--gold);
+  }
+  .plan-btn:hover { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  .plan.featured .plan-btn { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  .plan.featured .plan-btn:hover { background: var(--gold-light); }
+
+  /* FEATURES GRID */
+  .features-wrap { max-width: 1100px; margin: 0 auto; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; margin-top: 4rem; background: var(--border); }
+  .feat-card {
+    background: var(--black-2);
+    padding: 2rem 1.8rem;
+    transition: background 0.2s;
+  }
+  .feat-card:hover { background: var(--black-3); }
+  .feat-icon {
+    width: 42px; height: 42px;
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+  }
+  .feat-card-title { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--white); }
+  .feat-card-desc { font-size: 0.83rem; color: var(--white-dim); line-height: 1.75; }
+  .feat-badge {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border-bright);
+    padding: 0.25rem 0.65rem;
+    white-space: nowrap;
+  }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--black-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .testimonials-inner { max-width: 1000px; margin: 0 auto; }
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; }
+  .testi-card {
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+  }
+  .testi-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    color: var(--gold-dim);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .testi-text { font-size: 0.88rem; color: var(--white-dim); line-height: 1.8; margin-bottom: 1.5rem; font-style: italic; }
+  .testi-author { font-size: 0.8rem; font-weight: 500; color: var(--white); }
+  .testi-biz { font-size: 0.75rem; color: var(--gold-dim); }
+
+  /* CTA SECTION */
+  .cta-section {
+    text-align: center;
+    padding: 8rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .cta-title em { font-style: italic; color: var(--gold); }
+  .cta-sub { color: var(--white-dim); font-size: 0.95rem; margin-bottom: 2.5rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--gold);
+  }
+  .footer-links { display: flex; gap: 2rem; list-style: none; }
+  .footer-links a { color: var(--white-dim); font-size: 0.8rem; text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-copy { color: #333; font-size: 0.75rem; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    .how-steps, .pricing-grid, .testi-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .pricing-grid { background: transparent; gap: 1.5rem; }
+    footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#" style="letter-spacing:0.12em;">NEW<span>SITES</span>.COM</a>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#features">Features</a></li>
+  </ul>
+  <a class="nav-cta" href="signin.html">Get Started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-lines"></div>
+  <div class="hero-glow"></div>
+  <p class="hero-eyebrow">The future of business automation</p>
+  <h1 class="hero-title">Your business,<br><em>fully automated.</em></h1>
+  <p class="hero-sub">NewSites.com builds your professional website and hands you AI tools that answer calls, schedule appointments, follow up with leads — and never clock out.</p>
+  <div class="hero-btns">
+    <a class="btn-gold" href="#pricing">View plans</a>
+    <a class="btn-outline" href="#how">See how it works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Always on, never off</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">AI answers every call</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Bookings & follow-ups</div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <p class="section-eyebrow reveal">Process</p>
+    <h2 class="section-title reveal">From sign-up to <em>fully running</em><br>in under 24 hours.</h2>
+    <div class="how-steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-title">Pick your plan</div>
+        <div class="step-desc">Choose the tier that fits where your business is today. Upgrade anytime as you grow — no penalties, no hassle.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <div class="step-title">We build your site</div>
+        <div class="step-desc">Our AI generates a professional, branded website for your business — live and ready within one business day.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <div class="step-title">Activate your AI stack</div>
+        <div class="step-desc">Turn on your AI call bot, scheduling, follow-ups, and CRM. Your business runs while you focus on what you do best.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="pricing">
+    <p class="section-eyebrow reveal">Pricing</p>
+    <h2 class="section-title reveal">Simple pricing.<br><em>Serious results.</em></h2>
+    <p class="section-sub reveal">No setup fees. No annual contracts. Cancel anytime.</p>
+
+    <div class="pricing-grid reveal">
+
+      <!-- TIER 1 -->
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-tagline">Your business online, instantly.</div>
+        <div class="plan-price">
+          <span class="plan-dollar">$</span>
+          <span class="plan-amount">97</span>
+          <span class="plan-period">/mo</span>
+        </div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li><span class="feat-check">✦</span><span>AI-generated professional website</span></li>
+          <li><span class="feat-check">✦</span><span>Custom branding & colors</span></li>
+          <li><span class="feat-check">✦</span><span>Mobile-responsive design</span></li>
+          <li><span class="feat-check">✦</span><span>Optimized landing pages</span></li>
+          <li><span class="feat-check">✦</span><span>Landing page copy & call scripts provided</span></li>
+          <li><span class="feat-check">✦</span><span>Basic contact form</span></li>
+          <li><span class="feat-check">✦</span><span>Monthly site updates</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">24/7 AI call answering bot</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">AI lead filtering & qualification</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Instant SMS & auto callback</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Queue position & wait time alerts</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Appointment scheduling</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Follow-up automation</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">CRM / lead tracking</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Social & Google Business leads</span></li>
+        </ul>
+        <a class="plan-btn" href="signin.html">Get Starter</a>
+      </div>
+
+      <!-- TIER 2 -->
+      <div class="plan featured">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Growth</div>
+        <div class="plan-tagline">Your business on autopilot.</div>
+        <div class="plan-price">
+          <span class="plan-dollar">$</span>
+          <span class="plan-amount">297</span>
+          <span class="plan-period">/mo</span>
+        </div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li><span class="feat-check">✦</span><span>Everything in Starter</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> AI call answering bot</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> AI lead filtering & qualification</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Instant SMS when line is busy</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Auto callback if you miss a call</span></li>
+          <li><span class="feat-check">✦</span><span>Queue position & estimated wait time texts</span></li>
+          <li><span class="feat-check">✦</span><span>Appointment scheduling & calendar sync</span></li>
+          <li><span class="feat-check">✦</span><span>Multi-step follow-up sequences (SMS & email)</span></li>
+          <li><span class="feat-check">✦</span><span>CRM & lead tracking dashboard</span></li>
+          <li><span class="feat-check">✦</span><span>Google Business Profile lead capture</span></li>
+          <li><span class="feat-check">✦</span><span>Up to 500 calls/mo handled</span></li>
+          <li><span class="feat-check">✦</span><span>Weekly site updates</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Social media lead capture</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Social media auto-posting</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Review management</span></li>
+        </ul>
+        <a class="plan-btn" href="signin.html">Get Growth</a>
+      </div>
+
+      <!-- TIER 3 -->
+      <div class="plan">
+        <div class="plan-name">Empire</div>
+        <div class="plan-tagline">Full-scale business domination.</div>
+        <div class="plan-price">
+          <span class="plan-dollar">$</span>
+          <span class="plan-amount">597</span>
+          <span class="plan-period">/mo</span>
+        </div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li><span class="feat-check">✦</span><span>Everything in Growth</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Unlimited AI call handling</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Social media lead capture & auto-reply</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Text & DM lead capture (all platforms)</span></li>
+          <li><span class="feat-check">✦</span><span>Advanced AI lead scoring & filtering</span></li>
+          <li><span class="feat-check">✦</span><span>Instant SMS + auto callback (priority queue)</span></li>
+          <li><span class="feat-check">✦</span><span>Live queue position & wait time broadcast</span></li>
+          <li><span class="feat-check">✦</span><span>Advanced multi-step follow-up sequences</span></li>
+          <li><span class="feat-check">✦</span><span>Full CRM with pipeline management</span></li>
+          <li><span class="feat-check">✦</span><span>Social media auto-posting (all platforms)</span></li>
+          <li><span class="feat-check">✦</span><span>Google Business Profile management</span></li>
+          <li><span class="feat-check">✦</span><span>Review request & reputation management</span></li>
+          <li><span class="feat-check">✦</span><span>Multi-page website (up to 5 pages)</span></li>
+          <li><span class="feat-check">✦</span><span>Dedicated account manager</span></li>
+          <li><span class="feat-check">✦</span><span>Monthly strategy call</span></li>
+        </ul>
+        <a class="plan-btn" href="signin.html">Get Empire</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" style="background: var(--black-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="features-wrap">
+    <p class="section-eyebrow reveal">What's included</p>
+    <h2 class="section-title reveal">Every tool your<br><em>business needs.</em></h2>
+    <div class="features-grid reveal">
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">⬡</div>
+          <span class="feat-badge">Always On</span>
+        </div>
+        <div class="feat-card-title">AI call answering bot</div>
+        <div class="feat-card-desc">Your AI picks up every call <strong style="color:var(--gold)">24/7</strong> — nights, weekends, holidays. Qualifies callers, collects info, books appointments, and never puts a lead on hold forever.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◎</div>
+          <span class="feat-badge">24/7</span>
+        </div>
+        <div class="feat-card-title">AI lead filtering & qualification</div>
+        <div class="feat-card-desc">The AI screens every inbound lead in real time — filtering out time-wasters and tire-kickers so only serious, ready-to-buy prospects reach your calendar.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◈</div>
+          <span class="feat-badge">Instant</span>
+        </div>
+        <div class="feat-card-title">Instant SMS & auto callback</div>
+        <div class="feat-card-desc">If you're on a call, the lead instantly gets a text: their position in the queue and estimated wait time. When you're free, the system auto-dials them back — zero leads dropped.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◉</div>
+          <span class="feat-badge">24/7</span>
+        </div>
+        <div class="feat-card-title">Appointment scheduling</div>
+        <div class="feat-card-desc">Leads book directly from calls, texts, or your site — <strong style="color:var(--gold)">any time of day</strong>. Syncs with Google Calendar and fires automatic reminders so no-shows plummet.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">⬟</div>
+          <span class="feat-badge">Automated</span>
+        </div>
+        <div class="feat-card-title">Follow-up sequences</div>
+        <div class="feat-card-desc">Multi-step SMS and email follow-ups fire automatically after every call, quote, or appointment — nurturing leads for days or weeks until they convert, without you lifting a finger.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◇</div>
+          <span class="feat-badge">24/7</span>
+        </div>
+        <div class="feat-card-title">Social media & text lead capture</div>
+        <div class="feat-card-desc">Captures leads from Facebook, Instagram DMs, Google Business Profile, and inbound texts — <strong style="color:var(--gold)">around the clock</strong>. The AI replies instantly and routes them into your pipeline.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">○</div>
+          <span class="feat-badge">Live</span>
+        </div>
+        <div class="feat-card-title">Queue & wait time alerts</div>
+        <div class="feat-card-desc">When your AI bot is handling a call, waiting callers get an instant text with their position in line and real-time estimated wait — so they stay, not bail.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">⬢</div>
+          <span class="feat-badge">Optimized</span>
+        </div>
+        <div class="feat-card-title">Landing pages & call scripts</div>
+        <div class="feat-card-desc">Every site includes high-converting, SEO-optimized landing pages plus ready-to-use call scripts and offer copy — so your team knows exactly what to say to close the deal.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◑</div>
+          <span class="feat-badge">Automated</span>
+        </div>
+        <div class="feat-card-title">CRM, reviews & social posting</div>
+        <div class="feat-card-desc">Track every lead in your pipeline, auto-request reviews after completed jobs, and schedule AI-written social posts across all platforms — one dashboard, zero overhead.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <p class="section-eyebrow reveal">Social proof</p>
+    <h2 class="section-title reveal">Real businesses.<br><em>Real results.</em></h2>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">We went from missing half our calls to having a full schedule booked out two weeks in advance. The AI handles everything — I just show up and do the work.</p>
+        <div class="testi-author">Marcus T.</div>
+        <div class="testi-biz">Apex HVAC, Houston TX</div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">I was skeptical but the Empire plan paid for itself in the first week. My Google reviews went from 12 to 47 in a month because of the automated requests.</p>
+        <div class="testi-author">Sandra R.</div>
+        <div class="testi-biz">Clean & Shine Detailing, Atlanta GA</div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">The website alone looks better than anything my old agency built for $4,000. Having the bot answer calls while I'm on a job is just a bonus.</p>
+        <div class="testi-author">Derek L.</div>
+        <div class="testi-biz">Premier Landscaping, Phoenix AZ</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <p class="section-eyebrow reveal">Get started today</p>
+  <h2 class="cta-title reveal">Your competitors are<br><em>already automating.</em></h2>
+  <p class="cta-sub reveal">Join hundreds of small businesses running smarter with NewSites.com.</p>
+  <div class="reveal">
+    <a class="btn-gold" href="#pricing">Choose your plan</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo" style="letter-spacing:0.12em;">NEWSITES.COM</div>
+  <ul class="footer-links">
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+    <li><a href="#">Support</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 NewSites.com. All rights reserved.</div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
