@@ -1,0 +1,3287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEWSITES.COM — AI-Powered Business Automation</title>
+<meta name="description" content="NewSites.com builds your professional website and gives you a 24/7 AI that answers calls, books appointments, filters leads, and follows up automatically.">
+<meta name="keywords" content="AI website builder, AI call answering, business automation, lead generation, appointment scheduling">
+<meta property="og:title" content="NEWSITES.COM — AI-Powered Business Automation">
+<meta property="og:description" content="Your business on autopilot. AI calls, scheduling, follow-ups, and more.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#C9A84C">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23080808'/><text y='24' font-size='20' fill='%23C9A84C'>N</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;padding:0;background:#080808;}
+.app-page{display:none;width:100%;}
+.app-page.active{display:block;}
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6A2A;
+    --black: #080808;
+    --black-2: #111111;
+    --black-3: #1A1A1A;
+    --black-4: #242424;
+    --white: #F5F0E8;
+    --white-dim: #A89F8C;
+    --border: rgba(201,168,76,0.18);
+    --border-bright: rgba(201,168,76,0.45);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+    cursor: default;
+  }
+
+  /* NOISE OVERLAY */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 4rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.88);
+    backdrop-filter: blur(12px);
+  }
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--white); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--white-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--gold); }
+  .nav-cta {
+    background: transparent;
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 0.55rem 1.4rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--gold); color: var(--black); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 2rem 5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(201,168,76,0.09) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .hero-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4.5rem, 11vw, 10rem);
+    font-weight: 700;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.8rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.35s forwards;
+  }
+  .hero-title em { font-style: italic; color: var(--gold); }
+  .hero-sub {
+    max-width: 520px;
+    font-size: 1rem;
+    color: var(--white-dim);
+    line-height: 1.8;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+  .hero-btns {
+    display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.65s forwards;
+  }
+  .btn-gold {
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    padding: 0.9rem 2.2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-gold:hover { background: var(--gold-light); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid rgba(245,240,232,0.25);
+    padding: 0.9rem 2.2rem;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+  .hero-stats {
+    display: flex; gap: 3rem; margin-top: 5rem; flex-wrap: wrap; justify-content: center;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.8s forwards;
+  }
+  .stat { text-align: center; }
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+  .stat-label { font-size: 0.75rem; color: var(--white-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.3rem; }
+
+  /* SECTIONS */
+  section { padding: 7rem 4rem; }
+  .section-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.2rem, 4vw, 3.5rem);
+    font-weight: 300;
+    line-height: 1.15;
+    margin-bottom: 1.2rem;
+  }
+  .section-title em { font-style: italic; color: var(--gold); }
+  .section-sub { color: var(--white-dim); max-width: 500px; font-size: 0.95rem; line-height: 1.8; }
+
+  /* HOW IT WORKS */
+  .how { background: var(--black-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .how-inner { max-width: 1100px; margin: 0 auto; }
+  .how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3rem; margin-top: 4rem; }
+  .step { position: relative; padding-left: 1.5rem; border-left: 1px solid var(--border); }
+  .step-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+    color: var(--gold-dim);
+    line-height: 1;
+    margin-bottom: 0.8rem;
+  }
+  .step-title { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--white); }
+  .step-desc { font-size: 0.88rem; color: var(--white-dim); line-height: 1.75; }
+
+  /* PRICING */
+  .pricing { max-width: 1100px; margin: 0 auto; }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px; margin-top: 4rem; background: var(--border); }
+  .plan {
+    background: var(--black-2);
+    padding: 2.5rem 2rem;
+    position: relative;
+    transition: background 0.25s;
+  }
+  .plan:hover { background: var(--black-3); }
+  .plan.featured {
+    background: var(--black-3);
+    border-top: 2px solid var(--gold);
+  }
+  .plan-badge {
+    position: absolute;
+    top: -1px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--gold);
+    color: var(--black);
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.3rem 1rem;
+  }
+  .plan-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--white);
+    margin-bottom: 0.3rem;
+  }
+  .plan-tagline { font-size: 0.8rem; color: var(--white-dim); margin-bottom: 1.8rem; }
+  .plan-price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.3rem;
+    margin-bottom: 0.4rem;
+  }
+  .plan-dollar { font-size: 1rem; color: var(--gold); margin-top: 0.4rem; }
+  .plan-amount {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3.8rem;
+    font-weight: 300;
+    color: var(--white);
+    line-height: 1;
+  }
+  .plan-period { font-size: 0.8rem; color: var(--white-dim); }
+  .plan-divider { border: none; border-top: 1px solid var(--border); margin: 1.8rem 0; }
+  .plan-features { list-style: none; margin-bottom: 2rem; }
+  .plan-features li {
+    font-size: 0.85rem;
+    color: var(--white-dim);
+    padding: 0.45rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    border-bottom: 1px solid rgba(201,168,76,0.06);
+  }
+  .plan-features li:last-child { border-bottom: none; }
+  .feat-check { color: var(--gold); font-size: 0.75rem; margin-top: 0.22rem; flex-shrink: 0; }
+  .feat-x { color: #444; font-size: 0.75rem; margin-top: 0.22rem; flex-shrink: 0; }
+  .feat-text-off { color: #444; }
+  .plan-btn {
+    display: block;
+    width: 100%;
+    padding: 0.85rem;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-decoration: none;
+    border: 1px solid var(--border-bright);
+    background: transparent;
+    color: var(--gold);
+  }
+  .plan-btn:hover { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  .plan.featured .plan-btn { background: var(--gold); color: var(--black); border-color: var(--gold); }
+  .plan.featured .plan-btn:hover { background: var(--gold-light); }
+
+  /* FEATURES GRID */
+  .features-wrap { max-width: 1100px; margin: 0 auto; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; margin-top: 4rem; background: var(--border); }
+  .feat-card {
+    background: var(--black-2);
+    padding: 2rem 1.8rem;
+    transition: background 0.2s;
+  }
+  .feat-card:hover { background: var(--black-3); }
+  .feat-icon {
+    width: 42px; height: 42px;
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.2rem;
+    font-size: 1.1rem;
+  }
+  .feat-card-title { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--white); }
+  .feat-card-desc { font-size: 0.83rem; color: var(--white-dim); line-height: 1.75; }
+  .feat-badge {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--border-bright);
+    padding: 0.25rem 0.65rem;
+    white-space: nowrap;
+  }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--black-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .testimonials-inner { max-width: 1000px; margin: 0 auto; }
+  .testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 4rem; }
+  .testi-card {
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+  }
+  .testi-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    color: var(--gold-dim);
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .testi-text { font-size: 0.88rem; color: var(--white-dim); line-height: 1.8; margin-bottom: 1.5rem; font-style: italic; }
+  .testi-author { font-size: 0.8rem; font-weight: 500; color: var(--white); }
+  .testi-biz { font-size: 0.75rem; color: var(--gold-dim); }
+
+  /* CTA SECTION */
+  .cta-section {
+    text-align: center;
+    padding: 8rem 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .cta-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 300;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+  }
+  .cta-title em { font-style: italic; color: var(--gold); }
+  .cta-sub { color: var(--white-dim); font-size: 0.95rem; margin-bottom: 2.5rem; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 3rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--gold);
+  }
+  .footer-links { display: flex; gap: 2rem; list-style: none; }
+  .footer-links a { color: var(--white-dim); font-size: 0.8rem; text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--gold); }
+  .footer-copy { color: #333; font-size: 0.75rem; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* SCROLL REVEAL */
+  .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 900px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { display: none; }
+    section { padding: 5rem 1.5rem; }
+    .how-steps, .pricing-grid, .testi-grid { grid-template-columns: 1fr; gap: 1rem; }
+    .pricing-grid { background: transparent; gap: 1.5rem; }
+    footer { padding: 2rem 1.5rem; flex-direction: column; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; }
+  }
+
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6A2A;
+    --black: #080808;
+    --black-2: #111111;
+    --black-3: #1A1A1A;
+    --white: #F5F0E8;
+    --white-dim: #A89F8C;
+    --border: rgba(201,168,76,0.18);
+    --border-bright: rgba(201,168,76,0.45);
+    --danger: #E05252;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  /* SPLIT LAYOUT */
+  .left-panel {
+    width: 45%;
+    background: var(--black-2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .left-panel::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+    bottom: -100px; right: -100px;
+    pointer-events: none;
+  }
+  .left-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.035) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+  }
+  .left-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    position: relative;
+  }
+  .left-logo span { color: var(--white); }
+  .left-content { position: relative; }
+  .left-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 4vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.05;
+    margin-bottom: 1.2rem;
+  }
+  .left-headline em { font-style: italic; color: var(--gold); }
+  .left-sub { font-size: 0.9rem; color: var(--white-dim); line-height: 1.8; max-width: 360px; margin-bottom: 2.5rem; }
+  .left-stats { display: flex; gap: 2rem; }
+  .lst { }
+  .lst-num { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--gold); line-height: 1; }
+  .lst-label { font-size: 0.72rem; color: var(--white-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.2rem; }
+  .left-footer { font-size: 0.75rem; color: #333; position: relative; }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+  }
+  .auth-box { width: 100%; max-width: 420px; }
+
+  /* TABS */
+  .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+  .auth-tab {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+  .auth-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .auth-panel { display: none; }
+  .auth-panel.active { display: block; }
+
+  .auth-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .auth-sub { font-size: 0.85rem; color: var(--white-dim); margin-bottom: 2rem; }
+
+  /* GOOGLE BTN */
+  .google-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.8rem;
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1.5rem;
+  }
+  .google-btn:hover { background: var(--black-3); border-color: rgba(201,168,76,0.6); }
+  .google-icon { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .divider-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { font-size: 0.72rem; color: var(--white-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* FORM */
+  .field { margin-bottom: 1.1rem; }
+  .field label { display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.5rem; }
+  .field input {
+    width: 100%;
+    background: var(--black-2);
+    border: 1px solid var(--border);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--gold); }
+  .field input::placeholder { color: #333; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .forgot { font-size: 0.78rem; color: var(--gold-dim); text-align: right; margin-top: -0.5rem; margin-bottom: 1.5rem; cursor: pointer; text-decoration: none; display: block; }
+  .forgot:hover { color: var(--gold); }
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1.2rem;
+  }
+  .submit-btn:hover { background: var(--gold-light); }
+
+  .switch-text { font-size: 0.82rem; color: var(--white-dim); text-align: center; }
+  .switch-text a { color: var(--gold); text-decoration: none; cursor: pointer; }
+  .switch-text a:hover { color: var(--gold-light); }
+
+  .error-msg { font-size: 0.8rem; color: var(--danger); margin-top: -0.5rem; margin-bottom: 1rem; display: none; }
+  .error-msg.show { display: block; }
+
+  /* PLAN SELECT */
+  .plan-select { margin-bottom: 1.1rem; }
+  .plan-select label { display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.5rem; }
+  .plan-options { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
+  .plan-opt {
+    border: 1px solid var(--border);
+    padding: 0.65rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.78rem;
+  }
+  .plan-opt:hover { border-color: var(--border-bright); }
+  .plan-opt.selected { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+  .plan-opt-name { font-weight: 500; color: var(--white); margin-bottom: 0.15rem; }
+  .plan-opt-price { font-size: 0.7rem; color: var(--gold); }
+
+  /* SUCCESS STATE */
+  .success-box { text-align: center; display: none; }
+  .success-box.show { display: block; }
+  .success-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .success-title { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .success-sub { font-size: 0.88rem; color: var(--white-dim); margin-bottom: 2rem; line-height: 1.7; }
+  .go-btn {
+    display: inline-block;
+    padding: 0.9rem 2.5rem;
+    background: var(--gold);
+    color: var(--black);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+  }
+  .go-btn:hover { background: var(--gold-light); }
+
+  @media (max-width: 800px) {
+    body { flex-direction: column; }
+    .left-panel { width: 100%; min-height: 280px; padding: 2rem; }
+    .left-stats { display: none; }
+    .right-panel { padding: 2rem 1.5rem; }
+  }
+
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6A2A;
+    --black: #080808;
+    --black-2: #111111;
+    --black-3: #1A1A1A;
+    --black-4: #242424;
+    --white: #F5F0E8;
+    --white-dim: #A89F8C;
+    --border: rgba(201,168,76,0.15);
+    --border-bright: rgba(201,168,76,0.4);
+    --green: #2ECC71;
+    --red: #E74C3C;
+    --blue: #3498DB;
+    --orange: #E67E22;
+    --sidebar: 220px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar);
+    min-width: var(--sidebar);
+    background: var(--black-2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    left: 0; top: 0;
+    z-index: 50;
+    visibility: hidden;
+  }
+  .app-page.active .sidebar {
+    visibility: visible;
+  }
+  .sidebar-logo {
+    padding: 1.5rem 1.25rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    display: block;
+  }
+  .sidebar-logo span { color: var(--white); }
+  .sidebar-user {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .user-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .user-name { font-size: 0.82rem; font-weight: 500; color: var(--white); line-height: 1.2; }
+  .user-plan { font-size: 0.68rem; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; }
+  .sidebar-nav { flex: 1; padding: 0.75rem 0; overflow-y: auto; }
+  .nav-section-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #333;
+    padding: 0.75rem 1.25rem 0.35rem;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.82rem;
+    color: var(--white-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .nav-icon { font-size: 0.95rem; width: 18px; text-align: center; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 500;
+    padding: 0.15rem 0.45rem;
+    border-radius: 20px;
+  }
+  .nav-badge.gold { background: var(--gold); color: var(--black); }
+  .sidebar-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .signout-btn {
+    font-size: 0.78rem;
+    color: #444;
+    cursor: pointer;
+    transition: color 0.15s;
+    text-decoration: none;
+    display: block;
+  }
+  .signout-btn:hover { color: var(--white-dim); }
+
+  /* MAIN */
+  .main {
+    margin-left: var(--sidebar);
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.8);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  .topbar-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; }
+  .topbar-title span { color: var(--gold); font-style: italic; }
+  .topbar-right { display: flex; align-items: center; gap: 1rem; }
+  .live-badge {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--green); border: 1px solid rgba(46,204,113,0.3);
+    padding: 0.3rem 0.75rem;
+  }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+  .topbar-date { font-size: 0.78rem; color: var(--white-dim); }
+
+  /* CONTENT PAGES */
+  .page { display: none; padding: 1.75rem 2rem; }
+  .page.active { display: block; }
+
+  /* STAT CARDS ROW */
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); margin-bottom: 1.5rem; }
+  .stat-card {
+    background: var(--black-2);
+    padding: 1.25rem 1.5rem;
+    transition: background 0.15s;
+  }
+  .stat-card:hover { background: var(--black-3); }
+  .sc-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.5rem; }
+  .sc-value { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--white); line-height: 1; margin-bottom: 0.3rem; }
+  .sc-value.gold { color: var(--gold); }
+  .sc-value.green { color: var(--green); }
+  .sc-value.red { color: var(--red); }
+  .sc-delta { font-size: 0.72rem; color: var(--white-dim); }
+  .sc-delta.up { color: var(--green); }
+  .sc-delta.down { color: var(--red); }
+
+  /* SECTION HEADERS */
+  .section-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .section-hd h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; }
+  .section-hd h2 em { font-style: italic; color: var(--gold); }
+  .section-action { font-size: 0.75rem; color: var(--gold); cursor: pointer; letter-spacing: 0.06em; border: 1px solid var(--border-bright); padding: 0.3rem 0.75rem; transition: all 0.15s; }
+  .section-action:hover { background: var(--gold); color: var(--black); }
+
+  /* GRID LAYOUTS */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .panel {
+    background: var(--black-2);
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+  }
+  .panel-title { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .panel-title-action { font-size: 0.68rem; color: var(--gold); cursor: pointer; }
+
+  /* CALL QUEUE */
+  .call-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); }
+  .call-item:last-child { border-bottom: none; }
+  .call-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .call-status.active { background: var(--green); animation: pulse 1.5s infinite; }
+  .call-status.waiting { background: var(--orange); }
+  .call-status.missed { background: var(--red); }
+  .call-info { flex: 1; }
+  .call-name { font-size: 0.85rem; font-weight: 500; color: var(--white); }
+  .call-detail { font-size: 0.72rem; color: var(--white-dim); }
+  .call-time { font-size: 0.72rem; color: var(--white-dim); text-align: right; }
+  .call-pos { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; color: var(--gold); min-width: 28px; text-align: center; }
+  .call-action-btn { font-size: 0.68rem; padding: 0.25rem 0.6rem; border: 1px solid var(--border-bright); color: var(--gold); cursor: pointer; transition: all 0.15s; background: transparent; white-space: nowrap; }
+  .call-action-btn:hover { background: var(--gold); color: var(--black); }
+
+  /* LEADS */
+  .lead-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+  .lead-row:last-child { border-bottom: none; }
+  .lead-avatar { width: 30px; height: 30px; border-radius: 50%; background: rgba(201,168,76,0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 500; color: var(--gold); flex-shrink: 0; }
+  .lead-info { flex: 1; }
+  .lead-name { font-size: 0.83rem; font-weight: 500; color: var(--white); }
+  .lead-source { font-size: 0.7rem; color: var(--white-dim); }
+  .lead-tag { font-size: 0.62rem; padding: 0.18rem 0.5rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .tag-hot { background: rgba(231,76,60,0.15); color: var(--red); border: 1px solid rgba(231,76,60,0.3); }
+  .tag-warm { background: rgba(230,126,34,0.12); color: var(--orange); border: 1px solid rgba(230,126,34,0.3); }
+  .tag-cold { background: rgba(52,152,219,0.1); color: var(--blue); border: 1px solid rgba(52,152,219,0.25); }
+  .tag-booked { background: rgba(46,204,113,0.1); color: var(--green); border: 1px solid rgba(46,204,113,0.25); }
+  .tag-filtered { background: rgba(255,255,255,0.04); color: #555; border: 1px solid #333; }
+
+  /* APPOINTMENTS */
+  .appt-item { display: flex; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .appt-item:last-child { border-bottom: none; }
+  .appt-time-block { text-align: center; min-width: 44px; }
+  .appt-time { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 700; color: var(--gold); line-height: 1; }
+  .appt-ampm { font-size: 0.65rem; color: var(--white-dim); }
+  .appt-info { flex: 1; }
+  .appt-name { font-size: 0.83rem; font-weight: 500; color: var(--white); }
+  .appt-detail { font-size: 0.72rem; color: var(--white-dim); }
+  .appt-status { font-size: 0.65rem; padding: 0.18rem 0.5rem; border: 1px solid; }
+  .appt-confirmed { color: var(--green); border-color: rgba(46,204,113,0.3); background: rgba(46,204,113,0.06); }
+  .appt-pending { color: var(--orange); border-color: rgba(230,126,34,0.3); background: rgba(230,126,34,0.06); }
+
+  /* SMS LOG */
+  .sms-item { padding: 0.65rem 0; border-bottom: 1px solid var(--border); }
+  .sms-item:last-child { border-bottom: none; }
+  .sms-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem; }
+  .sms-name { font-size: 0.83rem; font-weight: 500; color: var(--white); }
+  .sms-time { font-size: 0.68rem; color: var(--white-dim); }
+  .sms-msg { font-size: 0.78rem; color: var(--white-dim); line-height: 1.5; }
+  .sms-dir { font-size: 0.62rem; padding: 0.12rem 0.45rem; margin-right: 0.4rem; }
+  .sms-out { background: rgba(201,168,76,0.08); color: var(--gold); border: 1px solid var(--border-bright); }
+  .sms-in { background: rgba(255,255,255,0.04); color: var(--white-dim); border: 1px solid rgba(255,255,255,0.08); }
+
+  /* REVENUE CHART */
+  .rev-chart { position: relative; height: 120px; display: flex; align-items: flex-end; gap: 6px; padding: 0 4px; }
+  .rev-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .rev-bar { width: 100%; background: rgba(201,168,76,0.15); border-top: 1px solid var(--gold); position: relative; transition: background 0.2s; cursor: pointer; }
+  .rev-bar:hover { background: rgba(201,168,76,0.28); }
+  .rev-bar.current { background: rgba(201,168,76,0.25); border-color: var(--gold-light); }
+  .rev-month { font-size: 0.6rem; color: var(--white-dim); text-align: center; }
+
+  /* REVIEWS */
+  .review-item { padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+  .review-item:last-child { border-bottom: none; }
+  .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.3rem; }
+  .review-name { font-size: 0.82rem; font-weight: 500; color: var(--white); }
+  .review-stars { color: var(--gold); font-size: 0.75rem; letter-spacing: 0.05em; }
+  .review-platform { font-size: 0.65rem; color: var(--white-dim); }
+  .review-text { font-size: 0.78rem; color: var(--white-dim); line-height: 1.55; font-style: italic; }
+
+  /* SOCIAL */
+  .social-item { display: flex; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .social-item:last-child { border-bottom: none; }
+  .social-platform { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+  .sp-fb { background: rgba(24,119,242,0.15); color: #1877F2; border: 1px solid rgba(24,119,242,0.3); }
+  .sp-ig { background: rgba(225,48,108,0.12); color: #E1306C; border: 1px solid rgba(225,48,108,0.25); }
+  .sp-gb { background: rgba(52,168,83,0.12); color: #34A853; border: 1px solid rgba(52,168,83,0.25); }
+  .social-info { flex: 1; }
+  .social-text { font-size: 0.8rem; color: var(--white-dim); line-height: 1.5; margin-bottom: 0.3rem; }
+  .social-meta { font-size: 0.68rem; color: #444; }
+  .social-status { font-size: 0.62rem; padding: 0.15rem 0.5rem; }
+  .s-scheduled { color: var(--orange); border: 1px solid rgba(230,126,34,0.3); background: rgba(230,126,34,0.06); }
+  .s-posted { color: var(--green); border: 1px solid rgba(46,204,113,0.3); background: rgba(46,204,113,0.06); }
+
+  /* BOOK DEMO BANNER */
+  .book-banner {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, transparent 60%);
+    border: 1px solid var(--border-bright);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+  .book-banner-text h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .book-banner-text h3 em { font-style: italic; color: var(--gold); }
+  .book-banner-text p { font-size: 0.82rem; color: var(--white-dim); }
+  .book-btn { background: var(--gold); color: var(--black); border: none; padding: 0.75rem 1.75rem; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .book-btn:hover { background: var(--gold-light); }
+
+  /* BOOKING MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--black-2); border: 1px solid var(--border-bright); width: 100%; max-width: 540px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
+  .modal-close { position: absolute; top: 1rem; right: 1.25rem; font-size: 1.2rem; color: var(--white-dim); cursor: pointer; background: none; border: none; color: var(--white-dim); transition: color 0.15s; }
+  .modal-close:hover { color: var(--white); }
+  .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .modal-sub { font-size: 0.83rem; color: var(--white-dim); margin-bottom: 1.75rem; }
+  .modal-field { margin-bottom: 1rem; }
+  .modal-field label { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.4rem; }
+  .modal-field input, .modal-field select, .modal-field textarea {
+    width: 100%; background: var(--black-3); border: 1px solid var(--border); color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; padding: 0.7rem 0.9rem; outline: none; transition: border-color 0.2s;
+  }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus { border-color: var(--gold); }
+  .modal-field select option { background: var(--black-3); }
+  .modal-field textarea { height: 80px; resize: vertical; }
+  .time-slots { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.5rem; margin-top: 0.4rem; }
+  .time-slot { border: 1px solid var(--border); padding: 0.5rem; text-align: center; font-size: 0.75rem; cursor: pointer; color: var(--white-dim); transition: all 0.15s; }
+  .time-slot:hover { border-color: var(--border-bright); color: var(--white); }
+  .time-slot.selected { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+  .time-slot.taken { opacity: 0.3; cursor: not-allowed; }
+  .modal-submit { width: 100%; padding: 0.9rem; background: var(--gold); color: var(--black); border: none; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; margin-top: 1rem; }
+  .modal-submit:hover { background: var(--gold-light); }
+  .book-success { text-align: center; padding: 1rem 0; display: none; }
+  .book-success.show { display: block; }
+  .book-success-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .book-success-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .book-success-sub { font-size: 0.85rem; color: var(--white-dim); line-height: 1.7; }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 2rem; color: var(--white-dim); font-size: 0.83rem; }
+
+  .hamburger {
+    display: none;
+    background: none; border: 1px solid var(--border);
+    color: var(--white-dim); cursor: pointer;
+    padding: 0.4rem 0.7rem; font-size: 1rem;
+    transition: all 0.15s; margin-right: 0.5rem;
+  }
+  .hamburger:hover { border-color: var(--gold); color: var(--gold); }
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); }
+
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-logo, .user-name, .user-plan, .nav-section-label, .nav-item span:not(.nav-icon), .nav-badge, .sidebar-footer { display: none; }
+    .sidebar.open .sidebar-logo, .sidebar.open .user-name, .sidebar.open .user-plan, .sidebar.open .nav-section-label, .sidebar.open .nav-item span, .sidebar.open .nav-badge, .sidebar.open .sidebar-footer { display: block; }
+    .sidebar.open { width: var(--sidebar); }
+    .nav-item { justify-content: center; padding: 0.75rem; }
+    .sidebar.open .nav-item { justify-content: flex-start; padding: 0.6rem 1.25rem; }
+    .main { margin-left: 0; }
+    .hamburger { display: block; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .two-col, .three-col { grid-template-columns: 1fr; }
+    .topbar { padding: 0.85rem 1rem; }
+    .page { padding: 1.25rem 1rem; }
+    .book-banner { flex-direction: column; }
+    .modal { max-width: 96vw; padding: 1.5rem; }
+    .time-slots { grid-template-columns: repeat(3,1fr); }
+  }
+
+
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6A2A;
+    --black: #080808;
+    --black-2: #111111;
+    --black-3: #1A1A1A;
+    --black-4: #242424;
+    --white: #F5F0E8;
+    --white-dim: #A89F8C;
+    --border: rgba(201,168,76,0.15);
+    --border-bright: rgba(201,168,76,0.4);
+    --green: #2ECC71;
+    --red: #E74C3C;
+    --sidebar: 220px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar);
+    min-width: var(--sidebar);
+    background: var(--black-2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    left: 0; top: 0;
+    z-index: 50;
+    transition: transform 0.3s ease;
+  }
+  .sidebar-logo {
+    padding: 1.5rem 1.25rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    display: block;
+  }
+  .sidebar-logo span { color: var(--white); }
+  .sidebar-user {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .user-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 500; color: var(--gold);
+    flex-shrink: 0;
+  }
+  .user-name { font-size: 0.82rem; font-weight: 500; color: var(--white); line-height: 1.2; }
+  .user-plan { font-size: 0.68rem; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; }
+  .sidebar-nav { flex: 1; padding: 0.75rem 0; overflow-y: auto; }
+  .nav-section-label { font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: #333; padding: 0.75rem 1.25rem 0.35rem; }
+  .nav-item {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.6rem 1.25rem; font-size: 0.82rem;
+    color: var(--white-dim); cursor: pointer;
+    transition: all 0.15s; border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .nav-icon { font-size: 0.95rem; width: 18px; text-align: center; flex-shrink: 0; }
+  .sidebar-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
+  .signout-btn { font-size: 0.78rem; color: #444; cursor: pointer; transition: color 0.15s; text-decoration: none; display: block; }
+  .signout-btn:hover { color: var(--white-dim); }
+
+  /* MOBILE OVERLAY */
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 49;
+  }
+  .sidebar-overlay.show { display: block; }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.85);
+    backdrop-filter: blur(8px);
+    position: sticky; top: 0; z-index: 40;
+    gap: 1rem;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 1rem; }
+  .hamburger {
+    display: none;
+    background: none; border: 1px solid var(--border);
+    color: var(--white-dim); cursor: pointer;
+    padding: 0.4rem 0.6rem; font-size: 1rem;
+    transition: all 0.15s;
+  }
+  .hamburger:hover { border-color: var(--gold); color: var(--gold); }
+  .topbar-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; }
+  .topbar-title span { color: var(--gold); font-style: italic; }
+  .save-btn {
+    background: var(--gold); color: var(--black);
+    border: none; padding: 0.55rem 1.4rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+    font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .save-btn:hover { background: var(--gold-light); }
+
+  /* SETTINGS LAYOUT */
+  .settings-wrap { display: flex; flex: 1; overflow: hidden; }
+  .settings-tabs {
+    width: 200px; min-width: 200px;
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    overflow-y: auto;
+  }
+  .s-tab {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.82rem; color: var(--white-dim);
+    cursor: pointer; transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .s-tab:hover { color: var(--white); background: rgba(255,255,255,0.02); }
+  .s-tab.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .s-tab-icon { font-size: 0.85rem; width: 16px; text-align: center; }
+  .settings-content { flex: 1; overflow-y: auto; padding: 2rem; }
+
+  /* PANELS */
+  .s-panel { display: none; }
+  .s-panel.active { display: block; }
+  .s-section { margin-bottom: 2rem; }
+  .s-section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .s-section-title em { font-style: italic; color: var(--gold); }
+  .s-section-sub { font-size: 0.82rem; color: var(--white-dim); margin-bottom: 1.5rem; line-height: 1.6; }
+  .s-card {
+    background: var(--black-2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .s-card-title { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field { margin-bottom: 1rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.4rem; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--black-3);
+    border: 1px solid var(--border); color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    padding: 0.65rem 0.9rem; outline: none; transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); }
+  .field select option { background: var(--black-3); }
+  .field textarea { height: 90px; resize: vertical; }
+  .field-full { grid-column: 1 / -1; }
+
+  /* TOGGLE */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
+  .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .toggle-info { }
+  .toggle-label { font-size: 0.88rem; color: var(--white); font-weight: 400; }
+  .toggle-desc { font-size: 0.75rem; color: var(--white-dim); margin-top: 0.15rem; }
+  .toggle {
+    position: relative; width: 42px; height: 24px;
+    background: var(--black-4); border: 1px solid var(--border);
+    border-radius: 12px; cursor: pointer; transition: all 0.25s;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: rgba(201,168,76,0.25); border-color: var(--gold); }
+  .toggle::after {
+    content: ''; position: absolute;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #444; top: 3px; left: 3px;
+    transition: all 0.25s;
+  }
+  .toggle.on::after { background: var(--gold); left: 19px; }
+
+  /* PLAN CARDS */
+  .plan-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); margin-bottom: 1rem; }
+  .plan-card { background: var(--black-2); padding: 1.25rem 1rem; cursor: pointer; transition: background 0.15s; border-top: 2px solid transparent; }
+  .plan-card:hover { background: var(--black-3); }
+  .plan-card.current { border-top-color: var(--gold); background: var(--black-3); }
+  .plan-card-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .plan-card-price { font-size: 0.82rem; color: var(--gold); margin-bottom: 0.75rem; }
+  .plan-card-features { font-size: 0.75rem; color: var(--white-dim); line-height: 1.7; }
+  .plan-badge-current { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--border-bright); padding: 0.15rem 0.5rem; display: inline-block; margin-bottom: 0.5rem; }
+
+  /* PAYMENT */
+  .payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .payment-card {
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    background: var(--black-2);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .payment-card:hover { border-color: var(--border-bright); }
+  .payment-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+  .payment-card-logo { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .stripe-logo { color: #6772E5; }
+  .paypal-logo { color: #003087; background: #fff; padding: 0.15rem 0.5rem; display: inline-block; font-size: 0.85rem; }
+  .payment-card-label { font-size: 0.82rem; color: var(--white); margin-bottom: 0.2rem; }
+  .payment-card-sub { font-size: 0.72rem; color: var(--white-dim); }
+  .payment-selected-badge {
+    position: absolute; top: 0.6rem; right: 0.6rem;
+    font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid var(--border-bright);
+    padding: 0.15rem 0.45rem;
+  }
+
+  /* STRIPE FORM */
+  .stripe-form { background: var(--black-3); border: 1px solid var(--border); padding: 1.25rem; margin-top: 1rem; }
+  .stripe-form-title { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 1rem; }
+  .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .card-field { }
+  .card-field label { display: block; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.35rem; }
+  .card-field input {
+    width: 100%; background: var(--black-2);
+    border: 1px solid var(--border); color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    padding: 0.6rem 0.8rem; outline: none; transition: border-color 0.2s;
+  }
+  .card-field input:focus { border-color: var(--gold); }
+  .secure-note { font-size: 0.72rem; color: #444; margin-top: 0.75rem; display: flex; align-items: center; gap: 0.4rem; }
+  .pay-btn {
+    width: 100%; padding: 0.85rem;
+    background: var(--gold); color: var(--black);
+    border: none; font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s; margin-top: 1rem;
+  }
+  .pay-btn:hover { background: var(--gold-light); }
+  .paypal-btn {
+    width: 100%; padding: 0.85rem;
+    background: #FFC439; color: #003087;
+    border: none; font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer; transition: all 0.2s; margin-top: 1rem;
+    display: none;
+  }
+  .paypal-btn:hover { background: #FFB800; }
+  .billing-history { }
+  .bh-row { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .bh-row:last-child { border-bottom: none; }
+  .bh-date { color: var(--white-dim); }
+  .bh-desc { color: var(--white); flex: 1; margin: 0 1rem; }
+  .bh-amount { color: var(--gold); font-weight: 500; }
+  .bh-status { font-size: 0.68rem; color: var(--green); border: 1px solid rgba(46,204,113,0.3); padding: 0.12rem 0.45rem; }
+
+  /* TEAM */
+  .team-member { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
+  .team-member:last-child { border-bottom: none; }
+  .team-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(201,168,76,0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 500; color: var(--gold); flex-shrink: 0; }
+  .team-info { flex: 1; }
+  .team-name { font-size: 0.85rem; font-weight: 500; color: var(--white); }
+  .team-email { font-size: 0.72rem; color: var(--white-dim); }
+  .team-role { font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.15rem 0.5rem; }
+  .role-owner { color: var(--gold); border: 1px solid var(--border-bright); }
+  .role-admin { color: var(--white-dim); border: 1px solid rgba(255,255,255,0.12); }
+  .role-member { color: #555; border: 1px solid #333; }
+  .team-actions { display: flex; gap: 0.5rem; }
+  .t-btn { font-size: 0.68rem; padding: 0.25rem 0.6rem; border: 1px solid var(--border); background: transparent; color: var(--white-dim); cursor: pointer; transition: all 0.15s; }
+  .t-btn:hover { border-color: var(--border-bright); color: var(--white); }
+  .t-btn.danger:hover { border-color: rgba(231,76,60,0.5); color: var(--red); }
+  .add-member-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.78rem; color: var(--gold);
+    border: 1px dashed var(--border-bright);
+    padding: 0.75rem 1rem; width: 100%;
+    background: transparent; cursor: pointer;
+    transition: all 0.15s; margin-top: 0.75rem;
+  }
+  .add-member-btn:hover { background: rgba(201,168,76,0.04); }
+
+  /* AI BOT */
+  .bot-script-area { background: var(--black-3); border: 1px solid var(--border); padding: 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; color: var(--white-dim); width: 100%; min-height: 140px; outline: none; resize: vertical; transition: border-color 0.2s; line-height: 1.7; }
+  .bot-script-area:focus { border-color: var(--gold); }
+  .voice-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; }
+  .voice-card { border: 1px solid var(--border); padding: 0.85rem; cursor: pointer; transition: all 0.15s; text-align: center; }
+  .voice-card:hover { border-color: var(--border-bright); }
+  .voice-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .voice-name { font-size: 0.82rem; font-weight: 500; color: var(--white); margin-bottom: 0.15rem; }
+  .voice-style { font-size: 0.7rem; color: var(--white-dim); }
+  .filter-level { display: flex; gap: 0.5rem; }
+  .fl-opt { flex: 1; border: 1px solid var(--border); padding: 0.6rem; text-align: center; cursor: pointer; font-size: 0.75rem; transition: all 0.15s; color: var(--white-dim); }
+  .fl-opt:hover { border-color: var(--border-bright); }
+  .fl-opt.selected { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.05); }
+
+  /* PASSWORD */
+  .security-row { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
+  .security-row:last-child { border-bottom: none; }
+  .security-label { font-size: 0.85rem; color: var(--white); }
+  .security-sub { font-size: 0.72rem; color: var(--white-dim); margin-top: 0.15rem; }
+  .sec-action { font-size: 0.75rem; color: var(--gold); cursor: pointer; border: 1px solid var(--border-bright); padding: 0.3rem 0.75rem; transition: all 0.15s; background: transparent; }
+  .sec-action:hover { background: var(--gold); color: var(--black); }
+  .sec-status-on { font-size: 0.68rem; color: var(--green); border: 1px solid rgba(46,204,113,0.3); padding: 0.15rem 0.5rem; }
+  .sec-status-off { font-size: 0.68rem; color: #555; border: 1px solid #333; padding: 0.15rem 0.5rem; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--black-3); border: 1px solid var(--gold);
+    color: var(--white); padding: 0.85rem 1.5rem;
+    font-size: 0.85rem; z-index: 999;
+    transform: translateY(20px); opacity: 0;
+    transition: all 0.3s;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); }
+
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .hamburger { display: block; }
+    .settings-tabs { display: none; }
+    .settings-tabs.mobile-open { display: block; position: fixed; inset: 0; background: var(--black-2); z-index: 200; padding: 4rem 0 2rem; overflow-y: auto; }
+    .field-grid { grid-template-columns: 1fr; }
+    .plan-grid { grid-template-columns: 1fr; }
+    .payment-methods { grid-template-columns: 1fr; }
+    .voice-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="app-page active" id="page-landing">
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#" style="letter-spacing:0.12em;">NEW<span>SITES</span>.COM</a>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#features">Features</a></li>
+  </ul>
+  <a class="nav-cta" href="#" onclick="navigate('signin')">Get Started</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-lines"></div>
+  <div class="hero-glow"></div>
+  <p class="hero-eyebrow">The future of business automation</p>
+  <h1 class="hero-title">Your business,<br><em>fully automated.</em></h1>
+  <p class="hero-sub">NewSites.com builds your professional website and hands you AI tools that answer calls, schedule appointments, follow up with leads — and never clock out.</p>
+  <div class="hero-btns">
+    <a class="btn-gold" href="#pricing">View plans</a>
+    <a class="btn-outline" href="#how">See how it works</a>
+  </div>
+  <div class="hero-stats">
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Always on, never off</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">AI answers every call</div></div>
+    <div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Bookings & follow-ups</div></div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="how-inner">
+    <p class="section-eyebrow reveal">Process</p>
+    <h2 class="section-title reveal">From sign-up to <em>fully running</em><br>in under 24 hours.</h2>
+    <div class="how-steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div class="step-title">Pick your plan</div>
+        <div class="step-desc">Choose the tier that fits where your business is today. Upgrade anytime as you grow — no penalties, no hassle.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <div class="step-title">We build your site</div>
+        <div class="step-desc">Our AI generates a professional, branded website for your business — live and ready within one business day.</div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <div class="step-title">Activate your AI stack</div>
+        <div class="step-desc">Turn on your AI call bot, scheduling, follow-ups, and CRM. Your business runs while you focus on what you do best.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="pricing">
+    <p class="section-eyebrow reveal">Pricing</p>
+    <h2 class="section-title reveal">Simple pricing.<br><em>Serious results.</em></h2>
+    <p class="section-sub reveal">No setup fees. No annual contracts. Cancel anytime.</p>
+
+    <div class="pricing-grid reveal">
+
+      <!-- TIER 1 -->
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-tagline">Your business online, instantly.</div>
+        <div class="plan-price">
+          <span class="plan-dollar">$</span>
+          <span class="plan-amount">97</span>
+          <span class="plan-period">/mo</span>
+        </div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li><span class="feat-check">✦</span><span>AI-generated professional website</span></li>
+          <li><span class="feat-check">✦</span><span>Custom branding & colors</span></li>
+          <li><span class="feat-check">✦</span><span>Mobile-responsive design</span></li>
+          <li><span class="feat-check">✦</span><span>Optimized landing pages</span></li>
+          <li><span class="feat-check">✦</span><span>Landing page copy & call scripts provided</span></li>
+          <li><span class="feat-check">✦</span><span>Basic contact form</span></li>
+          <li><span class="feat-check">✦</span><span>Monthly site updates</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">24/7 AI call answering bot</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">AI lead filtering & qualification</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Instant SMS & auto callback</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Queue position & wait time alerts</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Appointment scheduling</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Follow-up automation</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">CRM / lead tracking</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Social & Google Business leads</span></li>
+        </ul>
+        <a class="plan-btn" href="#" onclick="selectAndPay('starter','https://buy.stripe.com/STARTER_LINK_HERE')">Get Starter</a>
+      </div>
+
+      <!-- TIER 2 -->
+      <div class="plan featured">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Growth</div>
+        <div class="plan-tagline">Your business on autopilot.</div>
+        <div class="plan-price">
+          <span class="plan-dollar">$</span>
+          <span class="plan-amount">297</span>
+          <span class="plan-period">/mo</span>
+        </div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li><span class="feat-check">✦</span><span>Everything in Starter</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> AI call answering bot</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> AI lead filtering & qualification</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Instant SMS when line is busy</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Auto callback if you miss a call</span></li>
+          <li><span class="feat-check">✦</span><span>Queue position & estimated wait time texts</span></li>
+          <li><span class="feat-check">✦</span><span>Appointment scheduling & calendar sync</span></li>
+          <li><span class="feat-check">✦</span><span>Multi-step follow-up sequences (SMS & email)</span></li>
+          <li><span class="feat-check">✦</span><span>CRM & lead tracking dashboard</span></li>
+          <li><span class="feat-check">✦</span><span>Google Business Profile lead capture</span></li>
+          <li><span class="feat-check">✦</span><span>Up to 500 calls/mo handled</span></li>
+          <li><span class="feat-check">✦</span><span>Weekly site updates</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Social media lead capture</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Social media auto-posting</span></li>
+          <li><span class="feat-x">✦</span><span class="feat-text-off">Review management</span></li>
+        </ul>
+        <a class="plan-btn" href="#" onclick="selectAndPay('growth','https://buy.stripe.com/GROWTH_LINK_HERE')">Get Growth</a>
+      </div>
+
+      <!-- TIER 3 -->
+      <div class="plan">
+        <div class="plan-name">Empire</div>
+        <div class="plan-tagline">Full-scale business domination.</div>
+        <div class="plan-price">
+          <span class="plan-dollar">$</span>
+          <span class="plan-amount">597</span>
+          <span class="plan-period">/mo</span>
+        </div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li><span class="feat-check">✦</span><span>Everything in Growth</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Unlimited AI call handling</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Social media lead capture & auto-reply</span></li>
+          <li><span class="feat-check">✦</span><span><strong style="color:var(--gold)">24/7</strong> Text & DM lead capture (all platforms)</span></li>
+          <li><span class="feat-check">✦</span><span>Advanced AI lead scoring & filtering</span></li>
+          <li><span class="feat-check">✦</span><span>Instant SMS + auto callback (priority queue)</span></li>
+          <li><span class="feat-check">✦</span><span>Live queue position & wait time broadcast</span></li>
+          <li><span class="feat-check">✦</span><span>Advanced multi-step follow-up sequences</span></li>
+          <li><span class="feat-check">✦</span><span>Full CRM with pipeline management</span></li>
+          <li><span class="feat-check">✦</span><span>Social media auto-posting (all platforms)</span></li>
+          <li><span class="feat-check">✦</span><span>Google Business Profile management</span></li>
+          <li><span class="feat-check">✦</span><span>Review request & reputation management</span></li>
+          <li><span class="feat-check">✦</span><span>Multi-page website (up to 5 pages)</span></li>
+          <li><span class="feat-check">✦</span><span>Dedicated account manager</span></li>
+          <li><span class="feat-check">✦</span><span>Monthly strategy call</span></li>
+        </ul>
+        <a class="plan-btn" href="#" onclick="selectAndPay('empire','https://buy.stripe.com/EMPIRE_LINK_HERE')">Get Empire</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features" style="background: var(--black-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="features-wrap">
+    <p class="section-eyebrow reveal">What's included</p>
+    <h2 class="section-title reveal">Every tool your<br><em>business needs.</em></h2>
+    <div class="features-grid reveal">
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">⬡</div>
+          <span class="feat-badge">Always On</span>
+        </div>
+        <div class="feat-card-title">AI call answering bot</div>
+        <div class="feat-card-desc">Your AI picks up every call <strong style="color:var(--gold)">24/7</strong> — nights, weekends, holidays. Qualifies callers, collects info, books appointments, and never puts a lead on hold forever.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◎</div>
+          <span class="feat-badge">24/7</span>
+        </div>
+        <div class="feat-card-title">AI lead filtering & qualification</div>
+        <div class="feat-card-desc">The AI screens every inbound lead in real time — filtering out time-wasters and tire-kickers so only serious, ready-to-buy prospects reach your calendar.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◈</div>
+          <span class="feat-badge">Instant</span>
+        </div>
+        <div class="feat-card-title">Instant SMS & auto callback</div>
+        <div class="feat-card-desc">If you're on a call, the lead instantly gets a text: their position in the queue and estimated wait time. When you're free, the system auto-dials them back — zero leads dropped.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◉</div>
+          <span class="feat-badge">24/7</span>
+        </div>
+        <div class="feat-card-title">Appointment scheduling</div>
+        <div class="feat-card-desc">Leads book directly from calls, texts, or your site — <strong style="color:var(--gold)">any time of day</strong>. Syncs with Google Calendar and fires automatic reminders so no-shows plummet.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">⬟</div>
+          <span class="feat-badge">Automated</span>
+        </div>
+        <div class="feat-card-title">Follow-up sequences</div>
+        <div class="feat-card-desc">Multi-step SMS and email follow-ups fire automatically after every call, quote, or appointment — nurturing leads for days or weeks until they convert, without you lifting a finger.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◇</div>
+          <span class="feat-badge">24/7</span>
+        </div>
+        <div class="feat-card-title">Social media & text lead capture</div>
+        <div class="feat-card-desc">Captures leads from Facebook, Instagram DMs, Google Business Profile, and inbound texts — <strong style="color:var(--gold)">around the clock</strong>. The AI replies instantly and routes them into your pipeline.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">○</div>
+          <span class="feat-badge">Live</span>
+        </div>
+        <div class="feat-card-title">Queue & wait time alerts</div>
+        <div class="feat-card-desc">When your AI bot is handling a call, waiting callers get an instant text with their position in line and real-time estimated wait — so they stay, not bail.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">⬢</div>
+          <span class="feat-badge">Optimized</span>
+        </div>
+        <div class="feat-card-title">Landing pages & call scripts</div>
+        <div class="feat-card-desc">Every site includes high-converting, SEO-optimized landing pages plus ready-to-use call scripts and offer copy — so your team knows exactly what to say to close the deal.</div>
+      </div>
+
+      <div class="feat-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.2rem;">
+          <div class="feat-icon" style="margin-bottom:0;">◑</div>
+          <span class="feat-badge">Automated</span>
+        </div>
+        <div class="feat-card-title">CRM, reviews & social posting</div>
+        <div class="feat-card-desc">Track every lead in your pipeline, auto-request reviews after completed jobs, and schedule AI-written social posts across all platforms — one dashboard, zero overhead.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="testimonials-inner">
+    <p class="section-eyebrow reveal">Social proof</p>
+    <h2 class="section-title reveal">Real businesses.<br><em>Real results.</em></h2>
+    <div class="testi-grid">
+      <div class="testi-card reveal">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">We went from missing half our calls to having a full schedule booked out two weeks in advance. The AI handles everything — I just show up and do the work.</p>
+        <div class="testi-author">Marcus T.</div>
+        <div class="testi-biz">Apex HVAC, Houston TX</div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">I was skeptical but the Empire plan paid for itself in the first week. My Google reviews went from 12 to 47 in a month because of the automated requests.</p>
+        <div class="testi-author">Sandra R.</div>
+        <div class="testi-biz">Clean & Shine Detailing, Atlanta GA</div>
+      </div>
+      <div class="testi-card reveal">
+        <div class="testi-quote">"</div>
+        <p class="testi-text">The website alone looks better than anything my old agency built for $4,000. Having the bot answer calls while I'm on a job is just a bonus.</p>
+        <div class="testi-author">Derek L.</div>
+        <div class="testi-biz">Premier Landscaping, Phoenix AZ</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <p class="section-eyebrow reveal">Get started today</p>
+  <h2 class="cta-title reveal">Your competitors are<br><em>already automating.</em></h2>
+  <p class="cta-sub reveal">Join hundreds of small businesses running smarter with NewSites.com.</p>
+  <div class="reveal">
+    <a class="btn-gold" href="#pricing">Choose your plan</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo" style="letter-spacing:0.12em;">NEWSITES.COM</div>
+  <ul class="footer-links">
+    <li><a href="#">Privacy</a></li>
+    <li><a href="#">Terms</a></li>
+    <li><a href="#">Support</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <div class="footer-copy">© 2025 NewSites.com. All rights reserved.</div>
+</footer>
+
+<script>
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        setTimeout(() => e.target.classList.add('visible'), i * 80);
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</div>
+
+<div class="app-page" id="page-signin" style="min-height:100vh;display:none;">
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="left-grid"></div>
+  <a class="left-logo" href="#" onclick="navigate('landing')">NEW<span>SITES</span>.COM</a>
+  <div class="left-content">
+    <h2 class="left-headline">Welcome<br><em>back.</em></h2>
+    <p class="left-sub">Your AI is working around the clock. Sign in to see your leads, calls, bookings, and revenue — all in one place.</p>
+    <div class="left-stats">
+      <div class="lst"><div class="lst-num">24/7</div><div class="lst-label">AI running</div></div>
+      <div class="lst"><div class="lst-num">0</div><div class="lst-label" id="missed-stat">Missed calls</div></div>
+      <div class="lst"><div class="lst-num">∞</div><div class="lst-label">Uptime</div></div>
+    </div>
+  </div>
+  <div class="left-footer">© 2025 NEWSITES.COM — All rights reserved.</div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div class="auth-box">
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuth('signin')">Sign in</div>
+      <div class="auth-tab" onclick="switchAuth('signup')">Create account</div>
+    </div>
+
+    <!-- SIGN IN -->
+    <div class="auth-panel active" id="panel-signin">
+      <h2 class="auth-title">Sign in</h2>
+      <p class="auth-sub">Access your NEWSITES dashboard.</p>
+
+      <button class="google-btn" onclick="handleGoogle_signin()">
+        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="divider-row"><div class="divider-line"></div><span class="divider-text">or</span><div class="divider-line"></div></div>
+
+      <div class="field"><label>Email address</label><input type="email" id="si-email" placeholder="you@business.com" /></div>
+      <div class="field"><label>Password</label><input type="password" id="si-pass" placeholder="••••••••" /></div>
+      <a class="forgot" href="#">Forgot password?</a>
+      <div class="error-msg" id="si-error">Invalid email or password. Please try again.</div>
+      <button class="submit-btn" onclick="handleSignin_fn()">Sign in to dashboard</button>
+      <p class="switch-text">Don't have an account? <a onclick="switchAuth('signup')">Create one free</a></p>
+    </div>
+
+    <!-- SIGN UP -->
+    <div class="auth-panel" id="panel-signup">
+      <h2 class="auth-title">Get started</h2>
+      <p class="auth-sub">Create your NEWSITES account and go live today.</p>
+
+      <button class="google-btn" onclick="handleGoogle_signin()">
+        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Sign up with Google
+      </button>
+
+      <div class="divider-row"><div class="divider-line"></div><span class="divider-text">or</span><div class="divider-line"></div></div>
+
+      <div class="field-row">
+        <div class="field"><label>First name</label><input type="text" id="su-first" placeholder="Marcus" /></div>
+        <div class="field"><label>Last name</label><input type="text" id="su-last" placeholder="Johnson" /></div>
+      </div>
+      <div class="field"><label>Business name</label><input type="text" id="su-biz" placeholder="Apex Roofing Co." /></div>
+      <div class="field"><label>Email address</label><input type="email" id="su-email" placeholder="you@business.com" /></div>
+      <div class="field"><label>Phone number</label><input type="tel" id="su-phone" placeholder="(555) 000-0000" /></div>
+      <div class="field"><label>Password</label><input type="password" id="su-pass" placeholder="Min. 8 characters" /></div>
+
+      <div class="plan-select">
+        <label>Select your plan</label>
+        <div class="plan-options">
+          <div class="plan-opt" onclick="selectPlan(this,'starter')">
+            <div class="plan-opt-name">Starter</div>
+            <div class="plan-opt-price">$97/mo</div>
+          </div>
+          <div class="plan-opt selected" onclick="selectPlan(this,'growth')">
+            <div class="plan-opt-name">Growth</div>
+            <div class="plan-opt-price">$297/mo</div>
+          </div>
+          <div class="plan-opt" onclick="selectPlan(this,'empire')">
+            <div class="plan-opt-name">Empire</div>
+            <div class="plan-opt-price">$597/mo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-msg" id="su-error">Please fill in all required fields.</div>
+      <button class="submit-btn" onclick="handleSignup_fn()">Create my account</button>
+      <p class="switch-text">Already have an account? <a onclick="switchAuth('signin')">Sign in</a></p>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-box" id="success-box">
+      <div class="success-icon">✦</div>
+      <h2 class="success-title">You're in.</h2>
+      <p class="success-sub">Your account is live. Your AI is already standing by. Let's set up your dashboard and get your first site built.</p>
+      <button class="go-btn" onclick="navigate('dashboard')">Open my dashboard →</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let selectedPlan = 'growth';
+
+  function switchAuth(tab) {
+    document.querySelectorAll('.auth-tab').forEach((t,i) => {
+      t.classList.toggle('active', (tab==='signin'&&i===0)||(tab==='signup'&&i===1));
+    });
+    document.getElementById('panel-signin').classList.toggle('active', tab==='signin');
+    document.getElementById('panel-signup').classList.toggle('active', tab==='signup');
+    document.getElementById('success-box').classList.remove('show');
+  }
+
+  function selectPlan(el, plan) {
+    document.querySelectorAll('.plan-opt').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPlan = plan;
+  }
+
+  function handleGoogle() {
+    showSuccess();
+  }
+
+  function handleSignin() {
+    const email = document.getElementById('si-email').value.trim();
+    const pass = document.getElementById('si-pass').value.trim();
+    const err = document.getElementById('si-error');
+    if (!email || !pass) { err.classList.add('show'); return; }
+    err.classList.remove('show');
+    showSuccess();
+  }
+
+  function handleSignup() {
+    const first = document.getElementById('su-first').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const pass = document.getElementById('su-pass').value.trim();
+    const err = document.getElementById('su-error');
+    if (!first || !email || !pass) { err.classList.add('show'); return; }
+    err.classList.remove('show');
+    showSuccess();
+  }
+
+  function showSuccess() {
+    document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('success-box').classList.add('show');
+  }
+</script>
+</div>
+
+<div class="app-page" id="page-dashboard" style="height:100vh;overflow:hidden;display:none;">
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <a class="sidebar-logo" href="#" onclick="navigate('landing')">NEW<span>SITES</span>.COM</a>
+  <div class="sidebar-user">
+    <div class="user-avatar">MJ</div>
+    <div>
+      <div class="user-name">Marcus Johnson</div>
+      <div class="user-plan">Growth Plan</div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="showPage('overview')">
+      <span class="nav-icon">◈</span><span>Dashboard</span>
+    </div>
+    <div class="nav-section-label">AI Engine</div>
+    <div class="nav-item" onclick="showPage('leads')">
+      <span class="nav-icon">⬟</span><span>Lead Pipeline</span>
+    </div>
+    <div class="nav-item" onclick="showPage('appointments')">
+      <span class="nav-icon">◉</span><span>Appointments</span>
+    </div>
+    <div class="nav-item" onclick="showPage('sms')">
+      <span class="nav-icon">◇</span><span>SMS & Follow-Ups</span>
+    </div>
+    <div class="nav-section-label">Growth</div>
+    <div class="nav-item" onclick="showPage('revenue')">
+      <span class="nav-icon">⬡</span><span>Revenue & Analytics</span>
+    </div>
+    <div class="nav-item" onclick="showPage('reviews')">
+      <span class="nav-icon">○</span><span>Reviews</span>
+    </div>
+    <div class="nav-item" onclick="showPage('social')">
+      <span class="nav-icon">◑</span><span>Social Media</span>
+    </div>
+    <div class="nav-section-label">Account</div>
+    <div class="nav-item" onclick="showPage('billing')">
+      <span class="nav-icon">⬡</span><span>Billing & Plan</span>
+    </div>
+    <div class="nav-item" onclick="navigate('settings')">
+      <span class="nav-icon">⬢</span><span>Settings</span>
+    </div>
+    <div class="nav-item" onclick="openBooking()">
+      <span class="nav-icon">✦</span><span>Book Strategy Call</span>
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <a class="signout-btn" href="#" onclick="handleSignOut()">← Sign out</a>
+  </div>
+</nav>
+
+<!-- MOBILE SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar_dash()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:49;"></div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title"><button class="hamburger" onclick="toggleSidebar_dash()">☰</button>Good morning, <span id="topbar-title-name">there</span>.</div>
+    <div class="topbar-right">
+      <div class="live-badge"><div class="live-dot"></div>AI Active 24/7</div>
+      <div class="topbar-date" id="topbar-date"></div>
+    </div>
+  </div>
+
+  <!-- ===== OVERVIEW PAGE ===== -->
+  <div class="page active" id="page-overview">
+    <div class="book-banner">
+      <div class="book-banner-text">
+        <h3>Book your <em>strategy call</em></h3>
+        <p>30 minutes with your account manager. We'll optimize your AI setup and unlock more leads.</p>
+      </div>
+      <button class="book-btn" onclick="openBooking()">Book a call →</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="sc-label">Total revenue (mo)</div>
+        <div class="sc-value gold">$14,820</div>
+        <div class="sc-delta up">↑ 23% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">Calls handled (AI)</div>
+        <div class="sc-value">347</div>
+        <div class="sc-delta up">↑ 41 this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">New leads</div>
+        <div class="sc-value green">89</div>
+        <div class="sc-delta up">↑ 18% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">Filtered out (bad)</div>
+        <div class="sc-value red">24</div>
+        <div class="sc-delta">Saved ~6 hrs of your time</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">Active calls & queue <span class="panel-title-action" onclick="showPage('calls')">View all</span></div>
+        <div class="call-item">
+          <div class="call-status active"></div>
+          <div class="call-pos">—</div>
+          <div class="call-info">
+            <div class="call-name">Sandra R. — (713) 555-0142</div>
+            <div class="call-detail">On call now · 2m 14s · HVAC quote request</div>
+          </div>
+          <button class="call-action-btn">Join</button>
+        </div>
+        <div class="call-item">
+          <div class="call-status waiting"></div>
+          <div class="call-pos">#1</div>
+          <div class="call-info">
+            <div class="call-name">Derek L. — (602) 555-0388</div>
+            <div class="call-detail">Waiting · Est. 2 min · SMS sent</div>
+          </div>
+          <button class="call-action-btn">Callback</button>
+        </div>
+        <div class="call-item">
+          <div class="call-status waiting"></div>
+          <div class="call-pos">#2</div>
+          <div class="call-info">
+            <div class="call-name">Maria C. — (512) 555-0217</div>
+            <div class="call-detail">Waiting · Est. 5 min · SMS sent</div>
+          </div>
+          <button class="call-action-btn">Callback</button>
+        </div>
+        <div class="call-item">
+          <div class="call-status missed"></div>
+          <div class="call-pos">—</div>
+          <div class="call-info">
+            <div class="call-name">James T. — (404) 555-0091</div>
+            <div class="call-detail">Missed · Auto-callback scheduled 3:30pm</div>
+          </div>
+          <button class="call-action-btn">Call now</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Recent leads <span class="panel-title-action" onclick="showPage('leads')">View pipeline</span></div>
+        <div class="lead-row">
+          <div class="lead-avatar">SR</div>
+          <div class="lead-info"><div class="lead-name">Sandra R.</div><div class="lead-source">Google Business · Called in</div></div>
+          <span class="lead-tag tag-hot">Hot</span>
+        </div>
+        <div class="lead-row">
+          <div class="lead-avatar">DL</div>
+          <div class="lead-info"><div class="lead-name">Derek L.</div><div class="lead-source">Facebook DM</div></div>
+          <span class="lead-tag tag-booked">Booked</span>
+        </div>
+        <div class="lead-row">
+          <div class="lead-avatar">MC</div>
+          <div class="lead-info"><div class="lead-name">Maria C.</div><div class="lead-source">Website form</div></div>
+          <span class="lead-tag tag-warm">Warm</span>
+        </div>
+        <div class="lead-row">
+          <div class="lead-avatar">JT</div>
+          <div class="lead-info"><div class="lead-name">James T.</div><div class="lead-source">Instagram DM</div></div>
+          <span class="lead-tag tag-cold">Cold</span>
+        </div>
+        <div class="lead-row">
+          <div class="lead-avatar">??</div>
+          <div class="lead-info"><div class="lead-name">Unknown caller</div><div class="lead-source">Inbound call · No info given</div></div>
+          <span class="lead-tag tag-filtered">Filtered</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">Today's appointments <span class="panel-title-action" onclick="showPage('appointments')">Full calendar</span></div>
+        <div class="appt-item">
+          <div class="appt-time-block"><div class="appt-time">9:00</div><div class="appt-ampm">AM</div></div>
+          <div class="appt-info"><div class="appt-name">Sandra R. — HVAC estimate</div><div class="appt-detail">1427 Oak St · (713) 555-0142</div></div>
+          <span class="appt-status appt-confirmed">Confirmed</span>
+        </div>
+        <div class="appt-item">
+          <div class="appt-time-block"><div class="appt-time">11:30</div><div class="appt-ampm">AM</div></div>
+          <div class="appt-info"><div class="appt-name">Derek L. — Landscaping consult</div><div class="appt-detail">2890 Elm Ave · (602) 555-0388</div></div>
+          <span class="appt-status appt-confirmed">Confirmed</span>
+        </div>
+        <div class="appt-item">
+          <div class="appt-time-block"><div class="appt-time">2:00</div><div class="appt-ampm">PM</div></div>
+          <div class="appt-info"><div class="appt-name">Maria C. — Roof inspection</div><div class="appt-detail">500 Pine Blvd · (512) 555-0217</div></div>
+          <span class="appt-status appt-pending">Pending</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Latest SMS & follow-ups <span class="panel-title-action" onclick="showPage('sms')">View all</span></div>
+        <div class="sms-item">
+          <div class="sms-header"><div class="sms-name">Derek L.</div><div class="sms-time">10:42 AM</div></div>
+          <div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Derek! You're #1 in queue. Est. wait: 2 min. We'll call you right back.</div>
+        </div>
+        <div class="sms-item">
+          <div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:15 AM</div></div>
+          <div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Maria, reminder: your appointment is today at 2pm. Reply YES to confirm.</div>
+        </div>
+        <div class="sms-item">
+          <div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:17 AM</div></div>
+          <div class="sms-msg"><span class="sms-dir sms-in">IN</span>YES — see you then!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CALLS PAGE ===== -->
+  <div class="page" id="page-calls">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Active now</div><div class="sc-value green">1</div></div>
+      <div class="stat-card"><div class="sc-label">In queue</div><div class="sc-value gold">2</div></div>
+      <div class="stat-card"><div class="sc-label">Handled today</div><div class="sc-value">28</div></div>
+      <div class="stat-card"><div class="sc-label">Missed (auto-callback)</div><div class="sc-value red">3</div></div>
+    </div>
+    <div class="panel" style="margin-bottom:1.5rem;">
+      <div class="panel-title">Live call queue — 24/7 AI answering</div>
+      <div class="call-item">
+        <div class="call-status active"></div>
+        <div class="call-pos">—</div>
+        <div class="call-info"><div class="call-name">Sandra R. — (713) 555-0142</div><div class="call-detail">🟢 ON CALL NOW · 2m 14s · HVAC quote · Qualified lead</div></div>
+        <button class="call-action-btn">Join call</button>
+      </div>
+      <div class="call-item">
+        <div class="call-status waiting"></div>
+        <div class="call-pos">#1</div>
+        <div class="call-info"><div class="call-name">Derek L. — (602) 555-0388</div><div class="call-detail">Waiting · Est. wait: 2 min · Position text sent ✓</div></div>
+        <button class="call-action-btn">Callback now</button>
+      </div>
+      <div class="call-item">
+        <div class="call-status waiting"></div>
+        <div class="call-pos">#2</div>
+        <div class="call-info"><div class="call-name">Maria C. — (512) 555-0217</div><div class="call-detail">Waiting · Est. wait: 5 min · Position text sent ✓</div></div>
+        <button class="call-action-btn">Callback now</button>
+      </div>
+      <div class="call-item">
+        <div class="call-status missed"></div>
+        <div class="call-pos">—</div>
+        <div class="call-info"><div class="call-name">James T. — (404) 555-0091</div><div class="call-detail">Missed · Auto-callback at 3:30pm · SMS sent ✓</div></div>
+        <button class="call-action-btn">Call now</button>
+      </div>
+      <div class="call-item">
+        <div class="call-status missed"></div>
+        <div class="call-pos">—</div>
+        <div class="call-info"><div class="call-name">Unknown — (832) 555-0404</div><div class="call-detail">Filtered — AI detected spam/solicitor · No callback</div></div>
+        <span style="font-size:0.68rem;color:#444;">Blocked</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LEADS PAGE ===== -->
+  <div class="page" id="page-leads">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Total leads</div><div class="sc-value">89</div></div>
+      <div class="stat-card"><div class="sc-label">Hot</div><div class="sc-value red">14</div></div>
+      <div class="stat-card"><div class="sc-label">Booked</div><div class="sc-value green">31</div></div>
+      <div class="stat-card"><div class="sc-label">AI filtered</div><div class="sc-value">24</div><div class="sc-delta">Bad leads removed</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Full lead pipeline</div>
+      <div class="lead-row"><div class="lead-avatar">SR</div><div class="lead-info"><div class="lead-name">Sandra R.</div><div class="lead-source">Google Business · HVAC quote · (713) 555-0142</div></div><span class="lead-tag tag-hot">Hot</span></div>
+      <div class="lead-row"><div class="lead-avatar">DL</div><div class="lead-info"><div class="lead-name">Derek L.</div><div class="lead-source">Facebook DM · Landscaping · (602) 555-0388</div></div><span class="lead-tag tag-booked">Booked</span></div>
+      <div class="lead-row"><div class="lead-avatar">MC</div><div class="lead-info"><div class="lead-name">Maria C.</div><div class="lead-source">Website form · Roofing · (512) 555-0217</div></div><span class="lead-tag tag-warm">Warm</span></div>
+      <div class="lead-row"><div class="lead-avatar">JT</div><div class="lead-info"><div class="lead-name">James T.</div><div class="lead-source">Instagram DM · Plumbing · (404) 555-0091</div></div><span class="lead-tag tag-cold">Cold</span></div>
+      <div class="lead-row"><div class="lead-avatar">AL</div><div class="lead-info"><div class="lead-name">Amanda L.</div><div class="lead-source">Text message · Electrical · (214) 555-0339</div></div><span class="lead-tag tag-booked">Booked</span></div>
+      <div class="lead-row"><div class="lead-avatar">RK</div><div class="lead-info"><div class="lead-name">Robert K.</div><div class="lead-source">Google Business · Painting · (303) 555-0184</div></div><span class="lead-tag tag-hot">Hot</span></div>
+      <div class="lead-row"><div class="lead-avatar">??</div><div class="lead-info"><div class="lead-name">Unknown · solicitor</div><div class="lead-source">Inbound call · AI flagged as spam</div></div><span class="lead-tag tag-filtered">Filtered</span></div>
+    </div>
+  </div>
+
+  <!-- ===== APPOINTMENTS PAGE ===== -->
+  <div class="page" id="page-appointments">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Today</div><div class="sc-value gold">3</div></div>
+      <div class="stat-card"><div class="sc-label">This week</div><div class="sc-value">14</div></div>
+      <div class="stat-card"><div class="sc-label">Confirmed</div><div class="sc-value green">12</div></div>
+      <div class="stat-card"><div class="sc-label">No-shows</div><div class="sc-value red">1</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Upcoming appointments <span class="panel-title-action" onclick="openBooking()">+ Book a call</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">9:00</div><div class="appt-ampm">AM</div></div><div class="appt-info"><div class="appt-name">Sandra R. — HVAC estimate</div><div class="appt-detail">1427 Oak St · (713) 555-0142 · Booked via AI call</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">11:30</div><div class="appt-ampm">AM</div></div><div class="appt-info"><div class="appt-name">Derek L. — Landscaping consult</div><div class="appt-detail">2890 Elm Ave · (602) 555-0388 · Booked via Facebook DM</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">2:00</div><div class="appt-ampm">PM</div></div><div class="appt-info"><div class="appt-name">Maria C. — Roof inspection</div><div class="appt-detail">500 Pine Blvd · (512) 555-0217 · Booked via website</div></div><span class="appt-status appt-pending">Pending</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">4:00</div><div class="appt-ampm">PM</div></div><div class="appt-info"><div class="appt-name">Amanda L. — Electrical quote</div><div class="appt-detail">788 Birch Rd · (214) 555-0339 · Booked via text</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
+    </div>
+  </div>
+
+  <!-- ===== SMS PAGE ===== -->
+  <div class="page" id="page-sms">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Sent today</div><div class="sc-value gold">47</div></div>
+      <div class="stat-card"><div class="sc-label">Follow-ups active</div><div class="sc-value">18</div></div>
+      <div class="stat-card"><div class="sc-label">Reply rate</div><div class="sc-value green">74%</div></div>
+      <div class="stat-card"><div class="sc-label">Converted from SMS</div><div class="sc-value">9</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">SMS log & follow-up sequences</div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Derek L.</div><div class="sms-time">10:42 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Derek! You're #1 in queue. Est. wait: 2 min. We'll call you right back — hang tight!</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:15 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Maria, reminder: your appointment is today at 2pm at 500 Pine Blvd. Reply YES to confirm or RESCHEDULE to change it.</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:17 AM</div></div><div class="sms-msg"><span class="sms-dir sms-in">IN</span>YES — see you then!</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">James T.</div><div class="sms-time">9:55 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hey James! Sorry we missed your call. We've got you scheduled for a callback at 3:30pm today. Does that work?</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Robert K. — Follow-up Day 2</div><div class="sms-time">9:00 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">AUTO</span>Hi Robert, just following up on your painting quote from yesterday. Ready to get started? Reply or call us anytime.</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Amanda L. — Follow-up Day 1</div><div class="sms-time">8:30 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">AUTO</span>Hi Amanda! Thanks for reaching out yesterday. Your appointment is confirmed for 4pm today. See you soon!</div></div>
+    </div>
+  </div>
+
+  <!-- ===== REVENUE PAGE ===== -->
+  <div class="page" id="page-revenue">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">This month</div><div class="sc-value gold">$14,820</div><div class="sc-delta up">↑ 23% vs last month</div></div>
+      <div class="stat-card"><div class="sc-label">Last month</div><div class="sc-value">$12,040</div></div>
+      <div class="stat-card"><div class="sc-label">Avg. job value</div><div class="sc-value green">$428</div></div>
+      <div class="stat-card"><div class="sc-label">Projected (mo)</div><div class="sc-value">$17,200</div><div class="sc-delta up">On track</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Monthly revenue</div>
+      <div class="rev-chart">
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:42%"></div><div class="rev-month">Jul</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:55%"></div><div class="rev-month">Aug</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:48%"></div><div class="rev-month">Sep</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:63%"></div><div class="rev-month">Oct</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:70%"></div><div class="rev-month">Nov</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:81%"></div><div class="rev-month">Dec</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:68%"></div><div class="rev-month">Jan</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:74%"></div><div class="rev-month">Feb</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar current" style="height:88%"></div><div class="rev-month">Mar</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REVIEWS PAGE ===== -->
+  <div class="page" id="page-reviews">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Avg. rating</div><div class="sc-value gold">4.9 ★</div></div>
+      <div class="stat-card"><div class="sc-label">Total reviews</div><div class="sc-value">84</div></div>
+      <div class="stat-card"><div class="sc-label">This month</div><div class="sc-value green">17</div></div>
+      <div class="stat-card"><div class="sc-label">Requests sent</div><div class="sc-value">23</div><div class="sc-delta">74% response rate</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Recent reviews</div>
+      <div class="review-item"><div class="review-header"><div><div class="review-name">Sandra R.</div><div class="review-platform">Google · 2 days ago</div></div><div class="review-stars">★★★★★</div></div><div class="review-text">"Showed up on time, got the job done fast, and the price was fair. Will definitely use again."</div></div>
+      <div class="review-item"><div class="review-header"><div><div class="review-name">Derek L.</div><div class="review-platform">Google · 5 days ago</div></div><div class="review-stars">★★★★★</div></div><div class="review-text">"Best service I've had in years. The booking process was super easy and they followed up after too."</div></div>
+      <div class="review-item"><div class="review-header"><div><div class="review-name">Amanda L.</div><div class="review-platform">Facebook · 1 week ago</div></div><div class="review-stars">★★★★☆</div></div><div class="review-text">"Great work overall. Arrived a little late but the quality was excellent. Would recommend."</div></div>
+    </div>
+  </div>
+
+  <!-- ===== SOCIAL PAGE ===== -->
+  <div class="page" id="page-social">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Posts this month</div><div class="sc-value gold">24</div></div>
+      <div class="stat-card"><div class="sc-label">Total reach</div><div class="sc-value">8,430</div></div>
+      <div class="stat-card"><div class="sc-label">Leads from social</div><div class="sc-value green">12</div></div>
+      <div class="stat-card"><div class="sc-label">Platforms active</div><div class="sc-value">3</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Scheduled & posted content</div>
+      <div class="social-item"><div class="social-platform sp-fb">f</div><div class="social-info"><div class="social-text">Spring is here — is your HVAC ready? Book a free tune-up this week and save 15%. Limited slots!</div><div class="social-meta">Facebook · Scheduled for Today 2:00 PM</div></div><span class="social-status s-scheduled">Scheduled</span></div>
+      <div class="social-item"><div class="social-platform sp-ig">ig</div><div class="social-info"><div class="social-text">Before & after roofing job in Austin. No leaks, no drama — just clean work. DM us for a quote anytime.</div><div class="social-meta">Instagram · Posted Yesterday · 214 reach</div></div><span class="social-status s-posted">Posted</span></div>
+      <div class="social-item"><div class="social-platform sp-gb">G</div><div class="social-info"><div class="social-text">We're open 7 days a week! Call or book online for same-day service in your area.</div><div class="social-meta">Google Business · Posted 2 days ago · 88 views</div></div><span class="social-status s-posted">Posted</span></div>
+      <div class="social-item"><div class="social-platform sp-fb">f</div><div class="social-info"><div class="social-text">5-star review spotlight: "Best service I've had in years!" — Derek L. Thank you Derek! 🏆</div><div class="social-meta">Facebook · Posted 3 days ago · 412 reach</div></div><span class="social-status s-posted">Posted</span></div>
+    </div>
+  </div>
+
+
+  <!-- ===== BILLING PAGE ===== -->
+  <div class="page" id="page-billing">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Current plan</div><div class="sc-value gold">Growth</div><div class="sc-delta">$297/mo</div></div>
+      <div class="stat-card"><div class="sc-label">Next billing</div><div class="sc-value">Apr 1</div><div class="sc-delta">Auto-renews monthly</div></div>
+      <div class="stat-card"><div class="sc-label">Total paid</div><div class="sc-value green">$891</div><div class="sc-delta">3 months</div></div>
+      <div class="stat-card"><div class="sc-label">Status</div><div class="sc-value green">Active</div><div class="sc-delta up">✓ In good standing</div></div>
+    </div>
+    <div class="panel" style="margin-bottom:1.5rem;">
+      <div class="panel-title">Your plan</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);margin-bottom:1rem;">
+        <div style="background:var(--black-2);padding:1.25rem 1rem;border-top:2px solid transparent;cursor:pointer;" onclick="showToast_settings('Contact support to downgrade.')">
+          <div style="font-family:Cormorant Garamond,serif;font-size:1.2rem;font-weight:600;margin-bottom:0.2rem;">Starter</div>
+          <div style="font-size:0.82rem;color:var(--gold);margin-bottom:0.75rem;">$97/month</div>
+          <div style="font-size:0.75rem;color:var(--white-dim);">Website · Landing pages · Call scripts</div>
+        </div>
+        <div style="background:var(--black-3);padding:1.25rem 1rem;border-top:2px solid var(--gold);">
+          <div style="font-size:0.6rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--gold);border:1px solid var(--border-bright);padding:0.15rem 0.5rem;display:inline-block;margin-bottom:0.5rem;">Current plan</div>
+          <div style="font-family:Cormorant Garamond,serif;font-size:1.2rem;font-weight:600;margin-bottom:0.2rem;">Growth</div>
+          <div style="font-size:0.82rem;color:var(--gold);margin-bottom:0.75rem;">$297/month</div>
+          <div style="font-size:0.75rem;color:var(--white-dim);">+ 24/7 AI calls · Scheduling · CRM</div>
+        </div>
+        <div style="background:var(--black-2);padding:1.25rem 1rem;border-top:2px solid transparent;cursor:pointer;" onclick="showToast_settings('Upgrade to Empire coming soon!')">
+          <div style="font-family:Cormorant Garamond,serif;font-size:1.2rem;font-weight:600;margin-bottom:0.2rem;">Empire</div>
+          <div style="font-size:0.82rem;color:var(--gold);margin-bottom:0.75rem;">$597/month</div>
+          <div style="font-size:0.75rem;color:var(--white-dim);">+ Social · Reviews · Account manager</div>
+          <div style="margin-top:0.75rem;padding:0.5rem;background:var(--gold);color:var(--black);font-size:0.72rem;font-weight:500;text-align:center;cursor:pointer;letter-spacing:0.08em;text-transform:uppercase;">Upgrade →</div>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Billing history</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;"><span style="color:var(--white-dim);">Mar 1, 2025</span><span style="color:var(--white);flex:1;margin:0 1rem;">Growth Plan — Monthly</span><span style="color:var(--gold);font-weight:500;">$297.00</span><span style="font-size:0.68rem;color:var(--green);border:1px solid rgba(46,204,113,0.3);padding:0.12rem 0.45rem;">Paid</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0;border-bottom:1px solid var(--border);font-size:0.82rem;"><span style="color:var(--white-dim);">Feb 1, 2025</span><span style="color:var(--white);flex:1;margin:0 1rem;">Growth Plan — Monthly</span><span style="color:var(--gold);font-weight:500;">$297.00</span><span style="font-size:0.68rem;color:var(--green);border:1px solid rgba(46,204,113,0.3);padding:0.12rem 0.45rem;">Paid</span></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:0.7rem 0;font-size:0.82rem;"><span style="color:var(--white-dim);">Jan 1, 2025</span><span style="color:var(--white);flex:1;margin:0 1rem;">Growth Plan — Monthly</span><span style="color:var(--gold);font-weight:500;">$297.00</span><span style="font-size:0.68rem;color:var(--green);border:1px solid rgba(46,204,113,0.3);padding:0.12rem 0.45rem;">Paid</span></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let tfa = false;
+
+  function showPanel(id) {
+    document.querySelectorAll('.s-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  function selectPayment(type) {
+    document.getElementById('pm-stripe').classList.toggle('selected', type === 'stripe');
+    document.getElementById('pm-paypal').classList.toggle('selected', type === 'paypal');
+    document.getElementById('stripe-badge').style.display = type === 'stripe' ? 'block' : 'none';
+    document.getElementById('stripe-form').style.display = type === 'stripe' ? 'block' : 'none';
+    document.getElementById('paypal-form').style.display = type === 'paypal' ? 'block' : 'none';
+  }
+
+  function selectVoice(el) {
+    document.querySelectorAll('.voice-card').forEach(v => v.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectFilter(el) {
+    document.querySelectorAll('.fl-opt').forEach(f => f.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleTFA() {
+    tfa = !tfa;
+    document.getElementById('tfa-status').textContent = tfa ? 'On' : 'Off';
+    document.getElementById('tfa-status').className = tfa ? 'sec-status-on' : 'sec-status-off';
+    showToast(tfa ? '2FA enabled.' : '2FA disabled.');
+  }
+
+  function saveSettings() {
+    showToast('Settings saved successfully!');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('sidebar-overlay');
+    sb.classList.toggle('open');
+    ov.classList.toggle('show');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+  }
+</script>
+</div>
+
+<script>
+// ============================================================
+// SMOOTH SCROLL for landing page anchor links
+// ============================================================
+document.addEventListener('click', function(e) {
+  var a = e.target.closest('a');
+  if (!a) return;
+  var href = a.getAttribute('href');
+  if (!href || !href.startsWith('#') || href === '#') return;
+  var target = document.querySelector('#page-landing ' + href);
+  if (target) {
+    e.preventDefault();
+    target.scrollIntoView({ behavior: 'smooth' });
+  }
+});
+
+// ============================================================
+// USER STATE
+// ============================================================
+var currentUser = null;
+
+function setUser(data) {
+  currentUser = data;
+  // Update all avatar initials and name displays across dashboard + settings
+  var initials = ((data.first || 'U')[0] + (data.last || 'U')[0]).toUpperCase();
+  document.querySelectorAll('.user-avatar').forEach(function(el) { el.textContent = initials; });
+  document.querySelectorAll('.user-name').forEach(function(el) { el.textContent = (data.first || '') + ' ' + (data.last || ''); });
+  document.querySelectorAll('.user-plan').forEach(function(el) { el.textContent = capitalize(data.plan || 'starter') + ' Plan'; });
+  // Update greeting
+  var greet = document.getElementById('topbar-title-name');
+  if (greet) greet.textContent = data.first || 'there';
+  // Save to sessionStorage so refresh keeps user logged in during session
+  try { sessionStorage.setItem('ns_user', JSON.stringify(data)); } catch(e) {}
+}
+
+function getUser() {
+  if (currentUser) return currentUser;
+  try {
+    var s = sessionStorage.getItem('ns_user');
+    if (s) { currentUser = JSON.parse(s); return currentUser; }
+  } catch(e) {}
+  return null;
+}
+
+function handleSignOut() {
+  currentUser = null;
+  try { sessionStorage.removeItem('ns_user'); } catch(e) {}
+  navigate('signin');
+  // Reset signin form
+  setTimeout(function() {
+    var si = document.getElementById('si-email');
+    var sp = document.getElementById('si-pass');
+    if (si) si.value = '';
+    if (sp) sp.value = '';
+    switchAuth('signin');
+    var sb = document.getElementById('success-box');
+    if (sb) sb.classList.remove('show');
+    document.querySelectorAll('#page-signin .auth-panel').forEach(function(p) {
+      p.classList.remove('active');
+    });
+    var ps = document.getElementById('panel-signin');
+    if (ps) ps.classList.add('active');
+  }, 100);
+}
+
+function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+// ============================================================
+// ROUTER
+// ============================================================
+function navigate(page) {
+  // Guard: must be logged in to see dashboard or settings
+  if ((page === 'dashboard' || page === 'settings') && !getUser()) {
+    page = 'signin';
+  }
+
+  // Hide ALL pages first
+  ['landing','signin','dashboard','settings'].forEach(function(p) {
+    var el = document.getElementById('page-' + p);
+    if (el) { el.classList.remove('active'); el.style.display = 'none'; }
+  });
+
+  var el = document.getElementById('page-' + page);
+  if (!el) return;
+  el.classList.add('active');
+
+  if (page === 'landing') {
+    el.style.display = 'block';
+    document.body.style.overflow = 'auto';
+    document.body.style.height = 'auto';
+    window.scrollTo(0,0);
+    setTimeout(initLanding, 60);
+
+  } else if (page === 'signin') {
+    el.style.display = 'flex';
+    document.body.style.overflow = 'auto';
+    document.body.style.height = 'auto';
+
+  } else if (page === 'dashboard') {
+    el.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+    initDashboard();
+    setTimeout(function(){ showPage('overview'); }, 50);
+
+  } else if (page === 'settings') {
+    el.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100vh';
+    initSettings();
+    setTimeout(function(){ showPanel('profile'); }, 50);
+  }
+}
+
+function updateSidebarActive(page) {
+  // Mark correct nav item as active
+  document.querySelectorAll('.nav-item').forEach(function(n) { n.classList.remove('active'); });
+  if (page === 'settings') {
+    document.querySelectorAll('.nav-item').forEach(function(n) {
+      var oc = n.getAttribute('onclick') || '';
+      if (oc.indexOf("'settings'") !== -1) n.classList.add('active');
+    });
+  }
+}
+
+// ============================================================
+// LANDING
+// ============================================================
+function initLanding() {
+  var reveals = document.querySelectorAll('#page-landing .reveal');
+  var obs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(e,i) {
+      if (e.isIntersecting) {
+        setTimeout(function(){ e.target.classList.add('visible'); }, i*80);
+        obs.unobserve(e.target);
+      }
+    });
+  }, {threshold:0.1});
+  reveals.forEach(function(el){ obs.observe(el); });
+}
+setTimeout(initLanding, 100);
+
+// ============================================================
+// SIGNIN
+// ============================================================
+var selectedPlan = 'growth';
+
+function switchAuth(tab) {
+  var tabs = document.querySelectorAll('#page-signin .auth-tab');
+  if (tabs[0]) tabs[0].classList.toggle('active', tab==='signin');
+  if (tabs[1]) tabs[1].classList.toggle('active', tab==='signup');
+  var ps = document.getElementById('panel-signin');
+  var pu = document.getElementById('panel-signup');
+  var sb = document.getElementById('success-box');
+  if (ps) ps.classList.toggle('active', tab==='signin');
+  if (pu) pu.classList.toggle('active', tab==='signup');
+  if (sb) sb.classList.remove('show');
+}
+
+function selectPlan(el, plan) {
+  document.querySelectorAll('#page-signin .plan-opt').forEach(function(p){ p.classList.remove('selected'); });
+  el.classList.add('selected');
+  selectedPlan = plan;
+}
+
+function handleGoogle_signin() { showSuccess_signin(); }
+
+function handleSignin_fn() {
+  var email = document.getElementById('si-email');
+  var pass = document.getElementById('si-pass');
+  var err = document.getElementById('si-error');
+  if (!email||!pass||!email.value.trim()||!pass.value.trim()) {
+    if (err) err.classList.add('show'); return;
+  }
+  if (err) err.classList.remove('show');
+  showSuccess_signin();
+}
+
+function handleSignup_fn() {
+  var first = document.getElementById('su-first');
+  var email = document.getElementById('su-email');
+  var pass = document.getElementById('su-pass');
+  var err = document.getElementById('su-error');
+  if (!first||!email||!pass||!first.value.trim()||!email.value.trim()||!pass.value.trim()) {
+    if (err) err.classList.add('show'); return;
+  }
+  if (err) err.classList.remove('show');
+  showSuccess_signin();
+}
+
+function showSuccess_signin() {
+  // Capture what the user entered
+  var isSignup = document.getElementById('panel-signup') && 
+                 document.getElementById('panel-signup').classList.contains('active');
+  var userData = {
+    first: (isSignup ? (document.getElementById('su-first') ? document.getElementById('su-first').value.trim() : '') 
+                     : (document.getElementById('si-email') ? document.getElementById('si-email').value.split('@')[0] : 'User')),
+    last:  isSignup ? (document.getElementById('su-last') ? document.getElementById('su-last').value.trim() : '') : '',
+    email: isSignup ? (document.getElementById('su-email') ? document.getElementById('su-email').value.trim() : '')
+                    : (document.getElementById('si-email') ? document.getElementById('si-email').value.trim() : ''),
+    biz:   isSignup ? (document.getElementById('su-biz') ? document.getElementById('su-biz').value.trim() : '') : 'My Business',
+    plan:  selectedPlan || 'growth',
+  };
+  if (!userData.first || userData.first.length < 1) userData.first = 'User';
+  setUser(userData);
+
+  document.querySelectorAll('#page-signin .auth-panel').forEach(function(p){ p.classList.remove('active'); });
+  var sb = document.getElementById('success-box');
+  if (sb) sb.classList.add('show');
+  setTimeout(function(){ navigate('dashboard'); }, 1600);
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function initDashboard() {
+  var el = document.getElementById('topbar-date');
+  if (el) el.textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  // Update greeting with real user name
+  var u = getUser();
+  if (u) {
+    var greet = document.getElementById('topbar-title-name');
+    var hour = new Date().getHours();
+    var timeGreet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+    var topbarTitle = document.querySelector('#page-dashboard .topbar-title');
+    if (topbarTitle) {
+      topbarTitle.innerHTML = '<button class="hamburger" onclick="toggleSidebar_dash()">☰</button>' + 
+        timeGreet + ', <span id="topbar-title-name">' + (u.first || 'there') + '</span>.';
+    }
+    // Update avatars
+    var initials = ((u.first||'U')[0] + (u.last||'U')[0]).toUpperCase();
+    document.querySelectorAll('#page-dashboard .user-avatar').forEach(function(el){ el.textContent = initials; });
+    document.querySelectorAll('#page-dashboard .user-name').forEach(function(el){ el.textContent = (u.first||'') + ' ' + (u.last||''); });
+    document.querySelectorAll('#page-dashboard .user-plan').forEach(function(el){ el.textContent = capitalize(u.plan||'growth') + ' Plan'; });
+  }
+}
+
+function showPage(id) {
+  document.querySelectorAll('#page-dashboard .page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('#page-dashboard .nav-item').forEach(function(n){ n.classList.remove('active'); });
+  var pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  document.querySelectorAll('#page-dashboard .nav-item').forEach(function(n){
+    var oc = n.getAttribute('onclick') || '';
+    if (oc.indexOf("'" + id + "'") !== -1) n.classList.add('active');
+  });
+  if (window.innerWidth <= 900) closeSidebar_dash();
+  var main = document.querySelector('#page-dashboard .main');
+  if (main) main.scrollTop = 0;
+}
+
+// Navigate to dashboard then show a specific section (used from settings sidebar)
+function navigateDash(section) {
+  navigate('dashboard');
+  setTimeout(function() { showPage(section); }, 100);
+}
+
+function toggleSidebar_dash() {
+  var sb = document.querySelector('#page-dashboard .sidebar');
+  var ov = document.getElementById('sidebar-overlay');
+  if (!sb) return;
+  sb.classList.toggle('open');
+  if (ov) ov.style.display = sb.classList.contains('open') ? 'block' : 'none';
+}
+
+function closeSidebar_dash() {
+  var sb = document.querySelector('#page-dashboard .sidebar');
+  var ov = document.getElementById('sidebar-overlay');
+  if (sb) sb.classList.remove('open');
+  if (ov) ov.style.display = 'none';
+}
+
+function openBooking() {
+  var m = document.getElementById('booking-modal');
+  if (m) { m.classList.add('show'); }
+  var fw = document.getElementById('booking-form-wrap');
+  var bs = document.getElementById('book-success');
+  if (fw) fw.style.display = 'block';
+  if (bs) bs.classList.remove('show');
+}
+
+function closeBooking() {
+  var m = document.getElementById('booking-modal');
+  if (m) m.classList.remove('show');
+}
+
+function closeBookingOutside(e) {
+  if (e.target === document.getElementById('booking-modal')) closeBooking();
+}
+
+function selectSlot(el) {
+  if (el.classList.contains('taken')) return;
+  document.querySelectorAll('#page-dashboard .time-slot').forEach(function(s){ s.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function submitBooking() {
+  var fw = document.getElementById('booking-form-wrap');
+  var bs = document.getElementById('book-success');
+  if (fw) fw.style.display = 'none';
+  if (bs) bs.classList.add('show');
+  setTimeout(closeBooking, 3500);
+}
+
+// Global toast for dashboard
+function showToast_dash(msg) {
+  // reuse settings toast element or create one
+  var t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast-dash';
+    t.style.cssText = 'position:fixed;bottom:2rem;right:2rem;background:#1A1A1A;border:1px solid #C9A84C;color:#F5F0E8;padding:0.85rem 1.5rem;font-size:0.85rem;z-index:9999;transform:translateY(20px);opacity:0;transition:all 0.3s;font-family:DM Sans,sans-serif;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.transform = 'translateY(0)';
+  t.style.opacity = '1';
+  setTimeout(function(){ t.style.transform='translateY(20px)'; t.style.opacity='0'; }, 2800);
+}
+
+// ============================================================
+// SETTINGS
+// ============================================================
+function initSettings() {
+  var d = document.getElementById('bk-date');
+  if (d) {
+    var t = new Date(); t.setDate(t.getDate()+1);
+    d.min = t.toISOString().split('T')[0];
+    d.value = t.toISOString().split('T')[0];
+  }
+}
+
+function showPanel(id) {
+  document.querySelectorAll('#page-settings .s-panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('#page-settings .s-tab').forEach(function(t){ t.classList.remove('active'); });
+  var panel = document.getElementById('panel-' + id);
+  if (panel) panel.classList.add('active');
+  if (event && event.currentTarget) event.currentTarget.classList.add('active');
+}
+
+function toggleSidebar_settings() {
+  var sb = document.querySelector('#page-settings .sidebar');
+  var ov = document.getElementById('sidebar-overlay-settings');
+  if (!sb) return;
+  sb.classList.toggle('open');
+  if (ov) ov.style.display = sb.classList.contains('open') ? 'block' : 'none';
+}
+
+function closeSidebar_settings() {
+  var sb = document.querySelector('#page-settings .sidebar');
+  var ov = document.getElementById('sidebar-overlay-settings');
+  if (sb) sb.classList.remove('open');
+  if (ov) ov.style.display = 'none';
+}
+
+function showToast_settings(msg) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+function saveSettings() { showToast_settings('Settings saved successfully!'); }
+
+function selectPayment(type) {
+  var ps = document.getElementById('pm-stripe');
+  var pp = document.getElementById('pm-paypal');
+  var badge = document.getElementById('stripe-badge');
+  var sf = document.getElementById('stripe-form');
+  var pf = document.getElementById('paypal-form');
+  if (ps) ps.classList.toggle('selected', type==='stripe');
+  if (pp) pp.classList.toggle('selected', type==='paypal');
+  if (badge) badge.style.display = type==='stripe' ? 'block' : 'none';
+  if (sf) sf.style.display = type==='stripe' ? 'block' : 'none';
+  if (pf) pf.style.display = type==='paypal' ? 'block' : 'none';
+}
+
+function selectVoice(el) {
+  document.querySelectorAll('#page-settings .voice-card').forEach(function(v){ v.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function selectFilter(el) {
+  document.querySelectorAll('#page-settings .fl-opt').forEach(function(f){ f.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+var tfaOn = false;
+function toggleTFA() {
+  tfaOn = !tfaOn;
+  var st = document.getElementById('tfa-status');
+  if (st) { st.textContent = tfaOn?'On':'Off'; st.className = tfaOn?'sec-status-on':'sec-status-off'; }
+  showToast_settings(tfaOn ? '2FA enabled.' : '2FA disabled.');
+}
+
+// INIT — restore session if user already logged in
+(function() {
+  var u = getUser();
+  if (u) {
+    // Already logged in from previous navigation — keep dashboard accessible
+    console.log('Session restored for:', u.first);
+  }
+})();
+initDashboard();
+
+// ============================================================
+// STRIPE PAYMENT FLOW
+// ============================================================
+function selectAndPay(plan, stripeUrl) {
+  // If Stripe link is set, open payment page
+  if (!stripeUrl.includes('LINK_HERE')) {
+    window.open(stripeUrl, '_blank');
+    return;
+  }
+  // Fallback: go to sign up and pre-select plan
+  navigate('signin');
+  setTimeout(function() {
+    switchAuth('signup');
+    document.querySelectorAll('.plan-opt').forEach(function(p) { p.classList.remove('selected'); });
+    var opt = document.querySelector('.plan-opt[onclick*="' + plan + '"]');
+    if (opt) opt.classList.add('selected');
+  }, 200);
+}
+
+// ============================================================
+// LIVE CHAT WIDGET (bottom right corner)
+// ============================================================
+(function() {
+  var btn = document.createElement('div');
+  btn.id = 'live-chat-btn';
+  btn.innerHTML = '💬';
+  btn.style.cssText = 'position:fixed;bottom:24px;right:24px;width:52px;height:52px;background:#C9A84C;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;z-index:9999;box-shadow:0 4px 20px rgba(201,168,76,0.4);transition:transform 0.2s;';
+  btn.onmouseover = function(){ this.style.transform='scale(1.1)'; };
+  btn.onmouseout  = function(){ this.style.transform='scale(1)'; };
+  btn.onclick = function() {
+    var box = document.getElementById('chat-box');
+    box.style.display = box.style.display === 'none' ? 'flex' : 'none';
+  };
+
+  var box = document.createElement('div');
+  box.id = 'chat-box';
+  box.style.cssText = 'display:none;position:fixed;bottom:88px;right:24px;width:300px;background:#111;border:1px solid rgba(201,168,76,0.4);border-radius:12px;flex-direction:column;z-index:9998;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,0.5);';
+  box.innerHTML = '<div style="background:#C9A84C;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;">' +
+    '<span style="font-family:Cormorant Garamond,serif;font-size:1rem;font-weight:700;color:#080808;letter-spacing:0.06em;">NEWSITES.COM</span>' +
+    '<span onclick="document.getElementById('chat-box').style.display='none'" style="cursor:pointer;color:#080808;font-size:1.1rem;">✕</span>' +
+    '</div>' +
+    '<div id="chat-msgs" style="padding:12px;flex:1;max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;">' +
+    '<div style="background:#1A1A1A;padding:10px 12px;border-radius:8px;font-size:13px;color:#A89F8C;line-height:1.5;">👋 Hi! I'm the NewSites AI. Want to see how we can automate your business? Ask me anything!</div>' +
+    '</div>' +
+    '<div style="padding:8px;border-top:1px solid rgba(201,168,76,0.15);display:flex;gap:6px;">' +
+    '<input id="chat-input" type="text" placeholder="Type a message..." style="flex:1;background:#1A1A1A;border:1px solid rgba(201,168,76,0.2);color:#F5F0E8;padding:8px 10px;font-size:13px;border-radius:6px;outline:none;" onkeydown="if(event.key==='Enter')sendChat()">' +
+    '<button onclick="sendChat()" style="background:#C9A84C;color:#080808;border:none;padding:8px 12px;border-radius:6px;cursor:pointer;font-weight:500;font-size:13px;">→</button>' +
+    '</div>';
+
+  document.body.appendChild(btn);
+  document.body.appendChild(box);
+})();
+
+async function sendChat() {
+  var input = document.getElementById('chat-input');
+  var msgs = document.getElementById('chat-msgs');
+  var msg = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  // Show user message
+  var userDiv = document.createElement('div');
+  userDiv.style.cssText = 'background:rgba(201,168,76,0.12);padding:10px 12px;border-radius:8px;font-size:13px;color:#F5F0E8;align-self:flex-end;max-width:85%;line-height:1.5;';
+  userDiv.textContent = msg;
+  msgs.appendChild(userDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  // Show typing
+  var typingDiv = document.createElement('div');
+  typingDiv.style.cssText = 'background:#1A1A1A;padding:10px 12px;border-radius:8px;font-size:13px;color:#A89F8C;line-height:1.5;';
+  typingDiv.textContent = '...';
+  msgs.appendChild(typingDiv);
+  msgs.scrollTop = msgs.scrollHeight;
+
+  try {
+    var resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 200,
+        system: 'You are the AI sales assistant for NEWSITES.COM, a platform that builds professional websites and provides 24/7 AI automation for small businesses — including AI call answering, lead filtering, SMS follow-ups, appointment scheduling, social media posting, and review management. Plans start at $97/mo. Be helpful, concise, and encouraging. Guide people toward signing up. Keep replies under 3 sentences.',
+        messages: [{ role: 'user', content: msg }]
+      })
+    });
+    var data = await resp.json();
+    typingDiv.textContent = data.content?.[0]?.text || 'Happy to help! Click "Get Started" to pick your plan.';
+  } catch(e) {
+    typingDiv.textContent = 'Happy to help! Click "Get Started" above to pick a plan and go live today.';
+  }
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+// ============================================================
+// SCROLL TO TOP on page switch
+// ============================================================
+window.addEventListener('navigate-complete', function() {
+  window.scrollTo(0,0);
+});
+</script>
+
+<div class="app-page" id="page-settings" style="height:100vh;overflow:hidden;display:none;">
+
+
+<!-- MOBILE OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay-settings" onclick="closeSidebar_settings()"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <a class="sidebar-logo" href="#" onclick="navigate('landing')">NEW<span>SITES</span>.COM</a>
+  <div class="sidebar-user">
+    <div class="user-avatar">MJ</div>
+    <div>
+      <div class="user-name">Marcus Johnson</div>
+      <div class="user-plan">Growth Plan</div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item" onclick="navigate('dashboard')"><span class="nav-icon">◈</span><span>Dashboard</span></div>
+    <div class="nav-section-label">AI Engine</div>
+    <a class="nav-item" href="#" onclick="navigateDash('leads')"><span class="nav-icon">◎</span><span>Calls & Queue</span></a>
+    <a class="nav-item" href="#" onclick="navigateDash('appointments')"><span class="nav-icon">⬟</span><span>Lead Pipeline</span></a>
+    <a class="nav-item" href="#" onclick="navigateDash('sms')"><span class="nav-icon">◉</span><span>Appointments</span></a>
+    <a class="nav-item" href="#" onclick="navigateDash('revenue')"><span class="nav-icon">◇</span><span>SMS & Follow-Ups</span></a>
+    <div class="nav-section-label">Growth</div>
+    <a class="nav-item" href="#" onclick="navigateDash('reviews')"><span class="nav-icon">⬡</span><span>Revenue</span></a>
+    <a class="nav-item" href="#" onclick="navigateDash('social')"><span class="nav-icon">○</span><span>Reviews</span></a>
+    <a class="nav-item" href="#" onclick="navigate('dashboard')"><span class="nav-icon">◑</span><span>Social Media</span></a>
+    <div class="nav-section-label">Account</div>
+    <a class="nav-item active" href="settings.html"><span class="nav-icon">⬢</span><span>Settings</span></a>
+  </div>
+  <div class="sidebar-footer">
+    <a class="signout-btn" href="#" onclick="handleSignOut()">← Sign out</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar_settings()">☰</button>
+      <div class="topbar-title">Account <span>settings</span></div>
+    </div>
+    <button class="save-btn" onclick="saveSettings()">Save changes</button>
+  </div>
+
+  <div class="settings-wrap">
+    <!-- SETTINGS TABS -->
+    <div class="settings-tabs" id="settings-tabs">
+      <div class="s-tab active" onclick="showPanel('profile')"><span class="s-tab-icon">◎</span> Profile</div>
+      <div class="s-tab" onclick="showPanel('billing')"><span class="s-tab-icon">⬡</span> Plan & Billing</div>
+      <div class="s-tab" onclick="showPanel('notifications')"><span class="s-tab-icon">◇</span> Notifications</div>
+      <div class="s-tab" onclick="showPanel('bot')"><span class="s-tab-icon">◈</span> AI Bot</div>
+      <div class="s-tab" onclick="showPanel('security')"><span class="s-tab-icon">◉</span> Security</div>
+      <div class="s-tab" onclick="showPanel('team')"><span class="s-tab-icon">⬟</span> Team</div>
+    </div>
+
+    <!-- SETTINGS CONTENT -->
+    <div class="settings-content">
+
+      <!-- PROFILE -->
+      <div class="s-panel active" id="panel-profile">
+        <div class="s-section">
+          <h2 class="s-section-title">Profile & <em>business info</em></h2>
+          <p class="s-section-sub">This information appears on your website and is used by your AI bot when answering calls.</p>
+          <div class="s-card">
+            <div class="s-card-title">Personal info</div>
+            <div class="field-grid">
+              <div class="field"><label>First name</label><input type="text" value="Marcus" /></div>
+              <div class="field"><label>Last name</label><input type="text" value="Johnson" /></div>
+              <div class="field"><label>Email address</label><input type="email" value="marcus@apexhvac.com" /></div>
+              <div class="field"><label>Phone number</label><input type="tel" value="(713) 555-0142" /></div>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Business info</div>
+            <div class="field-grid">
+              <div class="field"><label>Business name</label><input type="text" value="Apex HVAC Services" /></div>
+              <div class="field"><label>Industry</label><input type="text" value="HVAC / Home Services" /></div>
+              <div class="field"><label>Business phone</label><input type="tel" value="(713) 555-0100" /></div>
+              <div class="field"><label>Website</label><input type="text" value="apexhvac.newsites.com" /></div>
+              <div class="field field-full"><label>Business address</label><input type="text" value="1427 Oak St, Houston, TX 77001" /></div>
+              <div class="field field-full"><label>Business description (used by AI bot)</label><textarea>We are Houston's top-rated HVAC company, offering 24/7 repair, installation, and maintenance. Licensed, bonded, and insured since 2012.</textarea></div>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Social & online presence</div>
+            <div class="field-grid">
+              <div class="field"><label>Google Business Profile</label><input type="text" placeholder="https://g.co/..." /></div>
+              <div class="field"><label>Facebook page</label><input type="text" placeholder="https://facebook.com/..." /></div>
+              <div class="field"><label>Instagram handle</label><input type="text" placeholder="@apexhvac" /></div>
+              <div class="field"><label>Google Business ID</label><input type="text" placeholder="ChIJ..." /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BILLING -->
+      <div class="s-panel" id="panel-billing">
+        <div class="s-section">
+          <h2 class="s-section-title">Plan & <em>billing</em></h2>
+          <p class="s-section-sub">Manage your subscription, upgrade your plan, and update your payment method.</p>
+
+          <div class="s-card">
+            <div class="s-card-title">Current plan</div>
+            <div class="plan-grid">
+              <div class="plan-card">
+                <div class="plan-card-name">Starter</div>
+                <div class="plan-card-price">$97 / month</div>
+                <div class="plan-card-features">Website · Landing pages · Call scripts</div>
+              </div>
+              <div class="plan-card current">
+                <div class="plan-badge-current">Current plan</div>
+                <div class="plan-card-name">Growth</div>
+                <div class="plan-card-price">$297 / month</div>
+                <div class="plan-card-features">+ 24/7 AI calls · Scheduling · SMS follow-ups · CRM · Google leads</div>
+              </div>
+              <div class="plan-card">
+                <div class="plan-card-name">Empire</div>
+                <div class="plan-card-price">$597 / month</div>
+                <div class="plan-card-features">+ Unlimited calls · Social · Reviews · Account manager · Strategy calls</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+              <button class="pay-btn" style="flex:1;" onclick="showToast('Plan upgrade request sent!')">Upgrade to Empire</button>
+              <button style="flex:1;padding:0.85rem;background:transparent;border:1px solid rgba(231,76,60,0.3);color:var(--red);font-family:DM Sans,sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;" onclick="showToast('Cancellation request sent. We will contact you.')">Cancel plan</button>
+            </div>
+          </div>
+
+          <div class="s-card">
+            <div class="s-card-title">Payment method</div>
+            <div class="payment-methods">
+              <div class="payment-card selected" id="pm-stripe" onclick="selectPayment('stripe')">
+                <div class="payment-selected-badge" id="stripe-badge">Active</div>
+                <div class="payment-card-logo stripe-logo">Stripe</div>
+                <div class="payment-card-label">Credit / Debit Card</div>
+                <div class="payment-card-sub">Visa, Mastercard, Amex, Discover</div>
+              </div>
+              <div class="payment-card" id="pm-paypal" onclick="selectPayment('paypal')">
+                <div class="payment-card-logo"><span class="paypal-logo">PayPal</span></div>
+                <div class="payment-card-label">PayPal</div>
+                <div class="payment-card-sub">Pay with your PayPal balance or linked bank</div>
+              </div>
+            </div>
+
+            <!-- STRIPE FORM -->
+            <div class="stripe-form" id="stripe-form">
+              <div class="stripe-form-title">Card details</div>
+              <div class="field" style="margin-bottom:0.75rem;">
+                <label>Cardholder name</label>
+                <input type="text" value="Marcus Johnson" />
+              </div>
+              <div class="field" style="margin-bottom:0.75rem;">
+                <label>Card number</label>
+                <input type="text" value="•••• •••• •••• 4242" />
+              </div>
+              <div class="card-row">
+                <div class="card-field"><label>Expiry</label><input type="text" value="09 / 27" /></div>
+                <div class="card-field"><label>CVC</label><input type="text" placeholder="•••" /></div>
+              </div>
+              <div class="secure-note">🔒 Payments secured by Stripe. We never store your card details.</div>
+              <button class="pay-btn" onclick="showToast('Card updated successfully!')">Update card</button>
+            </div>
+
+            <!-- PAYPAL FORM -->
+            <div id="paypal-form" style="display:none;margin-top:1rem;background:var(--black-3);border:1px solid var(--border);padding:1.25rem;">
+              <div class="stripe-form-title">Connect PayPal</div>
+              <p style="font-size:0.82rem;color:var(--white-dim);margin-bottom:1rem;line-height:1.6;">Click below to authorize NEWSITES.COM to charge your PayPal account monthly.</p>
+              <button class="paypal-btn" style="display:block;" onclick="showToast('Redirecting to PayPal...')">Connect PayPal account →</button>
+            </div>
+          </div>
+
+          <div class="s-card">
+            <div class="s-card-title">Billing history</div>
+            <div class="billing-history">
+              <div class="bh-row"><span class="bh-date">Mar 1, 2025</span><span class="bh-desc">Growth Plan — Monthly</span><span class="bh-amount">$297.00</span><span class="bh-status">Paid</span></div>
+              <div class="bh-row"><span class="bh-date">Feb 1, 2025</span><span class="bh-desc">Growth Plan — Monthly</span><span class="bh-amount">$297.00</span><span class="bh-status">Paid</span></div>
+              <div class="bh-row"><span class="bh-date">Jan 1, 2025</span><span class="bh-desc">Growth Plan — Monthly</span><span class="bh-amount">$297.00</span><span class="bh-status">Paid</span></div>
+              <div class="bh-row"><span class="bh-date">Dec 1, 2024</span><span class="bh-desc">Starter Plan — Monthly</span><span class="bh-amount">$97.00</span><span class="bh-status">Paid</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="s-panel" id="panel-notifications">
+        <div class="s-section">
+          <h2 class="s-section-title">Notification <em>preferences</em></h2>
+          <p class="s-section-sub">Choose how and when you get notified about your leads, calls, and AI activity.</p>
+          <div class="s-card">
+            <div class="s-card-title">SMS notifications</div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">New lead captured</div><div class="toggle-desc">Get a text every time the AI captures a new lead</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Missed call alert</div><div class="toggle-desc">Notified instantly when a call is missed and auto-callback is queued</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Appointment booked</div><div class="toggle-desc">Text when a customer books via call, SMS, or website</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Bad lead filtered</div><div class="toggle-desc">Know when the AI blocks a spam or low-quality lead</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">New review received</div><div class="toggle-desc">Get a text when a new Google or Facebook review comes in</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Email notifications</div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Daily summary report</div><div class="toggle-desc">Morning email with yesterday's calls, leads, and revenue</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Weekly performance digest</div><div class="toggle-desc">Full weekly breakdown every Monday at 8am</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Billing receipts</div><div class="toggle-desc">Email confirmation of every charge</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">AI bot activity alerts</div><div class="toggle-desc">Notified when the bot flags an unusual call or lead</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Quiet hours</div>
+            <div class="field-grid">
+              <div class="field"><label>No notifications from</label><input type="time" value="22:00" /></div>
+              <div class="field"><label>Until</label><input type="time" value="07:00" /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI BOT -->
+      <div class="s-panel" id="panel-bot">
+        <div class="s-section">
+          <h2 class="s-section-title">AI bot <em>settings</em></h2>
+          <p class="s-section-sub">Customize how your AI answers calls, qualifies leads, and communicates with customers.</p>
+          <div class="s-card">
+            <div class="s-card-title">Bot greeting script</div>
+            <div class="field" style="margin-bottom:0.75rem;">
+              <label>Opening greeting (what the bot says first)</label>
+              <textarea class="bot-script-area">Thank you for calling Apex HVAC Services! I'm your automated assistant. I can help you schedule a service, get a free quote, or answer questions about our services. How can I help you today?</textarea>
+            </div>
+            <div class="field">
+              <label>Busy / queue message</label>
+              <textarea class="bot-script-area" style="min-height:80px;">All of our team members are currently assisting other customers. You are number {position} in line. Your estimated wait time is {wait_time} minutes. I'll send you a text to confirm. Would you like to stay on the line or receive a callback?</textarea>
+            </div>
+            <div class="field">
+              <label>Call script / offer (what the AI pitches)</label>
+              <textarea class="bot-script-area">We're currently offering a FREE 20-point HVAC inspection for new customers — a $149 value. I can book that for you right now. What day works best this week?</textarea>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">AI voice</div>
+            <div class="voice-grid">
+              <div class="voice-card selected" onclick="selectVoice(this)"><div class="voice-name">Alex</div><div class="voice-style">Friendly · Professional</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Jordan</div><div class="voice-style">Warm · Conversational</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Morgan</div><div class="voice-style">Confident · Direct</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Taylor</div><div class="voice-style">Calm · Reassuring</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Riley</div><div class="voice-style">Energetic · Upbeat</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Casey</div><div class="voice-style">Formal · Precise</div></div>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Lead filter sensitivity</div>
+            <p style="font-size:0.78rem;color:var(--white-dim);margin-bottom:0.75rem;line-height:1.6;">How aggressively should the AI filter out bad leads and spam calls?</p>
+            <div class="filter-level">
+              <div class="fl-opt" onclick="selectFilter(this)">Low<br><span style="font-size:0.65rem;">Let most through</span></div>
+              <div class="fl-opt selected" onclick="selectFilter(this)">Medium<br><span style="font-size:0.65rem;">Balanced</span></div>
+              <div class="fl-opt" onclick="selectFilter(this)">High<br><span style="font-size:0.65rem;">Strict filtering</span></div>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Bot behavior</div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">24/7 answering enabled</div><div class="toggle-desc">Bot answers all inbound calls round the clock</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Auto SMS when busy</div><div class="toggle-desc">Automatically text callers their queue position if line is busy</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Auto callback</div><div class="toggle-desc">Automatically call missed callers back when available</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Book appointments autonomously</div><div class="toggle-desc">Bot can book appointments without your approval</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Require your approval for bookings</div><div class="toggle-desc">Bot holds the slot and sends you an approval request first</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="s-panel" id="panel-security">
+        <div class="s-section">
+          <h2 class="s-section-title">Password & <em>security</em></h2>
+          <p class="s-section-sub">Keep your account protected with a strong password and two-factor authentication.</p>
+          <div class="s-card">
+            <div class="s-card-title">Change password</div>
+            <div class="field"><label>Current password</label><input type="password" placeholder="••••••••" /></div>
+            <div class="field-grid">
+              <div class="field"><label>New password</label><input type="password" placeholder="Min. 8 characters" /></div>
+              <div class="field"><label>Confirm new password</label><input type="password" placeholder="Repeat password" /></div>
+            </div>
+            <button class="pay-btn" style="margin-top:0.5rem;" onclick="showToast('Password updated successfully!')">Update password</button>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Security settings</div>
+            <div class="security-row">
+              <div><div class="security-label">Two-factor authentication</div><div class="security-sub">Require a code from your phone when signing in</div></div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span class="sec-status-off" id="tfa-status">Off</span>
+                <button class="sec-action" onclick="toggleTFA()">Enable 2FA</button>
+              </div>
+            </div>
+            <div class="security-row">
+              <div><div class="security-label">Active sessions</div><div class="security-sub">You are logged in on 1 device</div></div>
+              <button class="sec-action" onclick="showToast('All other sessions signed out.')">Sign out all devices</button>
+            </div>
+            <div class="security-row">
+              <div><div class="security-label">Login history</div><div class="security-sub">Last login: Today, 8:42 AM from Houston, TX</div></div>
+              <button class="sec-action" onclick="showToast('Login history emailed to you.')">Email history</button>
+            </div>
+            <div class="security-row">
+              <div><div class="security-label">Delete account</div><div class="security-sub">Permanently delete your account and all data</div></div>
+              <button style="font-size:0.75rem;padding:0.3rem 0.75rem;background:transparent;border:1px solid rgba(231,76,60,0.35);color:var(--red);cursor:pointer;" onclick="showToast('Contact support to delete your account.')">Delete account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="s-panel" id="panel-team">
+        <div class="s-section">
+          <h2 class="s-section-title">Team <em>members</em></h2>
+          <p class="s-section-sub">Add team members to your account. Admins can access the dashboard. Members can view reports only.</p>
+          <div class="s-card">
+            <div class="s-card-title">Your team</div>
+            <div class="team-member">
+              <div class="team-avatar">MJ</div>
+              <div class="team-info"><div class="team-name">Marcus Johnson</div><div class="team-email">marcus@apexhvac.com</div></div>
+              <span class="team-role role-owner">Owner</span>
+            </div>
+            <div class="team-member">
+              <div class="team-avatar">SC</div>
+              <div class="team-info"><div class="team-name">Sarah Chen</div><div class="team-email">sarah@apexhvac.com</div></div>
+              <span class="team-role role-admin">Admin</span>
+              <div class="team-actions">
+                <button class="t-btn" onclick="showToast('Role updated.')">Edit</button>
+                <button class="t-btn danger" onclick="showToast('Member removed.')">Remove</button>
+              </div>
+            </div>
+            <div class="team-member">
+              <div class="team-avatar">TM</div>
+              <div class="team-info"><div class="team-name">Tyler Moore</div><div class="team-email">tyler@apexhvac.com</div></div>
+              <span class="team-role role-member">Member</span>
+              <div class="team-actions">
+                <button class="t-btn" onclick="showToast('Role updated.')">Edit</button>
+                <button class="t-btn danger" onclick="showToast('Member removed.')">Remove</button>
+              </div>
+            </div>
+            <button class="add-member-btn" onclick="showToast('Invite sent!')">+ Invite team member</button>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Invite new member</div>
+            <div class="field-grid">
+              <div class="field"><label>Email address</label><input type="email" placeholder="teammate@yourbiz.com" /></div>
+              <div class="field"><label>Role</label><select><option>Admin</option><option>Member</option></select></div>
+            </div>
+            <button class="pay-btn" style="margin-top:0.5rem;" onclick="showToast('Invitation sent!')">Send invite</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /settings-content -->
+  </div><!-- /settings-wrap -->
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let tfa = false;
+
+  function showPanel(id) {
+    document.querySelectorAll('.s-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  function selectPayment(type) {
+    document.getElementById('pm-stripe').classList.toggle('selected', type === 'stripe');
+    document.getElementById('pm-paypal').classList.toggle('selected', type === 'paypal');
+    document.getElementById('stripe-badge').style.display = type === 'stripe' ? 'block' : 'none';
+    document.getElementById('stripe-form').style.display = type === 'stripe' ? 'block' : 'none';
+    document.getElementById('paypal-form').style.display = type === 'paypal' ? 'block' : 'none';
+  }
+
+  function selectVoice(el) {
+    document.querySelectorAll('.voice-card').forEach(v => v.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectFilter(el) {
+    document.querySelectorAll('.fl-opt').forEach(f => f.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleTFA() {
+    tfa = !tfa;
+    document.getElementById('tfa-status').textContent = tfa ? 'On' : 'Off';
+    document.getElementById('tfa-status').className = tfa ? 'sec-status-on' : 'sec-status-off';
+    showToast(tfa ? '2FA enabled.' : '2FA disabled.');
+  }
+
+  function saveSettings() {
+    showToast('Settings saved successfully!');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('sidebar-overlay');
+    sb.classList.toggle('open');
+    ov.classList.toggle('show');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+  }
+</script>
+
+</div>
+</body>
+</html>
