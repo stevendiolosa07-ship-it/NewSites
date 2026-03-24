@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEWSITES.COM — Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6A2A;
+    --black: #080808;
+    --black-2: #111111;
+    --black-3: #1A1A1A;
+    --white: #F5F0E8;
+    --white-dim: #A89F8C;
+    --border: rgba(201,168,76,0.18);
+    --border-bright: rgba(201,168,76,0.45);
+    --danger: #E05252;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    display: flex;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.35;
+  }
+
+  /* SPLIT LAYOUT */
+  .left-panel {
+    width: 45%;
+    background: var(--black-2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 3rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .left-panel::before {
+    content: '';
+    position: absolute;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(201,168,76,0.07) 0%, transparent 70%);
+    bottom: -100px; right: -100px;
+    pointer-events: none;
+  }
+  .left-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.035) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+  }
+  .left-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    position: relative;
+  }
+  .left-logo span { color: var(--white); }
+  .left-content { position: relative; }
+  .left-headline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 4vw, 3.8rem);
+    font-weight: 700;
+    line-height: 1.05;
+    margin-bottom: 1.2rem;
+  }
+  .left-headline em { font-style: italic; color: var(--gold); }
+  .left-sub { font-size: 0.9rem; color: var(--white-dim); line-height: 1.8; max-width: 360px; margin-bottom: 2.5rem; }
+  .left-stats { display: flex; gap: 2rem; }
+  .lst { }
+  .lst-num { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--gold); line-height: 1; }
+  .lst-label { font-size: 0.72rem; color: var(--white-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.2rem; }
+  .left-footer { font-size: 0.75rem; color: #333; position: relative; }
+
+  /* RIGHT PANEL */
+  .right-panel {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+  }
+  .auth-box { width: 100%; max-width: 420px; }
+
+  /* TABS */
+  .auth-tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+  .auth-tab {
+    flex: 1;
+    text-align: center;
+    padding: 0.75rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--white-dim);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.2s;
+  }
+  .auth-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  .auth-panel { display: none; }
+  .auth-panel.active { display: block; }
+
+  .auth-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .auth-sub { font-size: 0.85rem; color: var(--white-dim); margin-bottom: 2rem; }
+
+  /* GOOGLE BTN */
+  .google-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.8rem;
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 400;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1.5rem;
+  }
+  .google-btn:hover { background: var(--black-3); border-color: rgba(201,168,76,0.6); }
+  .google-icon { width: 18px; height: 18px; flex-shrink: 0; }
+
+  .divider-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; }
+  .divider-line { flex: 1; height: 1px; background: var(--border); }
+  .divider-text { font-size: 0.72rem; color: var(--white-dim); letter-spacing: 0.1em; text-transform: uppercase; }
+
+  /* FORM */
+  .field { margin-bottom: 1.1rem; }
+  .field label { display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.5rem; }
+  .field input {
+    width: 100%;
+    background: var(--black-2);
+    border: 1px solid var(--border);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .field input:focus { border-color: var(--gold); }
+  .field input::placeholder { color: #333; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  .forgot { font-size: 0.78rem; color: var(--gold-dim); text-align: right; margin-top: -0.5rem; margin-bottom: 1.5rem; cursor: pointer; text-decoration: none; display: block; }
+  .forgot:hover { color: var(--gold); }
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--gold);
+    color: var(--black);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 1.2rem;
+  }
+  .submit-btn:hover { background: var(--gold-light); }
+
+  .switch-text { font-size: 0.82rem; color: var(--white-dim); text-align: center; }
+  .switch-text a { color: var(--gold); text-decoration: none; cursor: pointer; }
+  .switch-text a:hover { color: var(--gold-light); }
+
+  .error-msg { font-size: 0.8rem; color: var(--danger); margin-top: -0.5rem; margin-bottom: 1rem; display: none; }
+  .error-msg.show { display: block; }
+
+  /* PLAN SELECT */
+  .plan-select { margin-bottom: 1.1rem; }
+  .plan-select label { display: block; font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.5rem; }
+  .plan-options { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.5rem; }
+  .plan-opt {
+    border: 1px solid var(--border);
+    padding: 0.65rem 0.5rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.78rem;
+  }
+  .plan-opt:hover { border-color: var(--border-bright); }
+  .plan-opt.selected { border-color: var(--gold); background: rgba(201,168,76,0.06); }
+  .plan-opt-name { font-weight: 500; color: var(--white); margin-bottom: 0.15rem; }
+  .plan-opt-price { font-size: 0.7rem; color: var(--gold); }
+
+  /* SUCCESS STATE */
+  .success-box { text-align: center; display: none; }
+  .success-box.show { display: block; }
+  .success-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .success-title { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .success-sub { font-size: 0.88rem; color: var(--white-dim); margin-bottom: 2rem; line-height: 1.7; }
+  .go-btn {
+    display: inline-block;
+    padding: 0.9rem 2.5rem;
+    background: var(--gold);
+    color: var(--black);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+    border: none;
+  }
+  .go-btn:hover { background: var(--gold-light); }
+
+  @media (max-width: 800px) {
+    body { flex-direction: column; }
+    .left-panel { width: 100%; min-height: 280px; padding: 2rem; }
+    .left-stats { display: none; }
+    .right-panel { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+  <div class="left-grid"></div>
+  <a class="left-logo" href="newsites.html">NEW<span>SITES</span>.COM</a>
+  <div class="left-content">
+    <h2 class="left-headline">Welcome<br><em>back.</em></h2>
+    <p class="left-sub">Your AI is working around the clock. Sign in to see your leads, calls, bookings, and revenue — all in one place.</p>
+    <div class="left-stats">
+      <div class="lst"><div class="lst-num">24/7</div><div class="lst-label">AI running</div></div>
+      <div class="lst"><div class="lst-num">0</div><div class="lst-label" id="missed-stat">Missed calls</div></div>
+      <div class="lst"><div class="lst-num">∞</div><div class="lst-label">Uptime</div></div>
+    </div>
+  </div>
+  <div class="left-footer">© 2025 NEWSITES.COM — All rights reserved.</div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+  <div class="auth-box">
+
+    <!-- TABS -->
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuth('signin')">Sign in</div>
+      <div class="auth-tab" onclick="switchAuth('signup')">Create account</div>
+    </div>
+
+    <!-- SIGN IN -->
+    <div class="auth-panel active" id="panel-signin">
+      <h2 class="auth-title">Sign in</h2>
+      <p class="auth-sub">Access your NEWSITES dashboard.</p>
+
+      <button class="google-btn" onclick="handleGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Continue with Google
+      </button>
+
+      <div class="divider-row"><div class="divider-line"></div><span class="divider-text">or</span><div class="divider-line"></div></div>
+
+      <div class="field"><label>Email address</label><input type="email" id="si-email" placeholder="you@business.com" /></div>
+      <div class="field"><label>Password</label><input type="password" id="si-pass" placeholder="••••••••" /></div>
+      <a class="forgot" href="#">Forgot password?</a>
+      <div class="error-msg" id="si-error">Invalid email or password. Please try again.</div>
+      <button class="submit-btn" onclick="handleSignin()">Sign in to dashboard</button>
+      <p class="switch-text">Don't have an account? <a onclick="switchAuth('signup')">Create one free</a></p>
+    </div>
+
+    <!-- SIGN UP -->
+    <div class="auth-panel" id="panel-signup">
+      <h2 class="auth-title">Get started</h2>
+      <p class="auth-sub">Create your NEWSITES account and go live today.</p>
+
+      <button class="google-btn" onclick="handleGoogle()">
+        <svg class="google-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+        </svg>
+        Sign up with Google
+      </button>
+
+      <div class="divider-row"><div class="divider-line"></div><span class="divider-text">or</span><div class="divider-line"></div></div>
+
+      <div class="field-row">
+        <div class="field"><label>First name</label><input type="text" id="su-first" placeholder="Marcus" /></div>
+        <div class="field"><label>Last name</label><input type="text" id="su-last" placeholder="Johnson" /></div>
+      </div>
+      <div class="field"><label>Business name</label><input type="text" id="su-biz" placeholder="Apex Roofing Co." /></div>
+      <div class="field"><label>Email address</label><input type="email" id="su-email" placeholder="you@business.com" /></div>
+      <div class="field"><label>Phone number</label><input type="tel" id="su-phone" placeholder="(555) 000-0000" /></div>
+      <div class="field"><label>Password</label><input type="password" id="su-pass" placeholder="Min. 8 characters" /></div>
+
+      <div class="plan-select">
+        <label>Select your plan</label>
+        <div class="plan-options">
+          <div class="plan-opt" onclick="selectPlan(this,'starter')">
+            <div class="plan-opt-name">Starter</div>
+            <div class="plan-opt-price">$97/mo</div>
+          </div>
+          <div class="plan-opt selected" onclick="selectPlan(this,'growth')">
+            <div class="plan-opt-name">Growth</div>
+            <div class="plan-opt-price">$297/mo</div>
+          </div>
+          <div class="plan-opt" onclick="selectPlan(this,'empire')">
+            <div class="plan-opt-name">Empire</div>
+            <div class="plan-opt-price">$597/mo</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="error-msg" id="su-error">Please fill in all required fields.</div>
+      <button class="submit-btn" onclick="handleSignup()">Create my account</button>
+      <p class="switch-text">Already have an account? <a onclick="switchAuth('signin')">Sign in</a></p>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div class="success-box" id="success-box">
+      <div class="success-icon">✦</div>
+      <h2 class="success-title">You're in.</h2>
+      <p class="success-sub">Your account is live. Your AI is already standing by. Let's set up your dashboard and get your first site built.</p>
+      <a class="go-btn" href="dashboard.html">Open my dashboard →</a>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let selectedPlan = 'growth';
+
+  function switchAuth(tab) {
+    document.querySelectorAll('.auth-tab').forEach((t,i) => {
+      t.classList.toggle('active', (tab==='signin'&&i===0)||(tab==='signup'&&i===1));
+    });
+    document.getElementById('panel-signin').classList.toggle('active', tab==='signin');
+    document.getElementById('panel-signup').classList.toggle('active', tab==='signup');
+    document.getElementById('success-box').classList.remove('show');
+  }
+
+  function selectPlan(el, plan) {
+    document.querySelectorAll('.plan-opt').forEach(p => p.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedPlan = plan;
+  }
+
+  function handleGoogle() {
+    showSuccess();
+  }
+
+  function handleSignin() {
+    const email = document.getElementById('si-email').value.trim();
+    const pass = document.getElementById('si-pass').value.trim();
+    const err = document.getElementById('si-error');
+    if (!email || !pass) { err.classList.add('show'); return; }
+    err.classList.remove('show');
+    showSuccess();
+  }
+
+  function handleSignup() {
+    const first = document.getElementById('su-first').value.trim();
+    const email = document.getElementById('su-email').value.trim();
+    const pass = document.getElementById('su-pass').value.trim();
+    const err = document.getElementById('su-error');
+    if (!first || !email || !pass) { err.classList.add('show'); return; }
+    err.classList.remove('show');
+    showSuccess();
+  }
+
+  function showSuccess() {
+    document.querySelectorAll('.auth-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('success-box').classList.add('show');
+  }
+</script>
+</body>
+</html>
