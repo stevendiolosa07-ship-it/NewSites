@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEWSITES.COM — Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6A2A;
+    --black: #080808;
+    --black-2: #111111;
+    --black-3: #1A1A1A;
+    --black-4: #242424;
+    --white: #F5F0E8;
+    --white-dim: #A89F8C;
+    --border: rgba(201,168,76,0.15);
+    --border-bright: rgba(201,168,76,0.4);
+    --green: #2ECC71;
+    --red: #E74C3C;
+    --blue: #3498DB;
+    --orange: #E67E22;
+    --sidebar: 220px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { height: 100%; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar);
+    min-width: var(--sidebar);
+    background: var(--black-2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    left: 0; top: 0;
+    z-index: 50;
+  }
+  .sidebar-logo {
+    padding: 1.5rem 1.25rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    display: block;
+  }
+  .sidebar-logo span { color: var(--white); }
+  .sidebar-user {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .user-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .user-name { font-size: 0.82rem; font-weight: 500; color: var(--white); line-height: 1.2; }
+  .user-plan { font-size: 0.68rem; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; }
+  .sidebar-nav { flex: 1; padding: 0.75rem 0; overflow-y: auto; }
+  .nav-section-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #333;
+    padding: 0.75rem 1.25rem 0.35rem;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0.6rem 1.25rem;
+    font-size: 0.82rem;
+    color: var(--white-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    border-left: 2px solid transparent;
+    position: relative;
+  }
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .nav-icon { font-size: 0.95rem; width: 18px; text-align: center; flex-shrink: 0; }
+  .nav-badge {
+    margin-left: auto;
+    background: var(--red);
+    color: #fff;
+    font-size: 0.6rem;
+    font-weight: 500;
+    padding: 0.15rem 0.45rem;
+    border-radius: 20px;
+  }
+  .nav-badge.gold { background: var(--gold); color: var(--black); }
+  .sidebar-footer {
+    padding: 1rem 1.25rem;
+    border-top: 1px solid var(--border);
+  }
+  .signout-btn {
+    font-size: 0.78rem;
+    color: #444;
+    cursor: pointer;
+    transition: color 0.15s;
+    text-decoration: none;
+    display: block;
+  }
+  .signout-btn:hover { color: var(--white-dim); }
+
+  /* MAIN */
+  .main {
+    margin-left: var(--sidebar);
+    flex: 1;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* TOP BAR */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.8);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    top: 0;
+    z-index: 40;
+  }
+  .topbar-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; }
+  .topbar-title span { color: var(--gold); font-style: italic; }
+  .topbar-right { display: flex; align-items: center; gap: 1rem; }
+  .live-badge {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--green); border: 1px solid rgba(46,204,113,0.3);
+    padding: 0.3rem 0.75rem;
+  }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+  .topbar-date { font-size: 0.78rem; color: var(--white-dim); }
+
+  /* CONTENT PAGES */
+  .page { display: none; padding: 1.75rem 2rem; }
+  .page.active { display: block; }
+
+  /* STAT CARDS ROW */
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); margin-bottom: 1.5rem; }
+  .stat-card {
+    background: var(--black-2);
+    padding: 1.25rem 1.5rem;
+    transition: background 0.15s;
+  }
+  .stat-card:hover { background: var(--black-3); }
+  .sc-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.5rem; }
+  .sc-value { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 700; color: var(--white); line-height: 1; margin-bottom: 0.3rem; }
+  .sc-value.gold { color: var(--gold); }
+  .sc-value.green { color: var(--green); }
+  .sc-value.red { color: var(--red); }
+  .sc-delta { font-size: 0.72rem; color: var(--white-dim); }
+  .sc-delta.up { color: var(--green); }
+  .sc-delta.down { color: var(--red); }
+
+  /* SECTION HEADERS */
+  .section-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .section-hd h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; }
+  .section-hd h2 em { font-style: italic; color: var(--gold); }
+  .section-action { font-size: 0.75rem; color: var(--gold); cursor: pointer; letter-spacing: 0.06em; border: 1px solid var(--border-bright); padding: 0.3rem 0.75rem; transition: all 0.15s; }
+  .section-action:hover { background: var(--gold); color: var(--black); }
+
+  /* GRID LAYOUTS */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .panel {
+    background: var(--black-2);
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+  }
+  .panel-title { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
+  .panel-title-action { font-size: 0.68rem; color: var(--gold); cursor: pointer; }
+
+  /* CALL QUEUE */
+  .call-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); }
+  .call-item:last-child { border-bottom: none; }
+  .call-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .call-status.active { background: var(--green); animation: pulse 1.5s infinite; }
+  .call-status.waiting { background: var(--orange); }
+  .call-status.missed { background: var(--red); }
+  .call-info { flex: 1; }
+  .call-name { font-size: 0.85rem; font-weight: 500; color: var(--white); }
+  .call-detail { font-size: 0.72rem; color: var(--white-dim); }
+  .call-time { font-size: 0.72rem; color: var(--white-dim); text-align: right; }
+  .call-pos { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 700; color: var(--gold); min-width: 28px; text-align: center; }
+  .call-action-btn { font-size: 0.68rem; padding: 0.25rem 0.6rem; border: 1px solid var(--border-bright); color: var(--gold); cursor: pointer; transition: all 0.15s; background: transparent; white-space: nowrap; }
+  .call-action-btn:hover { background: var(--gold); color: var(--black); }
+
+  /* LEADS */
+  .lead-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.6rem 0; border-bottom: 1px solid var(--border); }
+  .lead-row:last-child { border-bottom: none; }
+  .lead-avatar { width: 30px; height: 30px; border-radius: 50%; background: rgba(201,168,76,0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 500; color: var(--gold); flex-shrink: 0; }
+  .lead-info { flex: 1; }
+  .lead-name { font-size: 0.83rem; font-weight: 500; color: var(--white); }
+  .lead-source { font-size: 0.7rem; color: var(--white-dim); }
+  .lead-tag { font-size: 0.62rem; padding: 0.18rem 0.5rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .tag-hot { background: rgba(231,76,60,0.15); color: var(--red); border: 1px solid rgba(231,76,60,0.3); }
+  .tag-warm { background: rgba(230,126,34,0.12); color: var(--orange); border: 1px solid rgba(230,126,34,0.3); }
+  .tag-cold { background: rgba(52,152,219,0.1); color: var(--blue); border: 1px solid rgba(52,152,219,0.25); }
+  .tag-booked { background: rgba(46,204,113,0.1); color: var(--green); border: 1px solid rgba(46,204,113,0.25); }
+  .tag-filtered { background: rgba(255,255,255,0.04); color: #555; border: 1px solid #333; }
+
+  /* APPOINTMENTS */
+  .appt-item { display: flex; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .appt-item:last-child { border-bottom: none; }
+  .appt-time-block { text-align: center; min-width: 44px; }
+  .appt-time { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 700; color: var(--gold); line-height: 1; }
+  .appt-ampm { font-size: 0.65rem; color: var(--white-dim); }
+  .appt-info { flex: 1; }
+  .appt-name { font-size: 0.83rem; font-weight: 500; color: var(--white); }
+  .appt-detail { font-size: 0.72rem; color: var(--white-dim); }
+  .appt-status { font-size: 0.65rem; padding: 0.18rem 0.5rem; border: 1px solid; }
+  .appt-confirmed { color: var(--green); border-color: rgba(46,204,113,0.3); background: rgba(46,204,113,0.06); }
+  .appt-pending { color: var(--orange); border-color: rgba(230,126,34,0.3); background: rgba(230,126,34,0.06); }
+
+  /* SMS LOG */
+  .sms-item { padding: 0.65rem 0; border-bottom: 1px solid var(--border); }
+  .sms-item:last-child { border-bottom: none; }
+  .sms-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.25rem; }
+  .sms-name { font-size: 0.83rem; font-weight: 500; color: var(--white); }
+  .sms-time { font-size: 0.68rem; color: var(--white-dim); }
+  .sms-msg { font-size: 0.78rem; color: var(--white-dim); line-height: 1.5; }
+  .sms-dir { font-size: 0.62rem; padding: 0.12rem 0.45rem; margin-right: 0.4rem; }
+  .sms-out { background: rgba(201,168,76,0.08); color: var(--gold); border: 1px solid var(--border-bright); }
+  .sms-in { background: rgba(255,255,255,0.04); color: var(--white-dim); border: 1px solid rgba(255,255,255,0.08); }
+
+  /* REVENUE CHART */
+  .rev-chart { position: relative; height: 120px; display: flex; align-items: flex-end; gap: 6px; padding: 0 4px; }
+  .rev-bar-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .rev-bar { width: 100%; background: rgba(201,168,76,0.15); border-top: 1px solid var(--gold); position: relative; transition: background 0.2s; cursor: pointer; }
+  .rev-bar:hover { background: rgba(201,168,76,0.28); }
+  .rev-bar.current { background: rgba(201,168,76,0.25); border-color: var(--gold-light); }
+  .rev-month { font-size: 0.6rem; color: var(--white-dim); text-align: center; }
+
+  /* REVIEWS */
+  .review-item { padding: 0.75rem 0; border-bottom: 1px solid var(--border); }
+  .review-item:last-child { border-bottom: none; }
+  .review-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.3rem; }
+  .review-name { font-size: 0.82rem; font-weight: 500; color: var(--white); }
+  .review-stars { color: var(--gold); font-size: 0.75rem; letter-spacing: 0.05em; }
+  .review-platform { font-size: 0.65rem; color: var(--white-dim); }
+  .review-text { font-size: 0.78rem; color: var(--white-dim); line-height: 1.55; font-style: italic; }
+
+  /* SOCIAL */
+  .social-item { display: flex; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
+  .social-item:last-child { border-bottom: none; }
+  .social-platform { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; flex-shrink: 0; }
+  .sp-fb { background: rgba(24,119,242,0.15); color: #1877F2; border: 1px solid rgba(24,119,242,0.3); }
+  .sp-ig { background: rgba(225,48,108,0.12); color: #E1306C; border: 1px solid rgba(225,48,108,0.25); }
+  .sp-gb { background: rgba(52,168,83,0.12); color: #34A853; border: 1px solid rgba(52,168,83,0.25); }
+  .social-info { flex: 1; }
+  .social-text { font-size: 0.8rem; color: var(--white-dim); line-height: 1.5; margin-bottom: 0.3rem; }
+  .social-meta { font-size: 0.68rem; color: #444; }
+  .social-status { font-size: 0.62rem; padding: 0.15rem 0.5rem; }
+  .s-scheduled { color: var(--orange); border: 1px solid rgba(230,126,34,0.3); background: rgba(230,126,34,0.06); }
+  .s-posted { color: var(--green); border: 1px solid rgba(46,204,113,0.3); background: rgba(46,204,113,0.06); }
+
+  /* BOOK DEMO BANNER */
+  .book-banner {
+    background: linear-gradient(135deg, rgba(201,168,76,0.08) 0%, transparent 60%);
+    border: 1px solid var(--border-bright);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+  .book-banner-text h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; margin-bottom: 0.25rem; }
+  .book-banner-text h3 em { font-style: italic; color: var(--gold); }
+  .book-banner-text p { font-size: 0.82rem; color: var(--white-dim); }
+  .book-btn { background: var(--gold); color: var(--black); border: none; padding: 0.75rem 1.75rem; font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  .book-btn:hover { background: var(--gold-light); }
+
+  /* BOOKING MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 200; display: none; align-items: center; justify-content: center; }
+  .modal-overlay.show { display: flex; }
+  .modal { background: var(--black-2); border: 1px solid var(--border-bright); width: 100%; max-width: 540px; padding: 2rem; position: relative; max-height: 90vh; overflow-y: auto; }
+  .modal-close { position: absolute; top: 1rem; right: 1.25rem; font-size: 1.2rem; color: var(--white-dim); cursor: pointer; background: none; border: none; color: var(--white-dim); transition: color 0.15s; }
+  .modal-close:hover { color: var(--white); }
+  .modal-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; margin-bottom: 0.3rem; }
+  .modal-sub { font-size: 0.83rem; color: var(--white-dim); margin-bottom: 1.75rem; }
+  .modal-field { margin-bottom: 1rem; }
+  .modal-field label { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.4rem; }
+  .modal-field input, .modal-field select, .modal-field textarea {
+    width: 100%; background: var(--black-3); border: 1px solid var(--border); color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem; padding: 0.7rem 0.9rem; outline: none; transition: border-color 0.2s;
+  }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus { border-color: var(--gold); }
+  .modal-field select option { background: var(--black-3); }
+  .modal-field textarea { height: 80px; resize: vertical; }
+  .time-slots { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.5rem; margin-top: 0.4rem; }
+  .time-slot { border: 1px solid var(--border); padding: 0.5rem; text-align: center; font-size: 0.75rem; cursor: pointer; color: var(--white-dim); transition: all 0.15s; }
+  .time-slot:hover { border-color: var(--border-bright); color: var(--white); }
+  .time-slot.selected { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.08); }
+  .time-slot.taken { opacity: 0.3; cursor: not-allowed; }
+  .modal-submit { width: 100%; padding: 0.9rem; background: var(--gold); color: var(--black); border: none; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; cursor: pointer; transition: all 0.2s; margin-top: 1rem; }
+  .modal-submit:hover { background: var(--gold-light); }
+  .book-success { text-align: center; padding: 1rem 0; display: none; }
+  .book-success.show { display: block; }
+  .book-success-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+  .book-success-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .book-success-sub { font-size: 0.85rem; color: var(--white-dim); line-height: 1.7; }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 2rem; color: var(--white-dim); font-size: 0.83rem; }
+
+  .hamburger {
+    display: none;
+    background: none; border: 1px solid var(--border);
+    color: var(--white-dim); cursor: pointer;
+    padding: 0.4rem 0.7rem; font-size: 1rem;
+    transition: all 0.15s; margin-right: 0.5rem;
+  }
+  .hamburger:hover { border-color: var(--gold); color: var(--gold); }
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); }
+
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+    .sidebar.open { transform: translateX(0); }
+    .sidebar-logo, .user-name, .user-plan, .nav-section-label, .nav-item span:not(.nav-icon), .nav-badge, .sidebar-footer { display: none; }
+    .sidebar.open .sidebar-logo, .sidebar.open .user-name, .sidebar.open .user-plan, .sidebar.open .nav-section-label, .sidebar.open .nav-item span, .sidebar.open .nav-badge, .sidebar.open .sidebar-footer { display: block; }
+    .sidebar.open { width: var(--sidebar); }
+    .nav-item { justify-content: center; padding: 0.75rem; }
+    .sidebar.open .nav-item { justify-content: flex-start; padding: 0.6rem 1.25rem; }
+    .main { margin-left: 0; }
+    .hamburger { display: block; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+    .two-col, .three-col { grid-template-columns: 1fr; }
+    .topbar { padding: 0.85rem 1rem; }
+    .page { padding: 1.25rem 1rem; }
+    .book-banner { flex-direction: column; }
+    .modal { max-width: 96vw; padding: 1.5rem; }
+    .time-slots { grid-template-columns: repeat(3,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar">
+  <a class="sidebar-logo" href="newsites.html">NEW<span>SITES</span>.COM</a>
+  <div class="sidebar-user">
+    <div class="user-avatar">MJ</div>
+    <div>
+      <div class="user-name">Marcus Johnson</div>
+      <div class="user-plan">Growth Plan</div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <div class="nav-item active" onclick="showPage('overview')">
+      <span class="nav-icon">◈</span><span>Dashboard</span>
+    </div>
+    <div class="nav-section-label">AI Engine</div>
+    <div class="nav-item" onclick="showPage('calls')">
+      <span class="nav-icon">◎</span><span>Calls & Queue</span>
+      <span class="nav-badge">3</span>
+    </div>
+    <div class="nav-item" onclick="showPage('leads')">
+      <span class="nav-icon">⬟</span><span>Lead Pipeline</span>
+      <span class="nav-badge gold">12</span>
+    </div>
+    <div class="nav-item" onclick="showPage('appointments')">
+      <span class="nav-icon">◉</span><span>Appointments</span>
+    </div>
+    <div class="nav-item" onclick="showPage('sms')">
+      <span class="nav-icon">◇</span><span>SMS & Follow-Ups</span>
+      <span class="nav-badge">5</span>
+    </div>
+    <div class="nav-section-label">Growth</div>
+    <div class="nav-item" onclick="showPage('revenue')">
+      <span class="nav-icon">⬡</span><span>Revenue</span>
+    </div>
+    <div class="nav-item" onclick="showPage('reviews')">
+      <span class="nav-icon">○</span><span>Reviews</span>
+    </div>
+    <div class="nav-item" onclick="showPage('social')">
+      <span class="nav-icon">◑</span><span>Social Media</span>
+    </div>
+    <div class="nav-section-label">Account</div>
+    <div class="nav-item" onclick="openBooking()">
+      <span class="nav-icon">✦</span><span>Book Strategy Call</span>
+    </div>
+    <a class="nav-item" href="settings.html">
+      <span class="nav-icon">⬢</span><span>Settings</span>
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    <a class="signout-btn" href="signin.html">← Sign out</a>
+  </div>
+</nav>
+
+<!-- MOBILE SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:49;"></div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title"><button class="hamburger" onclick="toggleSidebar()">☰</button>Good morning, <span>Marcus.</span></div>
+    <div class="topbar-right">
+      <div class="live-badge"><div class="live-dot"></div>AI Active 24/7</div>
+      <div class="topbar-date" id="topbar-date"></div>
+    </div>
+  </div>
+
+  <!-- ===== OVERVIEW PAGE ===== -->
+  <div class="page active" id="page-overview">
+    <div class="book-banner">
+      <div class="book-banner-text">
+        <h3>Book your <em>strategy call</em></h3>
+        <p>30 minutes with your account manager. We'll optimize your AI setup and unlock more leads.</p>
+      </div>
+      <button class="book-btn" onclick="openBooking()">Book a call →</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="sc-label">Total revenue (mo)</div>
+        <div class="sc-value gold">$14,820</div>
+        <div class="sc-delta up">↑ 23% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">Calls handled (AI)</div>
+        <div class="sc-value">347</div>
+        <div class="sc-delta up">↑ 41 this week</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">New leads</div>
+        <div class="sc-value green">89</div>
+        <div class="sc-delta up">↑ 18% vs last month</div>
+      </div>
+      <div class="stat-card">
+        <div class="sc-label">Filtered out (bad)</div>
+        <div class="sc-value red">24</div>
+        <div class="sc-delta">Saved ~6 hrs of your time</div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">Active calls & queue <span class="panel-title-action" onclick="showPage('calls')">View all</span></div>
+        <div class="call-item">
+          <div class="call-status active"></div>
+          <div class="call-pos">—</div>
+          <div class="call-info">
+            <div class="call-name">Sandra R. — (713) 555-0142</div>
+            <div class="call-detail">On call now · 2m 14s · HVAC quote request</div>
+          </div>
+          <button class="call-action-btn">Join</button>
+        </div>
+        <div class="call-item">
+          <div class="call-status waiting"></div>
+          <div class="call-pos">#1</div>
+          <div class="call-info">
+            <div class="call-name">Derek L. — (602) 555-0388</div>
+            <div class="call-detail">Waiting · Est. 2 min · SMS sent</div>
+          </div>
+          <button class="call-action-btn">Callback</button>
+        </div>
+        <div class="call-item">
+          <div class="call-status waiting"></div>
+          <div class="call-pos">#2</div>
+          <div class="call-info">
+            <div class="call-name">Maria C. — (512) 555-0217</div>
+            <div class="call-detail">Waiting · Est. 5 min · SMS sent</div>
+          </div>
+          <button class="call-action-btn">Callback</button>
+        </div>
+        <div class="call-item">
+          <div class="call-status missed"></div>
+          <div class="call-pos">—</div>
+          <div class="call-info">
+            <div class="call-name">James T. — (404) 555-0091</div>
+            <div class="call-detail">Missed · Auto-callback scheduled 3:30pm</div>
+          </div>
+          <button class="call-action-btn">Call now</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Recent leads <span class="panel-title-action" onclick="showPage('leads')">View pipeline</span></div>
+        <div class="lead-row">
+          <div class="lead-avatar">SR</div>
+          <div class="lead-info"><div class="lead-name">Sandra R.</div><div class="lead-source">Google Business · Called in</div></div>
+          <span class="lead-tag tag-hot">Hot</span>
+        </div>
+        <div class="lead-row">
+          <div class="lead-avatar">DL</div>
+          <div class="lead-info"><div class="lead-name">Derek L.</div><div class="lead-source">Facebook DM</div></div>
+          <span class="lead-tag tag-booked">Booked</span>
+        </div>
+        <div class="lead-row">
+          <div class="lead-avatar">MC</div>
+          <div class="lead-info"><div class="lead-name">Maria C.</div><div class="lead-source">Website form</div></div>
+          <span class="lead-tag tag-warm">Warm</span>
+        </div>
+        <div class="lead-row">
+          <div class="lead-avatar">JT</div>
+          <div class="lead-info"><div class="lead-name">James T.</div><div class="lead-source">Instagram DM</div></div>
+          <span class="lead-tag tag-cold">Cold</span>
+        </div>
+        <div class="lead-row">
+          <div class="lead-avatar">??</div>
+          <div class="lead-info"><div class="lead-name">Unknown caller</div><div class="lead-source">Inbound call · No info given</div></div>
+          <span class="lead-tag tag-filtered">Filtered</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title">Today's appointments <span class="panel-title-action" onclick="showPage('appointments')">Full calendar</span></div>
+        <div class="appt-item">
+          <div class="appt-time-block"><div class="appt-time">9:00</div><div class="appt-ampm">AM</div></div>
+          <div class="appt-info"><div class="appt-name">Sandra R. — HVAC estimate</div><div class="appt-detail">1427 Oak St · (713) 555-0142</div></div>
+          <span class="appt-status appt-confirmed">Confirmed</span>
+        </div>
+        <div class="appt-item">
+          <div class="appt-time-block"><div class="appt-time">11:30</div><div class="appt-ampm">AM</div></div>
+          <div class="appt-info"><div class="appt-name">Derek L. — Landscaping consult</div><div class="appt-detail">2890 Elm Ave · (602) 555-0388</div></div>
+          <span class="appt-status appt-confirmed">Confirmed</span>
+        </div>
+        <div class="appt-item">
+          <div class="appt-time-block"><div class="appt-time">2:00</div><div class="appt-ampm">PM</div></div>
+          <div class="appt-info"><div class="appt-name">Maria C. — Roof inspection</div><div class="appt-detail">500 Pine Blvd · (512) 555-0217</div></div>
+          <span class="appt-status appt-pending">Pending</span>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title">Latest SMS & follow-ups <span class="panel-title-action" onclick="showPage('sms')">View all</span></div>
+        <div class="sms-item">
+          <div class="sms-header"><div class="sms-name">Derek L.</div><div class="sms-time">10:42 AM</div></div>
+          <div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Derek! You're #1 in queue. Est. wait: 2 min. We'll call you right back.</div>
+        </div>
+        <div class="sms-item">
+          <div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:15 AM</div></div>
+          <div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Maria, reminder: your appointment is today at 2pm. Reply YES to confirm.</div>
+        </div>
+        <div class="sms-item">
+          <div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:17 AM</div></div>
+          <div class="sms-msg"><span class="sms-dir sms-in">IN</span>YES — see you then!</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CALLS PAGE ===== -->
+  <div class="page" id="page-calls">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Active now</div><div class="sc-value green">1</div></div>
+      <div class="stat-card"><div class="sc-label">In queue</div><div class="sc-value gold">2</div></div>
+      <div class="stat-card"><div class="sc-label">Handled today</div><div class="sc-value">28</div></div>
+      <div class="stat-card"><div class="sc-label">Missed (auto-callback)</div><div class="sc-value red">3</div></div>
+    </div>
+    <div class="panel" style="margin-bottom:1.5rem;">
+      <div class="panel-title">Live call queue — 24/7 AI answering</div>
+      <div class="call-item">
+        <div class="call-status active"></div>
+        <div class="call-pos">—</div>
+        <div class="call-info"><div class="call-name">Sandra R. — (713) 555-0142</div><div class="call-detail">🟢 ON CALL NOW · 2m 14s · HVAC quote · Qualified lead</div></div>
+        <button class="call-action-btn">Join call</button>
+      </div>
+      <div class="call-item">
+        <div class="call-status waiting"></div>
+        <div class="call-pos">#1</div>
+        <div class="call-info"><div class="call-name">Derek L. — (602) 555-0388</div><div class="call-detail">Waiting · Est. wait: 2 min · Position text sent ✓</div></div>
+        <button class="call-action-btn">Callback now</button>
+      </div>
+      <div class="call-item">
+        <div class="call-status waiting"></div>
+        <div class="call-pos">#2</div>
+        <div class="call-info"><div class="call-name">Maria C. — (512) 555-0217</div><div class="call-detail">Waiting · Est. wait: 5 min · Position text sent ✓</div></div>
+        <button class="call-action-btn">Callback now</button>
+      </div>
+      <div class="call-item">
+        <div class="call-status missed"></div>
+        <div class="call-pos">—</div>
+        <div class="call-info"><div class="call-name">James T. — (404) 555-0091</div><div class="call-detail">Missed · Auto-callback at 3:30pm · SMS sent ✓</div></div>
+        <button class="call-action-btn">Call now</button>
+      </div>
+      <div class="call-item">
+        <div class="call-status missed"></div>
+        <div class="call-pos">—</div>
+        <div class="call-info"><div class="call-name">Unknown — (832) 555-0404</div><div class="call-detail">Filtered — AI detected spam/solicitor · No callback</div></div>
+        <span style="font-size:0.68rem;color:#444;">Blocked</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LEADS PAGE ===== -->
+  <div class="page" id="page-leads">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Total leads</div><div class="sc-value">89</div></div>
+      <div class="stat-card"><div class="sc-label">Hot</div><div class="sc-value red">14</div></div>
+      <div class="stat-card"><div class="sc-label">Booked</div><div class="sc-value green">31</div></div>
+      <div class="stat-card"><div class="sc-label">AI filtered</div><div class="sc-value">24</div><div class="sc-delta">Bad leads removed</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Full lead pipeline</div>
+      <div class="lead-row"><div class="lead-avatar">SR</div><div class="lead-info"><div class="lead-name">Sandra R.</div><div class="lead-source">Google Business · HVAC quote · (713) 555-0142</div></div><span class="lead-tag tag-hot">Hot</span></div>
+      <div class="lead-row"><div class="lead-avatar">DL</div><div class="lead-info"><div class="lead-name">Derek L.</div><div class="lead-source">Facebook DM · Landscaping · (602) 555-0388</div></div><span class="lead-tag tag-booked">Booked</span></div>
+      <div class="lead-row"><div class="lead-avatar">MC</div><div class="lead-info"><div class="lead-name">Maria C.</div><div class="lead-source">Website form · Roofing · (512) 555-0217</div></div><span class="lead-tag tag-warm">Warm</span></div>
+      <div class="lead-row"><div class="lead-avatar">JT</div><div class="lead-info"><div class="lead-name">James T.</div><div class="lead-source">Instagram DM · Plumbing · (404) 555-0091</div></div><span class="lead-tag tag-cold">Cold</span></div>
+      <div class="lead-row"><div class="lead-avatar">AL</div><div class="lead-info"><div class="lead-name">Amanda L.</div><div class="lead-source">Text message · Electrical · (214) 555-0339</div></div><span class="lead-tag tag-booked">Booked</span></div>
+      <div class="lead-row"><div class="lead-avatar">RK</div><div class="lead-info"><div class="lead-name">Robert K.</div><div class="lead-source">Google Business · Painting · (303) 555-0184</div></div><span class="lead-tag tag-hot">Hot</span></div>
+      <div class="lead-row"><div class="lead-avatar">??</div><div class="lead-info"><div class="lead-name">Unknown · solicitor</div><div class="lead-source">Inbound call · AI flagged as spam</div></div><span class="lead-tag tag-filtered">Filtered</span></div>
+    </div>
+  </div>
+
+  <!-- ===== APPOINTMENTS PAGE ===== -->
+  <div class="page" id="page-appointments">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Today</div><div class="sc-value gold">3</div></div>
+      <div class="stat-card"><div class="sc-label">This week</div><div class="sc-value">14</div></div>
+      <div class="stat-card"><div class="sc-label">Confirmed</div><div class="sc-value green">12</div></div>
+      <div class="stat-card"><div class="sc-label">No-shows</div><div class="sc-value red">1</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Upcoming appointments <span class="panel-title-action" onclick="openBooking()">+ Book a call</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">9:00</div><div class="appt-ampm">AM</div></div><div class="appt-info"><div class="appt-name">Sandra R. — HVAC estimate</div><div class="appt-detail">1427 Oak St · (713) 555-0142 · Booked via AI call</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">11:30</div><div class="appt-ampm">AM</div></div><div class="appt-info"><div class="appt-name">Derek L. — Landscaping consult</div><div class="appt-detail">2890 Elm Ave · (602) 555-0388 · Booked via Facebook DM</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">2:00</div><div class="appt-ampm">PM</div></div><div class="appt-info"><div class="appt-name">Maria C. — Roof inspection</div><div class="appt-detail">500 Pine Blvd · (512) 555-0217 · Booked via website</div></div><span class="appt-status appt-pending">Pending</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">4:00</div><div class="appt-ampm">PM</div></div><div class="appt-info"><div class="appt-name">Amanda L. — Electrical quote</div><div class="appt-detail">788 Birch Rd · (214) 555-0339 · Booked via text</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
+    </div>
+  </div>
+
+  <!-- ===== SMS PAGE ===== -->
+  <div class="page" id="page-sms">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Sent today</div><div class="sc-value gold">47</div></div>
+      <div class="stat-card"><div class="sc-label">Follow-ups active</div><div class="sc-value">18</div></div>
+      <div class="stat-card"><div class="sc-label">Reply rate</div><div class="sc-value green">74%</div></div>
+      <div class="stat-card"><div class="sc-label">Converted from SMS</div><div class="sc-value">9</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">SMS log & follow-up sequences</div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Derek L.</div><div class="sms-time">10:42 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Derek! You're #1 in queue. Est. wait: 2 min. We'll call you right back — hang tight!</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:15 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Maria, reminder: your appointment is today at 2pm at 500 Pine Blvd. Reply YES to confirm or RESCHEDULE to change it.</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:17 AM</div></div><div class="sms-msg"><span class="sms-dir sms-in">IN</span>YES — see you then!</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">James T.</div><div class="sms-time">9:55 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hey James! Sorry we missed your call. We've got you scheduled for a callback at 3:30pm today. Does that work?</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Robert K. — Follow-up Day 2</div><div class="sms-time">9:00 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">AUTO</span>Hi Robert, just following up on your painting quote from yesterday. Ready to get started? Reply or call us anytime.</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Amanda L. — Follow-up Day 1</div><div class="sms-time">8:30 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">AUTO</span>Hi Amanda! Thanks for reaching out yesterday. Your appointment is confirmed for 4pm today. See you soon!</div></div>
+    </div>
+  </div>
+
+  <!-- ===== REVENUE PAGE ===== -->
+  <div class="page" id="page-revenue">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">This month</div><div class="sc-value gold">$14,820</div><div class="sc-delta up">↑ 23% vs last month</div></div>
+      <div class="stat-card"><div class="sc-label">Last month</div><div class="sc-value">$12,040</div></div>
+      <div class="stat-card"><div class="sc-label">Avg. job value</div><div class="sc-value green">$428</div></div>
+      <div class="stat-card"><div class="sc-label">Projected (mo)</div><div class="sc-value">$17,200</div><div class="sc-delta up">On track</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Monthly revenue</div>
+      <div class="rev-chart">
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:42%"></div><div class="rev-month">Jul</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:55%"></div><div class="rev-month">Aug</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:48%"></div><div class="rev-month">Sep</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:63%"></div><div class="rev-month">Oct</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:70%"></div><div class="rev-month">Nov</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:81%"></div><div class="rev-month">Dec</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:68%"></div><div class="rev-month">Jan</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar" style="height:74%"></div><div class="rev-month">Feb</div></div>
+        <div class="rev-bar-wrap"><div class="rev-bar current" style="height:88%"></div><div class="rev-month">Mar</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== REVIEWS PAGE ===== -->
+  <div class="page" id="page-reviews">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Avg. rating</div><div class="sc-value gold">4.9 ★</div></div>
+      <div class="stat-card"><div class="sc-label">Total reviews</div><div class="sc-value">84</div></div>
+      <div class="stat-card"><div class="sc-label">This month</div><div class="sc-value green">17</div></div>
+      <div class="stat-card"><div class="sc-label">Requests sent</div><div class="sc-value">23</div><div class="sc-delta">74% response rate</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Recent reviews</div>
+      <div class="review-item"><div class="review-header"><div><div class="review-name">Sandra R.</div><div class="review-platform">Google · 2 days ago</div></div><div class="review-stars">★★★★★</div></div><div class="review-text">"Showed up on time, got the job done fast, and the price was fair. Will definitely use again."</div></div>
+      <div class="review-item"><div class="review-header"><div><div class="review-name">Derek L.</div><div class="review-platform">Google · 5 days ago</div></div><div class="review-stars">★★★★★</div></div><div class="review-text">"Best service I've had in years. The booking process was super easy and they followed up after too."</div></div>
+      <div class="review-item"><div class="review-header"><div><div class="review-name">Amanda L.</div><div class="review-platform">Facebook · 1 week ago</div></div><div class="review-stars">★★★★☆</div></div><div class="review-text">"Great work overall. Arrived a little late but the quality was excellent. Would recommend."</div></div>
+    </div>
+  </div>
+
+  <!-- ===== SOCIAL PAGE ===== -->
+  <div class="page" id="page-social">
+    <div class="stats-row">
+      <div class="stat-card"><div class="sc-label">Posts this month</div><div class="sc-value gold">24</div></div>
+      <div class="stat-card"><div class="sc-label">Total reach</div><div class="sc-value">8,430</div></div>
+      <div class="stat-card"><div class="sc-label">Leads from social</div><div class="sc-value green">12</div></div>
+      <div class="stat-card"><div class="sc-label">Platforms active</div><div class="sc-value">3</div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">Scheduled & posted content</div>
+      <div class="social-item"><div class="social-platform sp-fb">f</div><div class="social-info"><div class="social-text">Spring is here — is your HVAC ready? Book a free tune-up this week and save 15%. Limited slots!</div><div class="social-meta">Facebook · Scheduled for Today 2:00 PM</div></div><span class="social-status s-scheduled">Scheduled</span></div>
+      <div class="social-item"><div class="social-platform sp-ig">ig</div><div class="social-info"><div class="social-text">Before & after roofing job in Austin. No leaks, no drama — just clean work. DM us for a quote anytime.</div><div class="social-meta">Instagram · Posted Yesterday · 214 reach</div></div><span class="social-status s-posted">Posted</span></div>
+      <div class="social-item"><div class="social-platform sp-gb">G</div><div class="social-info"><div class="social-text">We're open 7 days a week! Call or book online for same-day service in your area.</div><div class="social-meta">Google Business · Posted 2 days ago · 88 views</div></div><span class="social-status s-posted">Posted</span></div>
+      <div class="social-item"><div class="social-platform sp-fb">f</div><div class="social-info"><div class="social-text">5-star review spotlight: "Best service I've had in years!" — Derek L. Thank you Derek! 🏆</div><div class="social-meta">Facebook · Posted 3 days ago · 412 reach</div></div><span class="social-status s-posted">Posted</span></div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- BOOKING MODAL -->
+<div class="modal-overlay" id="booking-modal" onclick="closeBookingOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeBooking()">✕</button>
+
+    <div id="booking-form-wrap">
+      <h2 class="modal-title">Book a strategy call</h2>
+      <p class="modal-sub">30 minutes with your account manager. Pick a time that works for you.</p>
+
+      <div class="modal-field">
+        <label>Your name</label>
+        <input type="text" id="bk-name" value="Marcus Johnson" />
+      </div>
+      <div class="modal-field">
+        <label>Phone number</label>
+        <input type="tel" id="bk-phone" placeholder="(555) 000-0000" />
+      </div>
+      <div class="modal-field">
+        <label>Call type</label>
+        <select id="bk-type">
+          <option>Strategy & growth review</option>
+          <option>AI setup & optimization</option>
+          <option>Technical support</option>
+          <option>Upgrade my plan</option>
+          <option>General questions</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Select a date</label>
+        <input type="date" id="bk-date" />
+      </div>
+      <div class="modal-field">
+        <label>Available times</label>
+        <div class="time-slots">
+          <div class="time-slot" onclick="selectSlot(this)">9:00 AM</div>
+          <div class="time-slot" onclick="selectSlot(this)">9:30 AM</div>
+          <div class="time-slot taken">10:00 AM</div>
+          <div class="time-slot" onclick="selectSlot(this)">10:30 AM</div>
+          <div class="time-slot taken">11:00 AM</div>
+          <div class="time-slot" onclick="selectSlot(this)">11:30 AM</div>
+          <div class="time-slot" onclick="selectSlot(this)">1:00 PM</div>
+          <div class="time-slot" onclick="selectSlot(this)">1:30 PM</div>
+          <div class="time-slot taken">2:00 PM</div>
+          <div class="time-slot" onclick="selectSlot(this)">2:30 PM</div>
+          <div class="time-slot" onclick="selectSlot(this)">3:00 PM</div>
+          <div class="time-slot" onclick="selectSlot(this)">4:00 PM</div>
+        </div>
+      </div>
+      <div class="modal-field">
+        <label>Anything you want to cover? (optional)</label>
+        <textarea id="bk-notes" placeholder="e.g. I want to set up social media posting and review automation..."></textarea>
+      </div>
+      <button class="modal-submit" onclick="submitBooking()">Confirm booking →</button>
+    </div>
+
+    <div class="book-success" id="book-success">
+      <div class="book-success-icon">✦</div>
+      <h2 class="book-success-title">Call booked.</h2>
+      <p class="book-success-sub">You'll receive a confirmation SMS and email shortly. Your account manager will call you at the scheduled time. See you then!</p>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Sidebar toggle
+  function toggleSidebar() {
+    const sb = document.querySelector('.sidebar');
+    const ov = document.getElementById('sidebar-overlay');
+    sb.classList.toggle('open');
+    ov.style.display = sb.classList.contains('open') ? 'block' : 'none';
+  }
+  function closeSidebar() {
+    document.querySelector('.sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').style.display = 'none';
+  }
+
+  // Date
+  document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  // Set min date for booking
+  const d = document.getElementById('bk-date');
+  if(d) { const t = new Date(); t.setDate(t.getDate()+1); d.min = t.toISOString().split('T')[0]; d.value = t.toISOString().split('T')[0]; }
+
+  function showPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const pg = document.getElementById('page-'+id);
+    if(pg) pg.classList.add('active');
+    event.currentTarget && event.currentTarget.classList.add('active');
+    // Update nav highlight
+    document.querySelectorAll('.nav-item').forEach(n => {
+      if(n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');
+    });
+  }
+
+  function openBooking() {
+    document.getElementById('booking-modal').classList.add('show');
+    document.getElementById('booking-form-wrap').style.display = 'block';
+    document.getElementById('book-success').classList.remove('show');
+  }
+  function closeBooking() { document.getElementById('booking-modal').classList.remove('show'); }
+  function closeBookingOutside(e) { if(e.target===document.getElementById('booking-modal')) closeBooking(); }
+
+  function selectSlot(el) {
+    if(el.classList.contains('taken')) return;
+    document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function submitBooking() {
+    document.getElementById('booking-form-wrap').style.display = 'none';
+    document.getElementById('book-success').classList.add('show');
+    setTimeout(() => closeBooking(), 3500);
+  }
+</script>
+</body>
+</html>
