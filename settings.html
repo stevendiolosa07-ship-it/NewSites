@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEWSITES.COM — Settings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #E8C97A;
+    --gold-dim: #8B6A2A;
+    --black: #080808;
+    --black-2: #111111;
+    --black-3: #1A1A1A;
+    --black-4: #242424;
+    --white: #F5F0E8;
+    --white-dim: #A89F8C;
+    --border: rgba(201,168,76,0.15);
+    --border-bright: rgba(201,168,76,0.4);
+    --green: #2ECC71;
+    --red: #E74C3C;
+    --sidebar: 220px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--black);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    display: flex;
+    overflow: hidden;
+  }
+
+  /* SIDEBAR */
+  .sidebar {
+    width: var(--sidebar);
+    min-width: var(--sidebar);
+    background: var(--black-2);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    position: fixed;
+    left: 0; top: 0;
+    z-index: 50;
+    transition: transform 0.3s ease;
+  }
+  .sidebar-logo {
+    padding: 1.5rem 1.25rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    display: block;
+  }
+  .sidebar-logo span { color: var(--white); }
+  .sidebar-user {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .user-avatar {
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    background: rgba(201,168,76,0.15);
+    border: 1px solid var(--border-bright);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 500; color: var(--gold);
+    flex-shrink: 0;
+  }
+  .user-name { font-size: 0.82rem; font-weight: 500; color: var(--white); line-height: 1.2; }
+  .user-plan { font-size: 0.68rem; color: var(--gold); letter-spacing: 0.06em; text-transform: uppercase; }
+  .sidebar-nav { flex: 1; padding: 0.75rem 0; overflow-y: auto; }
+  .nav-section-label { font-size: 0.62rem; letter-spacing: 0.14em; text-transform: uppercase; color: #333; padding: 0.75rem 1.25rem 0.35rem; }
+  .nav-item {
+    display: flex; align-items: center; gap: 0.7rem;
+    padding: 0.6rem 1.25rem; font-size: 0.82rem;
+    color: var(--white-dim); cursor: pointer;
+    transition: all 0.15s; border-left: 2px solid transparent;
+    text-decoration: none;
+  }
+  .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.03); }
+  .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .nav-icon { font-size: 0.95rem; width: 18px; text-align: center; flex-shrink: 0; }
+  .sidebar-footer { padding: 1rem 1.25rem; border-top: 1px solid var(--border); }
+  .signout-btn { font-size: 0.78rem; color: #444; cursor: pointer; transition: color 0.15s; text-decoration: none; display: block; }
+  .signout-btn:hover { color: var(--white-dim); }
+
+  /* MOBILE OVERLAY */
+  .sidebar-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 49;
+  }
+  .sidebar-overlay.show { display: block; }
+
+  /* MAIN */
+  .main { margin-left: var(--sidebar); flex: 1; height: 100vh; overflow-y: auto; display: flex; flex-direction: column; }
+
+  /* TOPBAR */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(8,8,8,0.85);
+    backdrop-filter: blur(8px);
+    position: sticky; top: 0; z-index: 40;
+    gap: 1rem;
+  }
+  .topbar-left { display: flex; align-items: center; gap: 1rem; }
+  .hamburger {
+    display: none;
+    background: none; border: 1px solid var(--border);
+    color: var(--white-dim); cursor: pointer;
+    padding: 0.4rem 0.6rem; font-size: 1rem;
+    transition: all 0.15s;
+  }
+  .hamburger:hover { border-color: var(--gold); color: var(--gold); }
+  .topbar-title { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; font-weight: 600; }
+  .topbar-title span { color: var(--gold); font-style: italic; }
+  .save-btn {
+    background: var(--gold); color: var(--black);
+    border: none; padding: 0.55rem 1.4rem;
+    font-family: 'DM Sans', sans-serif; font-size: 0.8rem;
+    font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .save-btn:hover { background: var(--gold-light); }
+
+  /* SETTINGS LAYOUT */
+  .settings-wrap { display: flex; flex: 1; overflow: hidden; }
+  .settings-tabs {
+    width: 200px; min-width: 200px;
+    border-right: 1px solid var(--border);
+    padding: 1.5rem 0;
+    overflow-y: auto;
+  }
+  .s-tab {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.82rem; color: var(--white-dim);
+    cursor: pointer; transition: all 0.15s;
+    border-left: 2px solid transparent;
+  }
+  .s-tab:hover { color: var(--white); background: rgba(255,255,255,0.02); }
+  .s-tab.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .s-tab-icon { font-size: 0.85rem; width: 16px; text-align: center; }
+  .settings-content { flex: 1; overflow-y: auto; padding: 2rem; }
+
+  /* PANELS */
+  .s-panel { display: none; }
+  .s-panel.active { display: block; }
+  .s-section { margin-bottom: 2rem; }
+  .s-section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem; font-weight: 600;
+    margin-bottom: 0.3rem;
+  }
+  .s-section-title em { font-style: italic; color: var(--gold); }
+  .s-section-sub { font-size: 0.82rem; color: var(--white-dim); margin-bottom: 1.5rem; line-height: 1.6; }
+  .s-card {
+    background: var(--black-2);
+    border: 1px solid var(--border);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .s-card-title { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); }
+  .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .field { margin-bottom: 1rem; }
+  .field:last-child { margin-bottom: 0; }
+  .field label { display: block; font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.4rem; }
+  .field input, .field select, .field textarea {
+    width: 100%; background: var(--black-3);
+    border: 1px solid var(--border); color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    padding: 0.65rem 0.9rem; outline: none; transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--gold); }
+  .field select option { background: var(--black-3); }
+  .field textarea { height: 90px; resize: vertical; }
+  .field-full { grid-column: 1 / -1; }
+
+  /* TOGGLE */
+  .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
+  .toggle-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .toggle-info { }
+  .toggle-label { font-size: 0.88rem; color: var(--white); font-weight: 400; }
+  .toggle-desc { font-size: 0.75rem; color: var(--white-dim); margin-top: 0.15rem; }
+  .toggle {
+    position: relative; width: 42px; height: 24px;
+    background: var(--black-4); border: 1px solid var(--border);
+    border-radius: 12px; cursor: pointer; transition: all 0.25s;
+    flex-shrink: 0;
+  }
+  .toggle.on { background: rgba(201,168,76,0.25); border-color: var(--gold); }
+  .toggle::after {
+    content: ''; position: absolute;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #444; top: 3px; left: 3px;
+    transition: all 0.25s;
+  }
+  .toggle.on::after { background: var(--gold); left: 19px; }
+
+  /* PLAN CARDS */
+  .plan-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--border); margin-bottom: 1rem; }
+  .plan-card { background: var(--black-2); padding: 1.25rem 1rem; cursor: pointer; transition: background 0.15s; border-top: 2px solid transparent; }
+  .plan-card:hover { background: var(--black-3); }
+  .plan-card.current { border-top-color: var(--gold); background: var(--black-3); }
+  .plan-card-name { font-family: 'Cormorant Garamond', serif; font-size: 1.2rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .plan-card-price { font-size: 0.82rem; color: var(--gold); margin-bottom: 0.75rem; }
+  .plan-card-features { font-size: 0.75rem; color: var(--white-dim); line-height: 1.7; }
+  .plan-badge-current { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--border-bright); padding: 0.15rem 0.5rem; display: inline-block; margin-bottom: 0.5rem; }
+
+  /* PAYMENT */
+  .payment-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .payment-card {
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    background: var(--black-2);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .payment-card:hover { border-color: var(--border-bright); }
+  .payment-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+  .payment-card-logo { font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .stripe-logo { color: #6772E5; }
+  .paypal-logo { color: #003087; background: #fff; padding: 0.15rem 0.5rem; display: inline-block; font-size: 0.85rem; }
+  .payment-card-label { font-size: 0.82rem; color: var(--white); margin-bottom: 0.2rem; }
+  .payment-card-sub { font-size: 0.72rem; color: var(--white-dim); }
+  .payment-selected-badge {
+    position: absolute; top: 0.6rem; right: 0.6rem;
+    font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid var(--border-bright);
+    padding: 0.15rem 0.45rem;
+  }
+
+  /* STRIPE FORM */
+  .stripe-form { background: var(--black-3); border: 1px solid var(--border); padding: 1.25rem; margin-top: 1rem; }
+  .stripe-form-title { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 1rem; }
+  .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+  .card-field { }
+  .card-field label { display: block; font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 0.35rem; }
+  .card-field input {
+    width: 100%; background: var(--black-2);
+    border: 1px solid var(--border); color: var(--white);
+    font-family: 'DM Sans', sans-serif; font-size: 0.88rem;
+    padding: 0.6rem 0.8rem; outline: none; transition: border-color 0.2s;
+  }
+  .card-field input:focus { border-color: var(--gold); }
+  .secure-note { font-size: 0.72rem; color: #444; margin-top: 0.75rem; display: flex; align-items: center; gap: 0.4rem; }
+  .pay-btn {
+    width: 100%; padding: 0.85rem;
+    background: var(--gold); color: var(--black);
+    border: none; font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.2s; margin-top: 1rem;
+  }
+  .pay-btn:hover { background: var(--gold-light); }
+  .paypal-btn {
+    width: 100%; padding: 0.85rem;
+    background: #FFC439; color: #003087;
+    border: none; font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem; font-weight: 700;
+    letter-spacing: 0.05em;
+    cursor: pointer; transition: all 0.2s; margin-top: 1rem;
+    display: none;
+  }
+  .paypal-btn:hover { background: #FFB800; }
+  .billing-history { }
+  .bh-row { display: flex; align-items: center; justify-content: space-between; padding: 0.7rem 0; border-bottom: 1px solid var(--border); font-size: 0.82rem; }
+  .bh-row:last-child { border-bottom: none; }
+  .bh-date { color: var(--white-dim); }
+  .bh-desc { color: var(--white); flex: 1; margin: 0 1rem; }
+  .bh-amount { color: var(--gold); font-weight: 500; }
+  .bh-status { font-size: 0.68rem; color: var(--green); border: 1px solid rgba(46,204,113,0.3); padding: 0.12rem 0.45rem; }
+
+  /* TEAM */
+  .team-member { display: flex; align-items: center; gap: 0.75rem; padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
+  .team-member:last-child { border-bottom: none; }
+  .team-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(201,168,76,0.1); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 500; color: var(--gold); flex-shrink: 0; }
+  .team-info { flex: 1; }
+  .team-name { font-size: 0.85rem; font-weight: 500; color: var(--white); }
+  .team-email { font-size: 0.72rem; color: var(--white-dim); }
+  .team-role { font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.15rem 0.5rem; }
+  .role-owner { color: var(--gold); border: 1px solid var(--border-bright); }
+  .role-admin { color: var(--white-dim); border: 1px solid rgba(255,255,255,0.12); }
+  .role-member { color: #555; border: 1px solid #333; }
+  .team-actions { display: flex; gap: 0.5rem; }
+  .t-btn { font-size: 0.68rem; padding: 0.25rem 0.6rem; border: 1px solid var(--border); background: transparent; color: var(--white-dim); cursor: pointer; transition: all 0.15s; }
+  .t-btn:hover { border-color: var(--border-bright); color: var(--white); }
+  .t-btn.danger:hover { border-color: rgba(231,76,60,0.5); color: var(--red); }
+  .add-member-btn {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.78rem; color: var(--gold);
+    border: 1px dashed var(--border-bright);
+    padding: 0.75rem 1rem; width: 100%;
+    background: transparent; cursor: pointer;
+    transition: all 0.15s; margin-top: 0.75rem;
+  }
+  .add-member-btn:hover { background: rgba(201,168,76,0.04); }
+
+  /* AI BOT */
+  .bot-script-area { background: var(--black-3); border: 1px solid var(--border); padding: 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.82rem; color: var(--white-dim); width: 100%; min-height: 140px; outline: none; resize: vertical; transition: border-color 0.2s; line-height: 1.7; }
+  .bot-script-area:focus { border-color: var(--gold); }
+  .voice-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 0.75rem; }
+  .voice-card { border: 1px solid var(--border); padding: 0.85rem; cursor: pointer; transition: all 0.15s; text-align: center; }
+  .voice-card:hover { border-color: var(--border-bright); }
+  .voice-card.selected { border-color: var(--gold); background: rgba(201,168,76,0.05); }
+  .voice-name { font-size: 0.82rem; font-weight: 500; color: var(--white); margin-bottom: 0.15rem; }
+  .voice-style { font-size: 0.7rem; color: var(--white-dim); }
+  .filter-level { display: flex; gap: 0.5rem; }
+  .fl-opt { flex: 1; border: 1px solid var(--border); padding: 0.6rem; text-align: center; cursor: pointer; font-size: 0.75rem; transition: all 0.15s; color: var(--white-dim); }
+  .fl-opt:hover { border-color: var(--border-bright); }
+  .fl-opt.selected { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.05); }
+
+  /* PASSWORD */
+  .security-row { display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 0; border-bottom: 1px solid var(--border); }
+  .security-row:last-child { border-bottom: none; }
+  .security-label { font-size: 0.85rem; color: var(--white); }
+  .security-sub { font-size: 0.72rem; color: var(--white-dim); margin-top: 0.15rem; }
+  .sec-action { font-size: 0.75rem; color: var(--gold); cursor: pointer; border: 1px solid var(--border-bright); padding: 0.3rem 0.75rem; transition: all 0.15s; background: transparent; }
+  .sec-action:hover { background: var(--gold); color: var(--black); }
+  .sec-status-on { font-size: 0.68rem; color: var(--green); border: 1px solid rgba(46,204,113,0.3); padding: 0.15rem 0.5rem; }
+  .sec-status-off { font-size: 0.68rem; color: #555; border: 1px solid #333; padding: 0.15rem 0.5rem; }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--black-3); border: 1px solid var(--gold);
+    color: var(--white); padding: 0.85rem 1.5rem;
+    font-size: 0.85rem; z-index: 999;
+    transform: translateY(20px); opacity: 0;
+    transition: all 0.3s;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); }
+
+  @media (max-width: 900px) {
+    .sidebar { transform: translateX(-100%); }
+    .sidebar.open { transform: translateX(0); }
+    .main { margin-left: 0; }
+    .hamburger { display: block; }
+    .settings-tabs { display: none; }
+    .settings-tabs.mobile-open { display: block; position: fixed; inset: 0; background: var(--black-2); z-index: 200; padding: 4rem 0 2rem; overflow-y: auto; }
+    .field-grid { grid-template-columns: 1fr; }
+    .plan-grid { grid-template-columns: 1fr; }
+    .payment-methods { grid-template-columns: 1fr; }
+    .voice-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- MOBILE OVERLAY -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <a class="sidebar-logo" href="newsites.html">NEW<span>SITES</span>.COM</a>
+  <div class="sidebar-user">
+    <div class="user-avatar">MJ</div>
+    <div>
+      <div class="user-name">Marcus Johnson</div>
+      <div class="user-plan">Growth Plan</div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section-label">Overview</div>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">◈</span><span>Dashboard</span></a>
+    <div class="nav-section-label">AI Engine</div>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">◎</span><span>Calls & Queue</span></a>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">⬟</span><span>Lead Pipeline</span></a>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">◉</span><span>Appointments</span></a>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">◇</span><span>SMS & Follow-Ups</span></a>
+    <div class="nav-section-label">Growth</div>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">⬡</span><span>Revenue</span></a>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">○</span><span>Reviews</span></a>
+    <a class="nav-item" href="dashboard.html"><span class="nav-icon">◑</span><span>Social Media</span></a>
+    <div class="nav-section-label">Account</div>
+    <a class="nav-item active" href="settings.html"><span class="nav-icon">⬢</span><span>Settings</span></a>
+  </div>
+  <div class="sidebar-footer">
+    <a class="signout-btn" href="signin.html">← Sign out</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()">☰</button>
+      <div class="topbar-title">Account <span>settings</span></div>
+    </div>
+    <button class="save-btn" onclick="saveSettings()">Save changes</button>
+  </div>
+
+  <div class="settings-wrap">
+    <!-- SETTINGS TABS -->
+    <div class="settings-tabs" id="settings-tabs">
+      <div class="s-tab active" onclick="showPanel('profile')"><span class="s-tab-icon">◎</span> Profile</div>
+      <div class="s-tab" onclick="showPanel('billing')"><span class="s-tab-icon">⬡</span> Plan & Billing</div>
+      <div class="s-tab" onclick="showPanel('notifications')"><span class="s-tab-icon">◇</span> Notifications</div>
+      <div class="s-tab" onclick="showPanel('bot')"><span class="s-tab-icon">◈</span> AI Bot</div>
+      <div class="s-tab" onclick="showPanel('security')"><span class="s-tab-icon">◉</span> Security</div>
+      <div class="s-tab" onclick="showPanel('team')"><span class="s-tab-icon">⬟</span> Team</div>
+    </div>
+
+    <!-- SETTINGS CONTENT -->
+    <div class="settings-content">
+
+      <!-- PROFILE -->
+      <div class="s-panel active" id="panel-profile">
+        <div class="s-section">
+          <h2 class="s-section-title">Profile & <em>business info</em></h2>
+          <p class="s-section-sub">This information appears on your website and is used by your AI bot when answering calls.</p>
+          <div class="s-card">
+            <div class="s-card-title">Personal info</div>
+            <div class="field-grid">
+              <div class="field"><label>First name</label><input type="text" value="Marcus" /></div>
+              <div class="field"><label>Last name</label><input type="text" value="Johnson" /></div>
+              <div class="field"><label>Email address</label><input type="email" value="marcus@apexhvac.com" /></div>
+              <div class="field"><label>Phone number</label><input type="tel" value="(713) 555-0142" /></div>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Business info</div>
+            <div class="field-grid">
+              <div class="field"><label>Business name</label><input type="text" value="Apex HVAC Services" /></div>
+              <div class="field"><label>Industry</label><input type="text" value="HVAC / Home Services" /></div>
+              <div class="field"><label>Business phone</label><input type="tel" value="(713) 555-0100" /></div>
+              <div class="field"><label>Website</label><input type="text" value="apexhvac.newsites.com" /></div>
+              <div class="field field-full"><label>Business address</label><input type="text" value="1427 Oak St, Houston, TX 77001" /></div>
+              <div class="field field-full"><label>Business description (used by AI bot)</label><textarea>We are Houston's top-rated HVAC company, offering 24/7 repair, installation, and maintenance. Licensed, bonded, and insured since 2012.</textarea></div>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Social & online presence</div>
+            <div class="field-grid">
+              <div class="field"><label>Google Business Profile</label><input type="text" placeholder="https://g.co/..." /></div>
+              <div class="field"><label>Facebook page</label><input type="text" placeholder="https://facebook.com/..." /></div>
+              <div class="field"><label>Instagram handle</label><input type="text" placeholder="@apexhvac" /></div>
+              <div class="field"><label>Google Business ID</label><input type="text" placeholder="ChIJ..." /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BILLING -->
+      <div class="s-panel" id="panel-billing">
+        <div class="s-section">
+          <h2 class="s-section-title">Plan & <em>billing</em></h2>
+          <p class="s-section-sub">Manage your subscription, upgrade your plan, and update your payment method.</p>
+
+          <div class="s-card">
+            <div class="s-card-title">Current plan</div>
+            <div class="plan-grid">
+              <div class="plan-card">
+                <div class="plan-card-name">Starter</div>
+                <div class="plan-card-price">$97 / month</div>
+                <div class="plan-card-features">Website · Landing pages · Call scripts</div>
+              </div>
+              <div class="plan-card current">
+                <div class="plan-badge-current">Current plan</div>
+                <div class="plan-card-name">Growth</div>
+                <div class="plan-card-price">$297 / month</div>
+                <div class="plan-card-features">+ 24/7 AI calls · Scheduling · SMS follow-ups · CRM · Google leads</div>
+              </div>
+              <div class="plan-card">
+                <div class="plan-card-name">Empire</div>
+                <div class="plan-card-price">$597 / month</div>
+                <div class="plan-card-features">+ Unlimited calls · Social · Reviews · Account manager · Strategy calls</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:0.75rem;margin-top:1rem;">
+              <button class="pay-btn" style="flex:1;" onclick="showToast('Plan upgrade request sent!')">Upgrade to Empire</button>
+              <button style="flex:1;padding:0.85rem;background:transparent;border:1px solid rgba(231,76,60,0.3);color:var(--red);font-family:DM Sans,sans-serif;font-size:0.78rem;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;" onclick="showToast('Cancellation request sent. We will contact you.')">Cancel plan</button>
+            </div>
+          </div>
+
+          <div class="s-card">
+            <div class="s-card-title">Payment method</div>
+            <div class="payment-methods">
+              <div class="payment-card selected" id="pm-stripe" onclick="selectPayment('stripe')">
+                <div class="payment-selected-badge" id="stripe-badge">Active</div>
+                <div class="payment-card-logo stripe-logo">Stripe</div>
+                <div class="payment-card-label">Credit / Debit Card</div>
+                <div class="payment-card-sub">Visa, Mastercard, Amex, Discover</div>
+              </div>
+              <div class="payment-card" id="pm-paypal" onclick="selectPayment('paypal')">
+                <div class="payment-card-logo"><span class="paypal-logo">PayPal</span></div>
+                <div class="payment-card-label">PayPal</div>
+                <div class="payment-card-sub">Pay with your PayPal balance or linked bank</div>
+              </div>
+            </div>
+
+            <!-- STRIPE FORM -->
+            <div class="stripe-form" id="stripe-form">
+              <div class="stripe-form-title">Card details</div>
+              <div class="field" style="margin-bottom:0.75rem;">
+                <label>Cardholder name</label>
+                <input type="text" value="Marcus Johnson" />
+              </div>
+              <div class="field" style="margin-bottom:0.75rem;">
+                <label>Card number</label>
+                <input type="text" value="•••• •••• •••• 4242" />
+              </div>
+              <div class="card-row">
+                <div class="card-field"><label>Expiry</label><input type="text" value="09 / 27" /></div>
+                <div class="card-field"><label>CVC</label><input type="text" placeholder="•••" /></div>
+              </div>
+              <div class="secure-note">🔒 Payments secured by Stripe. We never store your card details.</div>
+              <button class="pay-btn" onclick="showToast('Card updated successfully!')">Update card</button>
+            </div>
+
+            <!-- PAYPAL FORM -->
+            <div id="paypal-form" style="display:none;margin-top:1rem;background:var(--black-3);border:1px solid var(--border);padding:1.25rem;">
+              <div class="stripe-form-title">Connect PayPal</div>
+              <p style="font-size:0.82rem;color:var(--white-dim);margin-bottom:1rem;line-height:1.6;">Click below to authorize NEWSITES.COM to charge your PayPal account monthly.</p>
+              <button class="paypal-btn" style="display:block;" onclick="showToast('Redirecting to PayPal...')">Connect PayPal account →</button>
+            </div>
+          </div>
+
+          <div class="s-card">
+            <div class="s-card-title">Billing history</div>
+            <div class="billing-history">
+              <div class="bh-row"><span class="bh-date">Mar 1, 2025</span><span class="bh-desc">Growth Plan — Monthly</span><span class="bh-amount">$297.00</span><span class="bh-status">Paid</span></div>
+              <div class="bh-row"><span class="bh-date">Feb 1, 2025</span><span class="bh-desc">Growth Plan — Monthly</span><span class="bh-amount">$297.00</span><span class="bh-status">Paid</span></div>
+              <div class="bh-row"><span class="bh-date">Jan 1, 2025</span><span class="bh-desc">Growth Plan — Monthly</span><span class="bh-amount">$297.00</span><span class="bh-status">Paid</span></div>
+              <div class="bh-row"><span class="bh-date">Dec 1, 2024</span><span class="bh-desc">Starter Plan — Monthly</span><span class="bh-amount">$97.00</span><span class="bh-status">Paid</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NOTIFICATIONS -->
+      <div class="s-panel" id="panel-notifications">
+        <div class="s-section">
+          <h2 class="s-section-title">Notification <em>preferences</em></h2>
+          <p class="s-section-sub">Choose how and when you get notified about your leads, calls, and AI activity.</p>
+          <div class="s-card">
+            <div class="s-card-title">SMS notifications</div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">New lead captured</div><div class="toggle-desc">Get a text every time the AI captures a new lead</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Missed call alert</div><div class="toggle-desc">Notified instantly when a call is missed and auto-callback is queued</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Appointment booked</div><div class="toggle-desc">Text when a customer books via call, SMS, or website</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Bad lead filtered</div><div class="toggle-desc">Know when the AI blocks a spam or low-quality lead</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">New review received</div><div class="toggle-desc">Get a text when a new Google or Facebook review comes in</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Email notifications</div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Daily summary report</div><div class="toggle-desc">Morning email with yesterday's calls, leads, and revenue</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Weekly performance digest</div><div class="toggle-desc">Full weekly breakdown every Monday at 8am</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Billing receipts</div><div class="toggle-desc">Email confirmation of every charge</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">AI bot activity alerts</div><div class="toggle-desc">Notified when the bot flags an unusual call or lead</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Quiet hours</div>
+            <div class="field-grid">
+              <div class="field"><label>No notifications from</label><input type="time" value="22:00" /></div>
+              <div class="field"><label>Until</label><input type="time" value="07:00" /></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI BOT -->
+      <div class="s-panel" id="panel-bot">
+        <div class="s-section">
+          <h2 class="s-section-title">AI bot <em>settings</em></h2>
+          <p class="s-section-sub">Customize how your AI answers calls, qualifies leads, and communicates with customers.</p>
+          <div class="s-card">
+            <div class="s-card-title">Bot greeting script</div>
+            <div class="field" style="margin-bottom:0.75rem;">
+              <label>Opening greeting (what the bot says first)</label>
+              <textarea class="bot-script-area">Thank you for calling Apex HVAC Services! I'm your automated assistant. I can help you schedule a service, get a free quote, or answer questions about our services. How can I help you today?</textarea>
+            </div>
+            <div class="field">
+              <label>Busy / queue message</label>
+              <textarea class="bot-script-area" style="min-height:80px;">All of our team members are currently assisting other customers. You are number {position} in line. Your estimated wait time is {wait_time} minutes. I'll send you a text to confirm. Would you like to stay on the line or receive a callback?</textarea>
+            </div>
+            <div class="field">
+              <label>Call script / offer (what the AI pitches)</label>
+              <textarea class="bot-script-area">We're currently offering a FREE 20-point HVAC inspection for new customers — a $149 value. I can book that for you right now. What day works best this week?</textarea>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">AI voice</div>
+            <div class="voice-grid">
+              <div class="voice-card selected" onclick="selectVoice(this)"><div class="voice-name">Alex</div><div class="voice-style">Friendly · Professional</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Jordan</div><div class="voice-style">Warm · Conversational</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Morgan</div><div class="voice-style">Confident · Direct</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Taylor</div><div class="voice-style">Calm · Reassuring</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Riley</div><div class="voice-style">Energetic · Upbeat</div></div>
+              <div class="voice-card" onclick="selectVoice(this)"><div class="voice-name">Casey</div><div class="voice-style">Formal · Precise</div></div>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Lead filter sensitivity</div>
+            <p style="font-size:0.78rem;color:var(--white-dim);margin-bottom:0.75rem;line-height:1.6;">How aggressively should the AI filter out bad leads and spam calls?</p>
+            <div class="filter-level">
+              <div class="fl-opt" onclick="selectFilter(this)">Low<br><span style="font-size:0.65rem;">Let most through</span></div>
+              <div class="fl-opt selected" onclick="selectFilter(this)">Medium<br><span style="font-size:0.65rem;">Balanced</span></div>
+              <div class="fl-opt" onclick="selectFilter(this)">High<br><span style="font-size:0.65rem;">Strict filtering</span></div>
+            </div>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Bot behavior</div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">24/7 answering enabled</div><div class="toggle-desc">Bot answers all inbound calls round the clock</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Auto SMS when busy</div><div class="toggle-desc">Automatically text callers their queue position if line is busy</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Auto callback</div><div class="toggle-desc">Automatically call missed callers back when available</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Book appointments autonomously</div><div class="toggle-desc">Bot can book appointments without your approval</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+            <div class="toggle-row"><div class="toggle-info"><div class="toggle-label">Require your approval for bookings</div><div class="toggle-desc">Bot holds the slot and sends you an approval request first</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECURITY -->
+      <div class="s-panel" id="panel-security">
+        <div class="s-section">
+          <h2 class="s-section-title">Password & <em>security</em></h2>
+          <p class="s-section-sub">Keep your account protected with a strong password and two-factor authentication.</p>
+          <div class="s-card">
+            <div class="s-card-title">Change password</div>
+            <div class="field"><label>Current password</label><input type="password" placeholder="••••••••" /></div>
+            <div class="field-grid">
+              <div class="field"><label>New password</label><input type="password" placeholder="Min. 8 characters" /></div>
+              <div class="field"><label>Confirm new password</label><input type="password" placeholder="Repeat password" /></div>
+            </div>
+            <button class="pay-btn" style="margin-top:0.5rem;" onclick="showToast('Password updated successfully!')">Update password</button>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Security settings</div>
+            <div class="security-row">
+              <div><div class="security-label">Two-factor authentication</div><div class="security-sub">Require a code from your phone when signing in</div></div>
+              <div style="display:flex;align-items:center;gap:0.75rem;">
+                <span class="sec-status-off" id="tfa-status">Off</span>
+                <button class="sec-action" onclick="toggleTFA()">Enable 2FA</button>
+              </div>
+            </div>
+            <div class="security-row">
+              <div><div class="security-label">Active sessions</div><div class="security-sub">You are logged in on 1 device</div></div>
+              <button class="sec-action" onclick="showToast('All other sessions signed out.')">Sign out all devices</button>
+            </div>
+            <div class="security-row">
+              <div><div class="security-label">Login history</div><div class="security-sub">Last login: Today, 8:42 AM from Houston, TX</div></div>
+              <button class="sec-action" onclick="showToast('Login history emailed to you.')">Email history</button>
+            </div>
+            <div class="security-row">
+              <div><div class="security-label">Delete account</div><div class="security-sub">Permanently delete your account and all data</div></div>
+              <button style="font-size:0.75rem;padding:0.3rem 0.75rem;background:transparent;border:1px solid rgba(231,76,60,0.35);color:var(--red);cursor:pointer;" onclick="showToast('Contact support to delete your account.')">Delete account</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TEAM -->
+      <div class="s-panel" id="panel-team">
+        <div class="s-section">
+          <h2 class="s-section-title">Team <em>members</em></h2>
+          <p class="s-section-sub">Add team members to your account. Admins can access the dashboard. Members can view reports only.</p>
+          <div class="s-card">
+            <div class="s-card-title">Your team</div>
+            <div class="team-member">
+              <div class="team-avatar">MJ</div>
+              <div class="team-info"><div class="team-name">Marcus Johnson</div><div class="team-email">marcus@apexhvac.com</div></div>
+              <span class="team-role role-owner">Owner</span>
+            </div>
+            <div class="team-member">
+              <div class="team-avatar">SC</div>
+              <div class="team-info"><div class="team-name">Sarah Chen</div><div class="team-email">sarah@apexhvac.com</div></div>
+              <span class="team-role role-admin">Admin</span>
+              <div class="team-actions">
+                <button class="t-btn" onclick="showToast('Role updated.')">Edit</button>
+                <button class="t-btn danger" onclick="showToast('Member removed.')">Remove</button>
+              </div>
+            </div>
+            <div class="team-member">
+              <div class="team-avatar">TM</div>
+              <div class="team-info"><div class="team-name">Tyler Moore</div><div class="team-email">tyler@apexhvac.com</div></div>
+              <span class="team-role role-member">Member</span>
+              <div class="team-actions">
+                <button class="t-btn" onclick="showToast('Role updated.')">Edit</button>
+                <button class="t-btn danger" onclick="showToast('Member removed.')">Remove</button>
+              </div>
+            </div>
+            <button class="add-member-btn" onclick="showToast('Invite sent!')">+ Invite team member</button>
+          </div>
+          <div class="s-card">
+            <div class="s-card-title">Invite new member</div>
+            <div class="field-grid">
+              <div class="field"><label>Email address</label><input type="email" placeholder="teammate@yourbiz.com" /></div>
+              <div class="field"><label>Role</label><select><option>Admin</option><option>Member</option></select></div>
+            </div>
+            <button class="pay-btn" style="margin-top:0.5rem;" onclick="showToast('Invitation sent!')">Send invite</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /settings-content -->
+  </div><!-- /settings-wrap -->
+</div><!-- /main -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let tfa = false;
+
+  function showPanel(id) {
+    document.querySelectorAll('.s-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.s-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  function selectPayment(type) {
+    document.getElementById('pm-stripe').classList.toggle('selected', type === 'stripe');
+    document.getElementById('pm-paypal').classList.toggle('selected', type === 'paypal');
+    document.getElementById('stripe-badge').style.display = type === 'stripe' ? 'block' : 'none';
+    document.getElementById('stripe-form').style.display = type === 'stripe' ? 'block' : 'none';
+    document.getElementById('paypal-form').style.display = type === 'paypal' ? 'block' : 'none';
+  }
+
+  function selectVoice(el) {
+    document.querySelectorAll('.voice-card').forEach(v => v.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectFilter(el) {
+    document.querySelectorAll('.fl-opt').forEach(f => f.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function toggleTFA() {
+    tfa = !tfa;
+    document.getElementById('tfa-status').textContent = tfa ? 'On' : 'Off';
+    document.getElementById('tfa-status').className = tfa ? 'sec-status-on' : 'sec-status-off';
+    showToast(tfa ? '2FA enabled.' : '2FA disabled.');
+  }
+
+  function saveSettings() {
+    showToast('Settings saved successfully!');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+  }
+
+  function toggleSidebar() {
+    const sb = document.getElementById('sidebar');
+    const ov = document.getElementById('sidebar-overlay');
+    sb.classList.toggle('open');
+    ov.classList.toggle('show');
+  }
+
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('show');
+  }
+</script>
+</body>
+</html>
