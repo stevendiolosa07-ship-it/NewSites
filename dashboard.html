@@ -101,6 +101,7 @@
     transition: all 0.15s;
     border-left: 2px solid transparent;
     position: relative;
+    text-decoration: none;
   }
   .nav-item:hover { color: var(--white); background: rgba(255,255,255,0.03); }
   .nav-item.active { color: var(--gold); border-left-color: var(--gold); background: rgba(201,168,76,0.05); }
@@ -202,7 +203,8 @@
     padding: 1.25rem;
   }
   .panel-title { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white-dim); margin-bottom: 1rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-  .panel-title-action { font-size: 0.68rem; color: var(--gold); cursor: pointer; }
+  .panel-title-action { font-size: 0.68rem; color: var(--gold); cursor: pointer; text-decoration: none; }
+  .panel-title-action:hover { text-decoration: underline; }
 
   /* CALL QUEUE */
   .call-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); }
@@ -232,6 +234,7 @@
   .tag-cold { background: rgba(52,152,219,0.1); color: var(--blue); border: 1px solid rgba(52,152,219,0.25); }
   .tag-booked { background: rgba(46,204,113,0.1); color: var(--green); border: 1px solid rgba(46,204,113,0.25); }
   .tag-filtered { background: rgba(255,255,255,0.04); color: #555; border: 1px solid #333; }
+  .tag-new { background: rgba(52,152,219,0.1); color: var(--blue); border: 1px solid rgba(52,152,219,0.25); }
 
   /* APPOINTMENTS */
   .appt-item { display: flex; gap: 0.75rem; padding: 0.65rem 0; border-bottom: 1px solid var(--border); align-items: flex-start; }
@@ -287,6 +290,28 @@
   .social-status { font-size: 0.62rem; padding: 0.15rem 0.5rem; }
   .s-scheduled { color: var(--orange); border: 1px solid rgba(230,126,34,0.3); background: rgba(230,126,34,0.06); }
   .s-posted { color: var(--green); border: 1px solid rgba(46,204,113,0.3); background: rgba(46,204,113,0.06); }
+
+  /* CRM PANEL */
+  .crm-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); margin-bottom: 1rem; }
+  .crm-stat { background: var(--black-3); padding: 0.85rem 1rem; text-align: center; }
+  .crm-stat-num { font-family: 'Cormorant Garamond', serif; font-size: 1.8rem; font-weight: 700; color: var(--gold); line-height: 1; }
+  .crm-stat-label { font-size: 0.62rem; color: var(--white-dim); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.25rem; }
+  .crm-open-btn {
+    display: block;
+    text-align: center;
+    background: rgba(201,168,76,0.08);
+    border: 1px solid var(--border-bright);
+    color: var(--gold);
+    padding: 0.6rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+    margin-top: 0.75rem;
+  }
+  .crm-open-btn:hover { background: var(--gold); color: var(--black); }
+  .crm-loading { text-align: center; color: var(--white-dim); font-size: 0.8rem; padding: 1rem; }
 
   /* BOOK DEMO BANNER */
   .book-banner {
@@ -346,7 +371,6 @@
     transition: all 0.15s; margin-right: 0.5rem;
   }
   .hamburger:hover { border-color: var(--gold); color: var(--gold); }
-  /* SCROLL */
   ::-webkit-scrollbar { width: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
   ::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.2); }
@@ -368,6 +392,7 @@
     .book-banner { flex-direction: column; }
     .modal { max-width: 96vw; padding: 1.5rem; }
     .time-slots { grid-template-columns: repeat(3,1fr); }
+    .crm-stats { grid-template-columns: repeat(2,1fr); }
   }
 </style>
 </head>
@@ -414,6 +439,11 @@
     <div class="nav-item" onclick="showPage('social')">
       <span class="nav-icon">◑</span><span>Social Media</span>
     </div>
+    <div class="nav-section-label">Tools</div>
+    <a class="nav-item" href="http://164.92.110.116:3003" target="_blank">
+      <span class="nav-icon">⬛</span><span>CRM</span>
+      <span class="nav-badge gold" id="crm-badge">—</span>
+    </a>
     <div class="nav-section-label">Account</div>
     <div class="nav-item" onclick="openBooking()">
       <span class="nav-icon">✦</span><span>Book Strategy Call</span>
@@ -515,32 +545,14 @@
         </div>
       </div>
 
+      <!-- LIVE CRM PANEL -->
       <div class="panel">
-        <div class="panel-title">Recent leads <span class="panel-title-action" onclick="showPage('leads')">View pipeline</span></div>
-        <div class="lead-row">
-          <div class="lead-avatar">SR</div>
-          <div class="lead-info"><div class="lead-name">Sandra R.</div><div class="lead-source">Google Business · Called in</div></div>
-          <span class="lead-tag tag-hot">Hot</span>
+        <div class="panel-title">
+          CRM — Live contacts
+          <a class="panel-title-action" href="http://164.92.110.116:3003" target="_blank">Open CRM ↗</a>
         </div>
-        <div class="lead-row">
-          <div class="lead-avatar">DL</div>
-          <div class="lead-info"><div class="lead-name">Derek L.</div><div class="lead-source">Facebook DM</div></div>
-          <span class="lead-tag tag-booked">Booked</span>
-        </div>
-        <div class="lead-row">
-          <div class="lead-avatar">MC</div>
-          <div class="lead-info"><div class="lead-name">Maria C.</div><div class="lead-source">Website form</div></div>
-          <span class="lead-tag tag-warm">Warm</span>
-        </div>
-        <div class="lead-row">
-          <div class="lead-avatar">JT</div>
-          <div class="lead-info"><div class="lead-name">James T.</div><div class="lead-source">Instagram DM</div></div>
-          <span class="lead-tag tag-cold">Cold</span>
-        </div>
-        <div class="lead-row">
-          <div class="lead-avatar">??</div>
-          <div class="lead-info"><div class="lead-name">Unknown caller</div><div class="lead-source">Inbound call · No info given</div></div>
-          <span class="lead-tag tag-filtered">Filtered</span>
+        <div id="crm-panel-content">
+          <div class="crm-loading">Loading CRM data...</div>
         </div>
       </div>
     </div>
@@ -617,12 +629,6 @@
         <div class="call-info"><div class="call-name">James T. — (404) 555-0091</div><div class="call-detail">Missed · Auto-callback at 3:30pm · SMS sent ✓</div></div>
         <button class="call-action-btn">Call now</button>
       </div>
-      <div class="call-item">
-        <div class="call-status missed"></div>
-        <div class="call-pos">—</div>
-        <div class="call-info"><div class="call-name">Unknown — (832) 555-0404</div><div class="call-detail">Filtered — AI detected spam/solicitor · No callback</div></div>
-        <span style="font-size:0.68rem;color:#444;">Blocked</span>
-      </div>
     </div>
   </div>
 
@@ -642,7 +648,6 @@
       <div class="lead-row"><div class="lead-avatar">JT</div><div class="lead-info"><div class="lead-name">James T.</div><div class="lead-source">Instagram DM · Plumbing · (404) 555-0091</div></div><span class="lead-tag tag-cold">Cold</span></div>
       <div class="lead-row"><div class="lead-avatar">AL</div><div class="lead-info"><div class="lead-name">Amanda L.</div><div class="lead-source">Text message · Electrical · (214) 555-0339</div></div><span class="lead-tag tag-booked">Booked</span></div>
       <div class="lead-row"><div class="lead-avatar">RK</div><div class="lead-info"><div class="lead-name">Robert K.</div><div class="lead-source">Google Business · Painting · (303) 555-0184</div></div><span class="lead-tag tag-hot">Hot</span></div>
-      <div class="lead-row"><div class="lead-avatar">??</div><div class="lead-info"><div class="lead-name">Unknown · solicitor</div><div class="lead-source">Inbound call · AI flagged as spam</div></div><span class="lead-tag tag-filtered">Filtered</span></div>
     </div>
   </div>
 
@@ -656,10 +661,9 @@
     </div>
     <div class="panel">
       <div class="panel-title">Upcoming appointments <span class="panel-title-action" onclick="openBooking()">+ Book a call</span></div>
-      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">9:00</div><div class="appt-ampm">AM</div></div><div class="appt-info"><div class="appt-name">Sandra R. — HVAC estimate</div><div class="appt-detail">1427 Oak St · (713) 555-0142 · Booked via AI call</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
-      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">11:30</div><div class="appt-ampm">AM</div></div><div class="appt-info"><div class="appt-name">Derek L. — Landscaping consult</div><div class="appt-detail">2890 Elm Ave · (602) 555-0388 · Booked via Facebook DM</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
-      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">2:00</div><div class="appt-ampm">PM</div></div><div class="appt-info"><div class="appt-name">Maria C. — Roof inspection</div><div class="appt-detail">500 Pine Blvd · (512) 555-0217 · Booked via website</div></div><span class="appt-status appt-pending">Pending</span></div>
-      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">4:00</div><div class="appt-ampm">PM</div></div><div class="appt-info"><div class="appt-name">Amanda L. — Electrical quote</div><div class="appt-detail">788 Birch Rd · (214) 555-0339 · Booked via text</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">9:00</div><div class="appt-ampm">AM</div></div><div class="appt-info"><div class="appt-name">Sandra R. — HVAC estimate</div><div class="appt-detail">1427 Oak St · (713) 555-0142</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">11:30</div><div class="appt-ampm">AM</div></div><div class="appt-info"><div class="appt-name">Derek L. — Landscaping consult</div><div class="appt-detail">2890 Elm Ave · (602) 555-0388</div></div><span class="appt-status appt-confirmed">Confirmed</span></div>
+      <div class="appt-item"><div class="appt-time-block"><div class="appt-time">2:00</div><div class="appt-ampm">PM</div></div><div class="appt-info"><div class="appt-name">Maria C. — Roof inspection</div><div class="appt-detail">500 Pine Blvd · (512) 555-0217</div></div><span class="appt-status appt-pending">Pending</span></div>
     </div>
   </div>
 
@@ -673,12 +677,9 @@
     </div>
     <div class="panel">
       <div class="panel-title">SMS log & follow-up sequences</div>
-      <div class="sms-item"><div class="sms-header"><div class="sms-name">Derek L.</div><div class="sms-time">10:42 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Derek! You're #1 in queue. Est. wait: 2 min. We'll call you right back — hang tight!</div></div>
-      <div class="sms-item"><div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:15 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Maria, reminder: your appointment is today at 2pm at 500 Pine Blvd. Reply YES to confirm or RESCHEDULE to change it.</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Derek L.</div><div class="sms-time">10:42 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Derek! You're #1 in queue. Est. wait: 2 min.</div></div>
+      <div class="sms-item"><div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:15 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hi Maria, reminder: your appointment is today at 2pm. Reply YES to confirm.</div></div>
       <div class="sms-item"><div class="sms-header"><div class="sms-name">Maria C.</div><div class="sms-time">10:17 AM</div></div><div class="sms-msg"><span class="sms-dir sms-in">IN</span>YES — see you then!</div></div>
-      <div class="sms-item"><div class="sms-header"><div class="sms-name">James T.</div><div class="sms-time">9:55 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">OUT</span>Hey James! Sorry we missed your call. We've got you scheduled for a callback at 3:30pm today. Does that work?</div></div>
-      <div class="sms-item"><div class="sms-header"><div class="sms-name">Robert K. — Follow-up Day 2</div><div class="sms-time">9:00 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">AUTO</span>Hi Robert, just following up on your painting quote from yesterday. Ready to get started? Reply or call us anytime.</div></div>
-      <div class="sms-item"><div class="sms-header"><div class="sms-name">Amanda L. — Follow-up Day 1</div><div class="sms-time">8:30 AM</div></div><div class="sms-msg"><span class="sms-dir sms-out">AUTO</span>Hi Amanda! Thanks for reaching out yesterday. Your appointment is confirmed for 4pm today. See you soon!</div></div>
     </div>
   </div>
 
@@ -712,13 +713,12 @@
       <div class="stat-card"><div class="sc-label">Avg. rating</div><div class="sc-value gold">4.9 ★</div></div>
       <div class="stat-card"><div class="sc-label">Total reviews</div><div class="sc-value">84</div></div>
       <div class="stat-card"><div class="sc-label">This month</div><div class="sc-value green">17</div></div>
-      <div class="stat-card"><div class="sc-label">Requests sent</div><div class="sc-value">23</div><div class="sc-delta">74% response rate</div></div>
+      <div class="stat-card"><div class="sc-label">Requests sent</div><div class="sc-value">23</div></div>
     </div>
     <div class="panel">
       <div class="panel-title">Recent reviews</div>
-      <div class="review-item"><div class="review-header"><div><div class="review-name">Sandra R.</div><div class="review-platform">Google · 2 days ago</div></div><div class="review-stars">★★★★★</div></div><div class="review-text">"Showed up on time, got the job done fast, and the price was fair. Will definitely use again."</div></div>
-      <div class="review-item"><div class="review-header"><div><div class="review-name">Derek L.</div><div class="review-platform">Google · 5 days ago</div></div><div class="review-stars">★★★★★</div></div><div class="review-text">"Best service I've had in years. The booking process was super easy and they followed up after too."</div></div>
-      <div class="review-item"><div class="review-header"><div><div class="review-name">Amanda L.</div><div class="review-platform">Facebook · 1 week ago</div></div><div class="review-stars">★★★★☆</div></div><div class="review-text">"Great work overall. Arrived a little late but the quality was excellent. Would recommend."</div></div>
+      <div class="review-item"><div class="review-header"><div><div class="review-name">Sandra R.</div><div class="review-platform">Google · 2 days ago</div></div><div class="review-stars">★★★★★</div></div><div class="review-text">"Showed up on time, got the job done fast, and the price was fair."</div></div>
+      <div class="review-item"><div class="review-header"><div><div class="review-name">Derek L.</div><div class="review-platform">Google · 5 days ago</div></div><div class="review-stars">★★★★★</div></div><div class="review-text">"Best service I've had in years. The booking process was super easy."</div></div>
     </div>
   </div>
 
@@ -732,10 +732,8 @@
     </div>
     <div class="panel">
       <div class="panel-title">Scheduled & posted content</div>
-      <div class="social-item"><div class="social-platform sp-fb">f</div><div class="social-info"><div class="social-text">Spring is here — is your HVAC ready? Book a free tune-up this week and save 15%. Limited slots!</div><div class="social-meta">Facebook · Scheduled for Today 2:00 PM</div></div><span class="social-status s-scheduled">Scheduled</span></div>
-      <div class="social-item"><div class="social-platform sp-ig">ig</div><div class="social-info"><div class="social-text">Before & after roofing job in Austin. No leaks, no drama — just clean work. DM us for a quote anytime.</div><div class="social-meta">Instagram · Posted Yesterday · 214 reach</div></div><span class="social-status s-posted">Posted</span></div>
-      <div class="social-item"><div class="social-platform sp-gb">G</div><div class="social-info"><div class="social-text">We're open 7 days a week! Call or book online for same-day service in your area.</div><div class="social-meta">Google Business · Posted 2 days ago · 88 views</div></div><span class="social-status s-posted">Posted</span></div>
-      <div class="social-item"><div class="social-platform sp-fb">f</div><div class="social-info"><div class="social-text">5-star review spotlight: "Best service I've had in years!" — Derek L. Thank you Derek! 🏆</div><div class="social-meta">Facebook · Posted 3 days ago · 412 reach</div></div><span class="social-status s-posted">Posted</span></div>
+      <div class="social-item"><div class="social-platform sp-fb">f</div><div class="social-info"><div class="social-text">Spring is here — is your HVAC ready? Book a free tune-up this week and save 15%.</div><div class="social-meta">Facebook · Scheduled Today 2:00 PM</div></div><span class="social-status s-scheduled">Scheduled</span></div>
+      <div class="social-item"><div class="social-platform sp-ig">ig</div><div class="social-info"><div class="social-text">Before & after roofing job in Austin. No leaks, no drama. DM us for a quote.</div><div class="social-meta">Instagram · Posted Yesterday · 214 reach</div></div><span class="social-status s-posted">Posted</span></div>
     </div>
   </div>
 
@@ -745,33 +743,13 @@
 <div class="modal-overlay" id="booking-modal" onclick="closeBookingOutside(event)">
   <div class="modal">
     <button class="modal-close" onclick="closeBooking()">✕</button>
-
     <div id="booking-form-wrap">
       <h2 class="modal-title">Book a strategy call</h2>
-      <p class="modal-sub">30 minutes with your account manager. Pick a time that works for you.</p>
-
-      <div class="modal-field">
-        <label>Your name</label>
-        <input type="text" id="bk-name" value="Marcus Johnson" />
-      </div>
-      <div class="modal-field">
-        <label>Phone number</label>
-        <input type="tel" id="bk-phone" placeholder="(555) 000-0000" />
-      </div>
-      <div class="modal-field">
-        <label>Call type</label>
-        <select id="bk-type">
-          <option>Strategy & growth review</option>
-          <option>AI setup & optimization</option>
-          <option>Technical support</option>
-          <option>Upgrade my plan</option>
-          <option>General questions</option>
-        </select>
-      </div>
-      <div class="modal-field">
-        <label>Select a date</label>
-        <input type="date" id="bk-date" />
-      </div>
+      <p class="modal-sub">30 minutes with your account manager.</p>
+      <div class="modal-field"><label>Your name</label><input type="text" id="bk-name" value="Marcus Johnson" /></div>
+      <div class="modal-field"><label>Phone number</label><input type="tel" id="bk-phone" placeholder="(555) 000-0000" /></div>
+      <div class="modal-field"><label>Call type</label><select id="bk-type"><option>Strategy & growth review</option><option>AI setup & optimization</option><option>Technical support</option><option>Upgrade my plan</option></select></div>
+      <div class="modal-field"><label>Select a date</label><input type="date" id="bk-date" /></div>
       <div class="modal-field">
         <label>Available times</label>
         <div class="time-slots">
@@ -779,27 +757,18 @@
           <div class="time-slot" onclick="selectSlot(this)">9:30 AM</div>
           <div class="time-slot taken">10:00 AM</div>
           <div class="time-slot" onclick="selectSlot(this)">10:30 AM</div>
-          <div class="time-slot taken">11:00 AM</div>
-          <div class="time-slot" onclick="selectSlot(this)">11:30 AM</div>
           <div class="time-slot" onclick="selectSlot(this)">1:00 PM</div>
-          <div class="time-slot" onclick="selectSlot(this)">1:30 PM</div>
-          <div class="time-slot taken">2:00 PM</div>
           <div class="time-slot" onclick="selectSlot(this)">2:30 PM</div>
           <div class="time-slot" onclick="selectSlot(this)">3:00 PM</div>
           <div class="time-slot" onclick="selectSlot(this)">4:00 PM</div>
         </div>
       </div>
-      <div class="modal-field">
-        <label>Anything you want to cover? (optional)</label>
-        <textarea id="bk-notes" placeholder="e.g. I want to set up social media posting and review automation..."></textarea>
-      </div>
       <button class="modal-submit" onclick="submitBooking()">Confirm booking →</button>
     </div>
-
     <div class="book-success" id="book-success">
       <div class="book-success-icon">✦</div>
       <h2 class="book-success-title">Call booked.</h2>
-      <p class="book-success-sub">You'll receive a confirmation SMS and email shortly. Your account manager will call you at the scheduled time. See you then!</p>
+      <p class="book-success-sub">You'll receive a confirmation SMS shortly.</p>
     </div>
   </div>
 </div>
@@ -819,7 +788,6 @@
 
   // Date
   document.getElementById('topbar-date').textContent = new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
-  // Set min date for booking
   const d = document.getElementById('bk-date');
   if(d) { const t = new Date(); t.setDate(t.getDate()+1); d.min = t.toISOString().split('T')[0]; d.value = t.toISOString().split('T')[0]; }
 
@@ -828,8 +796,6 @@
     document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
     const pg = document.getElementById('page-'+id);
     if(pg) pg.classList.add('active');
-    event.currentTarget && event.currentTarget.classList.add('active');
-    // Update nav highlight
     document.querySelectorAll('.nav-item').forEach(n => {
       if(n.getAttribute('onclick') && n.getAttribute('onclick').includes("'"+id+"'")) n.classList.add('active');
     });
@@ -842,18 +808,64 @@
   }
   function closeBooking() { document.getElementById('booking-modal').classList.remove('show'); }
   function closeBookingOutside(e) { if(e.target===document.getElementById('booking-modal')) closeBooking(); }
-
   function selectSlot(el) {
     if(el.classList.contains('taken')) return;
     document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
     el.classList.add('selected');
   }
-
   function submitBooking() {
     document.getElementById('booking-form-wrap').style.display = 'none';
     document.getElementById('book-success').classList.add('show');
     setTimeout(() => closeBooking(), 3500);
   }
+
+  // Load live CRM data
+  async function loadCRMData() {
+    const panel = document.getElementById('crm-panel-content');
+    const badge = document.getElementById('crm-badge');
+    try {
+      const res = await fetch('http://164.92.110.116:3003/api/contacts');
+      const contacts = await res.json();
+      const total = contacts.length;
+      const newLeads = contacts.filter(c => c.status === 'New lead').length;
+      const hot = contacts.filter(c => c.score >= 7).length;
+      const closed = contacts.filter(c => c.status === 'Closed').length;
+
+      badge.textContent = total;
+
+      const recent = contacts.slice(-4).reverse();
+      const rows = recent.length ? recent.map(c => {
+        const initials = (c.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+        const scoreClass = c.score >= 7 ? 'tag-hot' : c.score >= 4 ? 'tag-warm' : 'tag-cold';
+        const scoreLabel = c.score >= 7 ? 'Hot' : c.score >= 4 ? 'Warm' : 'Cold';
+        return `<div class="lead-row">
+          <div class="lead-avatar">${initials}</div>
+          <div class="lead-info">
+            <div class="lead-name">${c.name || 'Unknown'}</div>
+            <div class="lead-source">${c.source || 'Manual'} · ${c.phone || ''}</div>
+          </div>
+          <span class="lead-tag ${scoreClass}">${scoreLabel}</span>
+        </div>`;
+      }).join('') : '<div class="empty">No contacts yet</div>';
+
+      panel.innerHTML = `
+        <div class="crm-stats">
+          <div class="crm-stat"><div class="crm-stat-num">${total}</div><div class="crm-stat-label">Total</div></div>
+          <div class="crm-stat"><div class="crm-stat-num">${newLeads}</div><div class="crm-stat-label">New</div></div>
+          <div class="crm-stat"><div class="crm-stat-num">${hot}</div><div class="crm-stat-label">Hot</div></div>
+          <div class="crm-stat"><div class="crm-stat-num">${closed}</div><div class="crm-stat-label">Closed</div></div>
+        </div>
+        ${rows}
+        <a class="crm-open-btn" href="http://164.92.110.116:3003" target="_blank">Open full CRM →</a>
+      `;
+    } catch(e) {
+      panel.innerHTML = '<div class="empty">CRM offline — <a href="http://164.92.110.116:3003" target="_blank" style="color:var(--gold)">open directly ↗</a></div>';
+      badge.textContent = '!';
+    }
+  }
+
+  loadCRMData();
+  setInterval(loadCRMData, 30000); // refresh every 30 seconds
 </script>
 </body>
 </html>
