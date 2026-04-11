@@ -440,7 +440,7 @@
       <span class="nav-icon">◑</span><span>Social Media</span>
     </div>
     <div class="nav-section-label">Tools</div>
-    <a class="nav-item" href="https://164.92.110.116:3003" target="_blank">
+    <a class="nav-item" href="https://164.92.110.116.nip.io:3003" target="_blank">
       <span class="nav-icon">⬛</span><span>CRM</span>
       <span class="nav-badge gold" id="crm-badge">—</span>
     </a>
@@ -549,7 +549,7 @@
       <div class="panel">
         <div class="panel-title">
           CRM — Live contacts
-          <a class="panel-title-action" href="https://164.92.110.116:3003" target="_blank">Open CRM ↗</a>
+          <a class="panel-title-action" href="https://164.92.110.116.nip.io:3003" target="_blank">Open CRM ↗</a>
         </div>
         <div id="crm-panel-content">
           <div class="crm-loading">Loading CRM data...</div>
@@ -824,7 +824,7 @@
     const panel = document.getElementById('crm-panel-content');
     const badge = document.getElementById('crm-badge');
     try {
-      const res = await fetch('https://164.92.110.116:3003/api/contacts');
+      const res = await fetch('https://164.92.110.116.nip.io:3003/api/contacts');
       const contacts = await res.json();
       const total = contacts.length;
       const newLeads = contacts.filter(c => c.status === 'New lead').length;
@@ -856,10 +856,10 @@
           <div class="crm-stat"><div class="crm-stat-num">${closed}</div><div class="crm-stat-label">Closed</div></div>
         </div>
         ${rows}
-        <a class="crm-open-btn" href="https://164.92.110.116:3003" target="_blank">Open full CRM →</a>
+        <a class="crm-open-btn" href="https://164.92.110.116.nip.io:3003" target="_blank">Open full CRM →</a>
       `;
     } catch(e) {
-      panel.innerHTML = '<div class="empty">CRM offline — <a href="https://164.92.110.116:3003" target="_blank" style="color:var(--gold)">open directly ↗</a></div>';
+      panel.innerHTML = '<div class="empty">CRM offline — <a href="https://164.92.110.116.nip.io:3003" target="_blank" style="color:var(--gold)">open directly ↗</a></div>';
       badge.textContent = '!';
     }
   }
