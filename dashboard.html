@@ -825,7 +825,7 @@
     const panel = document.getElementById('crm-panel-content');
     const badge = document.getElementById('crm-badge');
     try {
-      const res = await fetch('https://164.92.110.116.nip.io:3003/api/contacts');
+      const res = await fetch(https://promotions-estimate-promotes-scholarships.trycloudflare.com/api/contacts);
       const contacts = await res.json();
       const total = contacts.length;
       const newLeads = contacts.filter(c => c.status === 'New lead').length;
@@ -857,16 +857,16 @@
           <div class="crm-stat"><div class="crm-stat-num">${closed}</div><div class="crm-stat-label">Closed</div></div>
         </div>
         ${rows}
-        <a class="crm-open-btn" href="https://164.92.110.116.nip.io:3003" target="_blank">Open full CRM →</a>
+        <a class="crm-open-btn" href="https://promotions-estimate-promotes-scholarships.trycloudflare.com" target="_blank">Open full CRM →</a>
       `;
     } catch(e) {
-      panel.innerHTML = '<div class="empty">CRM offline — <a href="https://164.92.110.116.nip.io:3003" target="_blank" style="color:var(--gold)">open directly ↗</a></div>';
+      panel.innerHTML = '<div class="empty">CRM offline — <a href="https://promotions-estimate-promotes-scholarships.trycloudflare.com" target="_blank" style="color:var(--gold)">open directly ↗</a></div>';
       badge.textContent = '!';
     }
   }
 
   loadCRMData();
   setInterval(loadCRMData, 30000); // refresh every 30 seconds
-async function submitSocialPost() { const msg = document.getElementById("social-post-text").value.trim(); const status = document.getElementById("social-post-status"); if (!msg) { status.textContent = "Please write a message first."; return; } status.textContent = "Posting..."; try { const r = await fetch("https://164.92.110.116.nip.io/social-post", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({message: msg, imageUrl: document.getElementById('imageUrl').value}) }); const d = await r.json(); if (d.success) { status.style.color = "var(--green)"; status.textContent = "Posted successfully!"; document.getElementById("social-post-text").value = ""; } else { status.style.color = "var(--red)"; status.textContent = "Failed: " + d.error; } } catch(e) { status.style.color = "var(--red)"; status.textContent = "Error connecting to server."; } }</script>
+async function submitSocialPost() { const msg = document.getElementById("social-post-text").value.trim(); const status = document.getElementById("social-post-status"); if (!msg) { status.textContent = "Please write a message first."; return; } status.textContent = "Posting..."; try { const r = await fetch("https://promotions-estimate-promotes-scholarships.trycloudflare.com/social-post", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({message: msg, imageUrl: document.getElementById('imageUrl').value}) }); const d = await r.json(); if (d.success) { status.style.color = "var(--green)"; status.textContent = "Posted successfully!"; document.getElementById("social-post-text").value = ""; } else { status.style.color = "var(--red)"; status.textContent = "Failed: " + d.error; } } catch(e) { status.style.color = "var(--red)"; status.textContent = "Error connecting to server."; } }</script>
 </body>
 </html>
