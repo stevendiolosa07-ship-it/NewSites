@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Started — NewSites.com</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#060608;color:#F5F0E8;font-family:'DM Sans',sans-serif;font-weight:300;min-height:100vh;padding:0}
+:root{--gold:#C9A84C;--gold-light:#E8C97A;--black:#060608;--black-2:#0e0e12;--white:#F5F0E8;--white-dim:#A89F8C;--border:rgba(201,168,76,0.15);--border-bright:rgba(201,168,76,0.4)}
+
+/* HEADER */
+.header{padding:1.5rem 3rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(6,6,8,0.95);position:sticky;top:0;z-index:10}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--gold);letter-spacing:0.12em;text-decoration:none}
+.header-sub{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--white-dim)}
+
+/* PROGRESS */
+.progress-wrap{background:var(--black-2);border-bottom:1px solid var(--border);padding:1rem 3rem}
+.progress-bar{height:2px;background:var(--border);max-width:600px;margin:0 auto;border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width 0.4s ease;width:0%}
+.steps-labels{display:flex;justify-content:space-between;max-width:600px;margin:0.6rem auto 0;font-family:'Space Mono',monospace;font-size:0.55rem;letter-spacing:0.15em;text-transform:uppercase}
+.step-label{color:var(--white-dim);transition:color 0.3s}
+.step-label.active{color:var(--gold)}
+
+/* MAIN */
+.main{max-width:660px;margin:0 auto;padding:3rem 2rem 6rem}
+
+/* STEP */
+.step-section{display:none}
+.step-section.active{display:block;animation:fadeUp 0.4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+.step-eyebrow{font-family:'Space Mono',monospace;font-size:0.6rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--gold);margin-bottom:0.8rem}
+.step-title{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;line-height:1.1;margin-bottom:0.6rem}
+.step-title em{font-style:italic;color:var(--gold)}
+.step-desc{font-size:0.88rem;color:var(--white-dim);line-height:1.75;margin-bottom:2rem}
+
+/* FORM ELEMENTS */
+.field{margin-bottom:1.4rem}
+.field label{display:block;font-size:0.8rem;font-weight:500;color:var(--white);margin-bottom:0.5rem;letter-spacing:0.04em}
+.field label span{color:var(--gold);margin-left:0.2rem}
+.field input,.field textarea,.field select{width:100%;background:var(--black-2);border:1px solid var(--border);color:var(--white);padding:0.85rem 1rem;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:300;transition:border-color 0.2s;outline:none;border-radius:0;-webkit-appearance:none}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--border-bright)}
+.field textarea{resize:vertical;min-height:100px}
+.field select option{background:var(--black-2);color:var(--white)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.field-hint{font-size:0.75rem;color:var(--white-dim);margin-top:0.4rem}
+
+/* COLOR PICKER */
+.color-opts{display:flex;gap:0.8rem;flex-wrap:wrap;margin-top:0.5rem}
+.color-opt{width:36px;height:36px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.2s;position:relative}
+.color-opt.selected{border-color:var(--gold);transform:scale(1.15)}
+.color-opt::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#fff;opacity:0;text-shadow:0 1px 2px rgba(0,0,0,0.8)}
+.color-opt.selected::after{opacity:1}
+
+/* SERVICE CHECKBOXES */
+.service-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-top:0.5rem}
+.service-opt{border:1px solid var(--border);padding:0.8rem 1rem;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:0.7rem;font-size:0.85rem;color:var(--white-dim)}
+.service-opt:hover{border-color:var(--border-bright);color:var(--white)}
+.service-opt.selected{border-color:var(--gold);color:var(--white);background:rgba(201,168,76,0.06)}
+.service-opt input{display:none}
+.service-check{width:16px;height:16px;border:1px solid var(--border-bright);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:var(--gold)}
+.service-opt.selected .service-check{background:var(--gold);border-color:var(--gold);color:#000}
+
+/* TONE OPTIONS */
+.tone-opts{display:grid;grid-template-columns:1fr 1fr;gap:0.7rem;margin-top:0.5rem}
+.tone-opt{border:1px solid var(--border);padding:1rem;cursor:pointer;transition:all 0.2s}
+.tone-opt:hover{border-color:var(--border-bright)}
+.tone-opt.selected{border-color:var(--gold);background:rgba(201,168,76,0.06)}
+.tone-name{font-size:0.85rem;font-weight:500;color:var(--white);margin-bottom:0.2rem}
+.tone-desc{font-size:0.75rem;color:var(--white-dim)}
+
+/* UPLOAD AREA */
+.upload-area{border:1px dashed var(--border-bright);padding:2rem;text-align:center;cursor:pointer;transition:all 0.2s;margin-top:0.5rem}
+.upload-area:hover{border-color:var(--gold);background:rgba(201,168,76,0.03)}
+.upload-icon{font-size:2rem;margin-bottom:0.5rem}
+.upload-text{font-size:0.82rem;color:var(--white-dim)}
+.upload-text span{color:var(--gold)}
+.upload-area input{display:none}
+
+/* BUTTONS */
+.btn-row{display:flex;gap:1rem;margin-top:2rem;align-items:center}
+.btn-next{background:var(--gold);color:#000;border:none;padding:0.9rem 2.2rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.25s}
+.btn-next:hover{background:var(--gold-light)}
+.btn-back{background:transparent;color:var(--white-dim);border:1px solid var(--border);padding:0.9rem 1.8rem;font-family:'DM Sans',sans-serif;font-size:0.82rem;letter-spacing:0.1em;text-transform:uppercase;cursor:pointer;transition:all 0.25s}
+.btn-back:hover{border-color:var(--gold);color:var(--gold)}
+
+/* SUMMARY */
+.summary-grid{display:grid;gap:0.5rem;margin-bottom:2rem}
+.summary-row{display:flex;gap:1rem;padding:0.7rem 0;border-bottom:1px solid var(--border);font-size:0.85rem}
+.summary-key{color:var(--white-dim);flex-shrink:0;width:140px}
+.summary-val{color:var(--white)}
+
+/* SUCCESS */
+#success-screen{display:none;text-align:center;padding:4rem 2rem}
+.success-icon{font-size:4rem;margin-bottom:1.5rem}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:600;color:var(--gold);margin-bottom:1rem}
+.success-sub{font-size:0.92rem;color:var(--white-dim);line-height:1.8;max-width:440px;margin:0 auto 2rem}
+.btn-home{display:inline-block;background:var(--gold);color:#000;padding:0.85rem 2rem;font-size:0.82rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;transition:all 0.25s}
+.btn-home:hover{background:var(--gold-light)}
+
+@media(max-width:600px){
+  .header{padding:1rem 1.5rem}
+  .progress-wrap{padding:1rem 1.5rem}
+  .main{padding:2rem 1.2rem 5rem}
+  .field-row,.service-grid,.tone-opts{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a class="logo" href="index.html">NEW<span style="color:#F5F0E8">SITES</span>.COM</a>
+  <div class="header-sub">Business Onboarding</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  <div class="steps-labels">
+    <span class="step-label active" id="lbl-1">Business</span>
+    <span class="step-label" id="lbl-2">Services</span>
+    <span class="step-label" id="lbl-3">Branding</span>
+    <span class="step-label" id="lbl-4">Contact</span>
+    <span class="step-label" id="lbl-5">Review</span>
+  </div>
+</div>
+
+<div class="main" id="form-main">
+
+  <!-- STEP 1: BUSINESS INFO -->
+  <div class="step-section active" id="step-1">
+    <div class="step-eyebrow">Step 1 of 5</div>
+    <h2 class="step-title">Tell us about your <em>business.</em></h2>
+    <p class="step-desc">This is the foundation of your website. The more detail you give us, the better your site will look.</p>
+
+    <div class="field">
+      <label>Business Name <span>*</span></label>
+      <input type="text" id="biz-name" placeholder="e.g. Jerry's HVAC Services">
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Industry / Type <span>*</span></label>
+        <select id="biz-type">
+          <option value="">Select your industry</option>
+          <option>HVAC</option>
+          <option>Plumbing</option>
+          <option>Electrical</option>
+          <option>Landscaping</option>
+          <option>Cleaning Services</option>
+          <option>Auto Repair</option>
+          <option>Roofing</option>
+          <option>Construction</option>
+          <option>Beauty / Salon</option>
+          <option>Fitness / Personal Training</option>
+          <option>Restaurant / Food</option>
+          <option>Legal Services</option>
+          <option>Medical / Healthcare</option>
+          <option>Real Estate</option>
+          <option>Other</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Years in Business</label>
+        <input type="text" id="biz-years" placeholder="e.g. 5 years">
+      </div>
+    </div>
+    <div class="field">
+      <label>What does your business do? <span>*</span></label>
+      <textarea id="biz-desc" placeholder="Describe what you do and who your customers are. The more detail, the better your website copy will be."></textarea>
+    </div>
+    <div class="field">
+      <label>What makes you different from competitors?</label>
+      <textarea id="biz-diff" placeholder="e.g. 24/7 availability, licensed & insured, best prices, 10+ years experience..." style="min-height:80px"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="goStep(2)">Next: Services →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: SERVICES -->
+  <div class="step-section" id="step-2">
+    <div class="step-eyebrow">Step 2 of 5</div>
+    <h2 class="step-title">What services do <em>you offer?</em></h2>
+    <p class="step-desc">Select all that apply — these will become sections on your website.</p>
+
+    <div class="field">
+      <label>Your Main Services (select all that apply)</label>
+      <div class="service-grid" id="services-grid">
+        <div class="service-opt" onclick="toggleService(this)"><input type="checkbox"><div class="service-check">✓</div><span>Installation</span></div>
+        <div class="service-opt" onclick="toggleService(this)"><input type="checkbox"><div class="service-check">✓</div><span>Repair & Maintenance</span></div>
+        <div class="service-opt" onclick="toggleService(this)"><input type="checkbox"><div class="service-check">✓</div><span>Emergency Services</span></div>
+        <div class="service-opt" onclick="toggleService(this)"><input type="checkbox"><div class="service-check">✓</div><span>Inspection & Tune-Up</span></div>
+        <div class="service-opt" onclick="toggleService(this)"><input type="checkbox"><div class="service-check">✓</div><span>Residential</span></div>
+        <div class="service-opt" onclick="toggleService(this)"><input type="checkbox"><div class="service-check">✓</div><span>Commercial</span></div>
+        <div class="service-opt" onclick="toggleService(this)"><input type="checkbox"><div class="service-check">✓</div><span>Free Estimates</span></div>
+        <div class="service-opt" onclick="toggleService(this)"><input type="checkbox"><div class="service-check">✓</div><span>Financing Available</span></div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Describe your top 3 services in detail</label>
+      <textarea id="services-detail" placeholder="e.g.&#10;1. AC Repair — We fix all makes and models same day&#10;2. Furnace Installation — Licensed install with 2-year warranty&#10;3. Duct Cleaning — Full duct system cleaning from $199"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Service Area</label>
+      <input type="text" id="service-area" placeholder="e.g. Los Angeles, CA and surrounding areas within 30 miles">
+    </div>
+
+    <div class="field">
+      <label>Starting Price / Price Range</label>
+      <input type="text" id="biz-price" placeholder="e.g. Service calls from $89 | Installations from $1,200">
+      <div class="field-hint">Optional — helps set expectations and pre-qualify leads on your site</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(1)">← Back</button>
+      <button class="btn-next" onclick="goStep(3)">Next: Branding →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: BRANDING -->
+  <div class="step-section" id="step-3">
+    <div class="step-eyebrow">Step 3 of 5</div>
+    <h2 class="step-title">Let's talk about your <em>brand.</em></h2>
+    <p class="step-desc">Your website's look and feel should match your business personality.</p>
+
+    <div class="field">
+      <label>Preferred Color Scheme</label>
+      <div class="color-opts" id="color-opts">
+        <div class="color-opt" style="background:#1a3a5c" data-color="Navy Blue" onclick="selectColor(this)" title="Navy Blue"></div>
+        <div class="color-opt" style="background:#c9342c" data-color="Bold Red" onclick="selectColor(this)" title="Bold Red"></div>
+        <div class="color-opt" style="background:#2d6a2d" data-color="Forest Green" onclick="selectColor(this)" title="Forest Green"></div>
+        <div class="color-opt" style="background:#C9A84C" data-color="Gold & Black" onclick="selectColor(this)" title="Gold & Black"></div>
+        <div class="color-opt" style="background:#4a4a8a" data-color="Royal Purple" onclick="selectColor(this)" title="Royal Purple"></div>
+        <div class="color-opt" style="background:#e07020" data-color="Orange & Dark" onclick="selectColor(this)" title="Orange & Dark"></div>
+        <div class="color-opt" style="background:#1a1a1a;border:1px solid #444" data-color="Black & White" onclick="selectColor(this)" title="Black & White"></div>
+        <div class="color-opt" style="background:#2a7a9a" data-color="Ocean Blue" onclick="selectColor(this)" title="Ocean Blue"></div>
+      </div>
+      <input type="hidden" id="brand-color">
+    </div>
+
+    <div class="field">
+      <label>Website Tone / Personality</label>
+      <div class="tone-opts">
+        <div class="tone-opt" onclick="selectTone(this)" data-tone="Professional & Trustworthy">
+          <div class="tone-name">Professional & Trustworthy</div>
+          <div class="tone-desc">Clean, corporate, builds confidence</div>
+        </div>
+        <div class="tone-opt" onclick="selectTone(this)" data-tone="Bold & Aggressive">
+          <div class="tone-name">Bold & Aggressive</div>
+          <div class="tone-desc">Strong, direct, dominates the market</div>
+        </div>
+        <div class="tone-opt" onclick="selectTone(this)" data-tone="Friendly & Approachable">
+          <div class="tone-name">Friendly & Approachable</div>
+          <div class="tone-desc">Warm, community-focused, trustworthy</div>
+        </div>
+        <div class="tone-opt" onclick="selectTone(this)" data-tone="Premium & Luxury">
+          <div class="tone-name">Premium & Luxury</div>
+          <div class="tone-desc">High-end, sophisticated, worth the price</div>
+        </div>
+      </div>
+      <input type="hidden" id="brand-tone">
+    </div>
+
+    <div class="field">
+      <label>Do you have a logo?</label>
+      <div class="upload-area" onclick="document.getElementById('logo-upload').click()">
+        <div class="upload-icon">🖼️</div>
+        <div class="upload-text">Click to upload your logo<br><span>PNG, JPG, or SVG — optional</span></div>
+        <input type="file" id="logo-upload" accept="image/*" onchange="handleLogoUpload(this)">
+      </div>
+      <div id="logo-name" style="font-size:0.78rem;color:var(--gold);margin-top:0.5rem;display:none"></div>
+    </div>
+
+    <div class="field">
+      <label>Tagline or Slogan</label>
+      <input type="text" id="biz-tagline" placeholder='e.g. "Fast, Reliable, Affordable" or "Your comfort is our priority"'>
+      <div class="field-hint">If you don't have one, our AI will create one for you</div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(2)">← Back</button>
+      <button class="btn-next" onclick="goStep(4)">Next: Contact Info →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: CONTACT -->
+  <div class="step-section" id="step-4">
+    <div class="step-eyebrow">Step 4 of 5</div>
+    <h2 class="step-title">Your contact <em>information.</em></h2>
+    <p class="step-desc">This goes on your website so customers can reach you. Your AI bot will use this too.</p>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Your Name <span>*</span></label>
+        <input type="text" id="owner-name" placeholder="Your full name">
+      </div>
+      <div class="field">
+        <label>Business Phone <span>*</span></label>
+        <input type="tel" id="biz-phone" placeholder="(555) 000-0000">
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Business Email <span>*</span></label>
+        <input type="email" id="biz-email" placeholder="you@yourbusiness.com">
+      </div>
+      <div class="field">
+        <label>Business Address</label>
+        <input type="text" id="biz-address" placeholder="City, State (or full address)">
+      </div>
+    </div>
+    <div class="field">
+      <label>Business Hours</label>
+      <input type="text" id="biz-hours" placeholder="e.g. Mon–Fri 8am–6pm, Sat 9am–3pm, 24/7 Emergency">
+    </div>
+    <div class="field">
+      <label>Existing Website (if any)</label>
+      <input type="url" id="biz-website" placeholder="https://yourbusiness.com">
+      <div class="field-hint">We'll reference it for branding and content</div>
+    </div>
+    <div class="field">
+      <label>Social Media Handles</label>
+      <input type="text" id="biz-social" placeholder="e.g. @jerryhvac on Instagram, Facebook.com/jerryhvac">
+    </div>
+    <div class="field">
+      <label>Anything else we should know?</label>
+      <textarea id="biz-notes" placeholder="Special certifications, awards, guarantees, promotions, anything that sets you apart..." style="min-height:80px"></textarea>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(3)">← Back</button>
+      <button class="btn-next" onclick="goStep(5)">Review & Submit →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: REVIEW -->
+  <div class="step-section" id="step-5">
+    <div class="step-eyebrow">Step 5 of 5</div>
+    <h2 class="step-title">Review & <em>submit.</em></h2>
+    <p class="step-desc">Double check everything looks right, then submit. We'll start building your site within 24 hours.</p>
+
+    <div class="summary-grid" id="summary-grid"></div>
+
+    <div class="btn-row">
+      <button class="btn-back" onclick="goStep(4)">← Back</button>
+      <button class="btn-next" id="submit-btn" onclick="submitForm()">🚀 Submit & Start Building</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- SUCCESS -->
+<div id="success-screen">
+  <div class="success-icon">🎉</div>
+  <div class="success-title">We're on it!</div>
+  <p class="success-sub">Your business info has been received. We'll have your site ready within 24 hours and reach out to you at the email you provided.</p>
+  <a class="btn-home" href="index.html">Back to Home</a>
+</div>
+
+<script>
+let currentStep = 1;
+const totalSteps = 5;
+
+function goStep(n) {
+  // Validate required fields
+  if(n > currentStep) {
+    if(currentStep === 1) {
+      if(!document.getElementById('biz-name').value.trim()) { alert('Please enter your business name.'); return; }
+      if(!document.getElementById('biz-type').value) { alert('Please select your industry.'); return; }
+      if(!document.getElementById('biz-desc').value.trim()) { alert('Please describe your business.'); return; }
+    }
+    if(currentStep === 4) {
+      if(!document.getElementById('owner-name').value.trim()) { alert('Please enter your name.'); return; }
+      if(!document.getElementById('biz-phone').value.trim()) { alert('Please enter your business phone.'); return; }
+      if(!document.getElementById('biz-email').value.trim()) { alert('Please enter your business email.'); return; }
+    }
+  }
+
+  if(n === 5) buildSummary();
+
+  document.getElementById(`step-${currentStep}`).classList.remove('active');
+  document.getElementById(`lbl-${currentStep}`).classList.remove('active');
+  currentStep = n;
+  document.getElementById(`step-${currentStep}`).classList.add('active');
+  document.getElementById(`lbl-${currentStep}`).classList.add('active');
+
+  const pct = ((n-1)/(totalSteps-1))*100;
+  document.getElementById('progress-fill').style.width = pct + '%';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function toggleService(el) {
+  el.classList.toggle('selected');
+}
+
+function selectColor(el) {
+  document.querySelectorAll('.color-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('brand-color').value = el.dataset.color;
+}
+
+function selectTone(el) {
+  document.querySelectorAll('.tone-opt').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('brand-tone').value = el.dataset.tone;
+}
+
+function handleLogoUpload(input) {
+  if(input.files[0]) {
+    const nameEl = document.getElementById('logo-name');
+    nameEl.textContent = '✓ ' + input.files[0].name;
+    nameEl.style.display = 'block';
+  }
+}
+
+function getSelectedServices() {
+  return Array.from(document.querySelectorAll('.service-opt.selected span')).map(el => el.textContent).join(', ') || 'None selected';
+}
+
+function buildSummary() {
+  const rows = [
+    ['Business Name', document.getElementById('biz-name').value],
+    ['Industry', document.getElementById('biz-type').value],
+    ['Years in Business', document.getElementById('biz-years').value || '—'],
+    ['Description', document.getElementById('biz-desc').value],
+    ['What Makes You Different', document.getElementById('biz-diff').value || '—'],
+    ['Services Selected', getSelectedServices()],
+    ['Service Details', document.getElementById('services-detail').value || '—'],
+    ['Service Area', document.getElementById('service-area').value || '—'],
+    ['Price Range', document.getElementById('biz-price').value || '—'],
+    ['Brand Color', document.getElementById('brand-color').value || '—'],
+    ['Website Tone', document.getElementById('brand-tone').value || '—'],
+    ['Tagline', document.getElementById('biz-tagline').value || '—'],
+    ['Owner Name', document.getElementById('owner-name').value],
+    ['Phone', document.getElementById('biz-phone').value],
+    ['Email', document.getElementById('biz-email').value],
+    ['Address', document.getElementById('biz-address').value || '—'],
+    ['Hours', document.getElementById('biz-hours').value || '—'],
+    ['Social Media', document.getElementById('biz-social').value || '—'],
+    ['Additional Notes', document.getElementById('biz-notes').value || '—'],
+  ];
+
+  document.getElementById('summary-grid').innerHTML = rows.map(([k,v]) => `
+    <div class="summary-row">
+      <div class="summary-key">${k}</div>
+      <div class="summary-val">${v}</div>
+    </div>
+  `).join('');
+}
+
+async function submitForm() {
+  const btn = document.getElementById('submit-btn');
+  btn.textContent = 'Submitting...';
+  btn.disabled = true;
+
+  const data = {
+    bizName: document.getElementById('biz-name').value,
+    bizType: document.getElementById('biz-type').value,
+    bizYears: document.getElementById('biz-years').value,
+    bizDesc: document.getElementById('biz-desc').value,
+    bizDiff: document.getElementById('biz-diff').value,
+    services: getSelectedServices(),
+    servicesDetail: document.getElementById('services-detail').value,
+    serviceArea: document.getElementById('service-area').value,
+    bizPrice: document.getElementById('biz-price').value,
+    brandColor: document.getElementById('brand-color').value,
+    brandTone: document.getElementById('brand-tone').value,
+    bizTagline: document.getElementById('biz-tagline').value,
+    ownerName: document.getElementById('owner-name').value,
+    bizPhone: document.getElementById('biz-phone').value,
+    bizEmail: document.getElementById('biz-email').value,
+    bizAddress: document.getElementById('biz-address').value,
+    bizHours: document.getElementById('biz-hours').value,
+    bizSocial: document.getElementById('biz-social').value,
+    bizNotes: document.getElementById('biz-notes').value,
+  };
+
+  try {
+    const res = await fetch('https://screw-loops-output-amended.trycloudflare.com/onboarding', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(data)
+    });
+    const result = await res.json();
+    if(result.success) {
+      document.getElementById('form-main').style.display = 'none';
+      document.getElementById('success-screen').style.display = 'block';
+      document.querySelector('.progress-wrap').style.display = 'none';
+      window.scrollTo({top:0,behavior:'smooth'});
+    } else {
+      throw new Error(result.error || 'Submission failed');
+    }
+  } catch(e) {
+    alert('Something went wrong. Please try again or email us directly.');
+    btn.textContent = '🚀 Submit & Start Building';
+    btn.disabled = false;
+  }
+}
+</script>
+</body>
+</html>
