@@ -603,6 +603,22 @@ const ro=new IntersectionObserver(entries=>{
   entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*80);ro.unobserve(e.target);}});
 },{threshold:0.1});
 document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+async function checkout(plan) {
+  try {
+    const btn = event.target;
+    btn.textContent = 'Loading...';
+    btn.disabled = true;
+    const res = await fetch('https://pac-missed-flashers-arab.trycloudflare.com/create-checkout', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({plan})
+    });
+    const data = await res.json();
+    if(data.url) window.location.href = data.url;
+    else { btn.textContent = 'Try Again'; btn.disabled = false; }
+  } catch(e) { alert('Something went wrong. Please try again.'); }
+}
 </script>
 </body>
 </html>
