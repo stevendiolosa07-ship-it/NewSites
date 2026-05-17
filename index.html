@@ -619,6 +619,26 @@ async function checkout(plan) {
     else { btn.textContent = 'Try Again'; btn.disabled = false; }
   } catch(e) { alert('Something went wrong. Please try again.'); }
 }
+
+async function submitContact() {
+  const name = document.getElementById('cf-name').value.trim();
+  const email = document.getElementById('cf-email').value.trim();
+  const biz = document.getElementById('cf-biz').value.trim();
+  const msg = document.getElementById('cf-msg').value.trim();
+  const btn = document.getElementById('cf-btn');
+  btn.textContent = 'Sending...'; btn.disabled = true;
+  try {
+    const res = await fetch('https://screw-loops-output-amended.trycloudflare.com/contact', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({name, email, biz, msg})
+    });
+    const data = await res.json();
+    if(data.success) {
+      document.getElementById('cf-success').style.display = 'block';
+      btn.style.display = 'none';
+    } else { throw new Error(); }
+  } catch(e) { alert('Something went wrong. Please try again.'); btn.textContent = 'Send Message'; btn.disabled = false; }
+}
 </script>
 </body>
 </html>
