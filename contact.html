@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact — NewSites.com</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #f0c96a;
+      --gold-dim: #7a5f28;
+      --black: #060608;
+      --white: #f5f0e8;
+      --white-dim: #9090a0;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100vh; overflow-x: hidden; }
+    body { background: var(--black); color: var(--white); font-family: 'DM Sans', sans-serif; font-weight: 300; }
+
+    #bg-canvas { position: fixed; inset: 0; z-index: 0; }
+
+    .float-card {
+      position: fixed; border: 1px solid rgba(201,168,76,0.18);
+      background: rgba(14,14,18,0.88); backdrop-filter: blur(10px);
+      padding: 12px 16px; font-size: 0.75rem; color: var(--white-dim);
+      pointer-events: none; z-index: 1; animation: floatCard linear infinite;
+    }
+    .float-card .fc-title { color: var(--gold); font-size: 0.63rem; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 5px; }
+    .float-card .fc-value { color: var(--white); font-size: 1rem; font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+    .float-card .fc-sub { font-size: 0.63rem; color: #4cff91; margin-top: 3px; }
+    .fc-pulse { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4cff91; margin-right: 5px; animation: pulse 1.4s ease-in-out infinite; }
+    .fc1 { top: 13%; left: 2%; animation-duration: 18s; }
+    .fc2 { top: 32%; right: 2%; animation-duration: 22s; animation-delay: -6s; }
+    .fc3 { top: 58%; left: 1.5%; animation-duration: 20s; animation-delay: -11s; }
+    .fc4 { top: 76%; right: 2%; animation-duration: 16s; animation-delay: -4s; }
+    .fc5 { top: 46%; left: 2%; animation-duration: 24s; animation-delay: -9s; }
+    @keyframes floatCard {
+      0%   { transform: translateY(0px) rotate(-0.4deg); }
+      25%  { transform: translateY(-13px) rotate(0.4deg); }
+      50%  { transform: translateY(-5px) rotate(-0.2deg); }
+      75%  { transform: translateY(-17px) rotate(0.3deg); }
+      100% { transform: translateY(0px) rotate(-0.4deg); }
+    }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.35;transform:scale(0.65);} }
+
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 18px 48px; display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(201,168,76,0.1);
+      background: rgba(6,6,8,0.93); backdrop-filter: blur(16px);
+    }
+    .logo { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.1em; color: var(--gold); text-decoration: none; }
+    .logo span { color: var(--white); }
+    nav a.back { font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--white-dim); text-decoration: none; border: 1px solid rgba(201,168,76,0.2); padding: 8px 20px; transition: all 0.3s; }
+    nav a.back:hover { color: var(--gold); border-color: var(--gold); }
+
+    main { position: relative; z-index: 2; min-height: 100vh; display: grid; grid-template-columns: 1fr 1fr; padding-top: 72px; }
+
+    .left-panel { padding: 80px 60px 80px 72px; display: flex; flex-direction: column; justify-content: center; border-right: 1px solid rgba(201,168,76,0.07); }
+    .eyebrow { font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 22px; opacity: 0; animation: fadeUp 0.7s 0.2s forwards; }
+    h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 4.5vw, 5.5rem); line-height: 0.93; letter-spacing: 0.02em; color: var(--white); margin-bottom: 28px; opacity: 0; animation: fadeUp 0.7s 0.35s forwards; }
+    h1 em { font-style: normal; color: var(--gold); }
+    .desc { font-size: 0.95rem; line-height: 1.75; color: var(--white-dim); max-width: 380px; margin-bottom: 44px; opacity: 0; animation: fadeUp 0.7s 0.5s forwards; }
+    .perks { display: flex; flex-direction: column; gap: 18px; opacity: 0; animation: fadeUp 0.7s 0.65s forwards; }
+    .perk { display: flex; align-items: center; gap: 13px; font-size: 0.88rem; color: var(--white-dim); }
+    .perk-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+
+    .right-panel { padding: 80px 72px 80px 60px; display: flex; flex-direction: column; justify-content: center; }
+    .form-box {
+      background: rgba(14,14,18,0.72); border: 1px solid rgba(201,168,76,0.14);
+      padding: 44px; backdrop-filter: blur(20px);
+      opacity: 0; animation: fadeUp 0.7s 0.4s forwards;
+    }
+    .form-box h2 { font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 0.1em; color: var(--white); margin-bottom: 5px; }
+    .form-box > p { font-size: 0.8rem; color: var(--white-dim); margin-bottom: 30px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 13px; }
+    .field { margin-bottom: 13px; }
+    .field label { display: block; font-size: 0.63rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold-dim); margin-bottom: 7px; }
+    .field input, .field textarea {
+      width: 100%; background: rgba(255,255,255,0.04); border: 1px solid rgba(201,168,76,0.17);
+      color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 300;
+      padding: 12px 14px; outline: none; transition: border-color 0.3s, background 0.3s;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+    .field input::placeholder, .field textarea::placeholder { color: rgba(144,144,160,0.32); }
+    .field textarea { resize: none; height: 96px; }
+
+    .submit-btn {
+      width: 100%; background: var(--gold); color: #060608;
+      border: none; font-family: 'Bebas Neue', sans-serif;
+      font-size: 1.12rem; letter-spacing: 0.2em; padding: 17px;
+      cursor: pointer; transition: background 0.3s, transform 0.15s; margin-top: 4px;
+    }
+    .submit-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .form-msg { margin-top: 13px; padding: 11px 14px; font-size: 0.8rem; display: none; }
+    .form-msg.ok  { display:block; border:1px solid rgba(76,255,145,0.3); background:rgba(76,255,145,0.06); color:#4cff91; }
+    .form-msg.err { display:block; border:1px solid rgba(255,80,80,0.3); background:rgba(255,80,80,0.06); color:#ff8080; }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(22px);} to{opacity:1;transform:translateY(0);} }
+
+    @media(max-width:900px){
+      main{grid-template-columns:1fr;}
+      .left-panel{padding:60px 26px 36px;border-right:none;border-bottom:1px solid rgba(201,168,76,0.07);}
+      .right-panel{padding:36px 26px 60px;}
+      nav{padding:18px 22px;}
+      .form-box{padding:26px 18px;}
+      .form-row{grid-template-columns:1fr;}
+      .fc1,.fc2,.fc3,.fc4,.fc5{display:none;}
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<div class="float-card fc1">
+  <div class="fc-title">Inbound Call</div>
+  <div class="fc-value">📞 +1 (310) 555-0182</div>
+  <div class="fc-sub"><span class="fc-pulse"></span>AI Answering Now</div>
+</div>
+<div class="float-card fc2">
+  <div class="fc-title">New Lead Captured</div>
+  <div class="fc-value">Mike's Plumbing Co.</div>
+  <div class="fc-sub"><span class="fc-pulse"></span>Added to CRM</div>
+</div>
+<div class="float-card fc3">
+  <div class="fc-title">SMS Sent</div>
+  <div class="fc-value">47 Messages Today</div>
+  <div class="fc-sub"><span class="fc-pulse"></span>Auto Follow-Up Active</div>
+</div>
+<div class="float-card fc4">
+  <div class="fc-title">Instagram Post</div>
+  <div class="fc-value">2.4K Reached</div>
+  <div class="fc-sub"><span class="fc-pulse"></span>Auto-Posted 8:00 AM</div>
+</div>
+<div class="float-card fc5">
+  <div class="fc-title">Monthly Revenue</div>
+  <div class="fc-value">$12,450</div>
+  <div class="fc-sub"><span class="fc-pulse"></span>+34% vs Last Month</div>
+</div>
+
+<nav>
+  <a href="index.html" class="logo">New<span>Sites</span></a>
+  <a href="index.html" class="back">← Home</a>
+</nav>
+
+<main>
+  <div class="left-panel">
+    <p class="eyebrow">Get In Touch</p>
+    <h1>Let's <em>Automate</em> Your Business</h1>
+    <p class="desc">Tell us about your business and we'll show you exactly how NewSites.com handles your calls, captures leads, and posts to social — all on autopilot.</p>
+    <div class="perks">
+      <div class="perk"><div class="perk-dot"></div>Response within 24 hours</div>
+      <div class="perk"><div class="perk-dot"></div>Free 30-minute demo call</div>
+      <div class="perk"><div class="perk-dot"></div>Live in as little as 48 hours</div>
+      <div class="perk"><div class="perk-dot"></div>No contracts, cancel anytime</div>
+    </div>
+  </div>
+
+  <div class="right-panel">
+    <div class="form-box">
+      <h2>Send a Message</h2>
+      <p>We'll get back to you within 24 hours.</p>
+      <div class="form-row">
+        <div class="field"><label>Your Name *</label><input type="text" id="f-name" placeholder="John Smith" /></div>
+        <div class="field"><label>Business Name</label><input type="text" id="f-biz" placeholder="Smith Roofing LLC" /></div>
+      </div>
+      <div class="form-row">
+        <div class="field"><label>Email *</label><input type="email" id="f-email" placeholder="you@business.com" /></div>
+        <div class="field"><label>Phone *</label><input type="tel" id="f-phone" placeholder="(310) 555-0100" /></div>
+      </div>
+      <div class="field">
+        <label>Message</label>
+        <textarea id="f-msg" placeholder="What industry are you in? What's your biggest challenge right now?"></textarea>
+      </div>
+      <button class="submit-btn" id="sub-btn" onclick="doSubmit()">Get Started →</button>
+      <div class="form-msg" id="form-msg"></div>
+    </div>
+  </div>
+</main>
+
+<script>
+const canvas = document.getElementById('bg-canvas');
+const ctx = canvas.getContext('2d');
+let W, H, particles, phones, signals = [];
+
+function resize() { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight; }
+
+function rr(a,b){ return a + Math.random()*(b-a); }
+
+function initParticles() {
+  particles = Array.from({length:80}, () => ({
+    x: Math.random()*W, y: Math.random()*H,
+    r: rr(0.8,2.2), vx: rr(-0.16,0.16), vy: rr(-0.12,0.12),
+    alpha: rr(0.12,0.45)
+  }));
+}
+
+function initPhones() {
+  phones = Array.from({length:8}, (_,i) => ({
+    x: Math.random()*W, y: Math.random()*H,
+    size: rr(18,34), vx: rr(-0.11,0.11), vy: rr(-0.09,0.09),
+    alpha: rr(0.07,0.2), rot: Math.random()*Math.PI*2, rotV: rr(-0.003,0.003),
+    type: i%3
+  }));
+}
+
+function drawIcon(x,y,size,alpha,rot,type) {
+  ctx.save(); ctx.translate(x,y); ctx.rotate(rot);
+  ctx.globalAlpha = alpha; ctx.strokeStyle='#c9a84c';
+  ctx.lineWidth=1.4; ctx.lineCap='round'; ctx.lineJoin='round';
+  const s = size*0.5;
+  if(type===0){
+    ctx.beginPath(); ctx.roundRect(-s*0.44,-s,s*0.88,s*2,s*0.17); ctx.stroke();
+    ctx.beginPath(); ctx.arc(0,-s*0.64,s*0.11,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#c9a84c'; ctx.beginPath(); ctx.arc(0,s*0.7,s*0.15,0,Math.PI*2); ctx.fill();
+  } else if(type===1){
+    ctx.beginPath(); ctx.rect(-s,-s*0.6,s*2,s*1.2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-s,-s*0.6); ctx.lineTo(0,s*0.08); ctx.lineTo(s,-s*0.6); ctx.stroke();
+  } else {
+    const bw=s*0.36, bars=[0.4,0.78,0.54,1.0];
+    bars.forEach((h,i)=>{ ctx.beginPath(); ctx.rect(-s*0.82+i*(bw+s*0.11),s*(1-h)*0.85-s*0.42,bw,s*h*0.85); ctx.stroke(); });
+  }
+  ctx.restore();
+}
+
+function spawnSignal(){
+  if(particles.length<2) return;
+  const a=Math.floor(Math.random()*particles.length);
+  let b=Math.floor(Math.random()*particles.length);
+  while(b===a) b=Math.floor(Math.random()*particles.length);
+  signals.push({from:a,to:b,t:0,speed:rr(0.007,0.017)});
+}
+setInterval(spawnSignal, 1500);
+
+function tick(){
+  ctx.clearRect(0,0,W,H);
+
+  ctx.strokeStyle='rgba(201,168,76,0.022)'; ctx.lineWidth=0.5;
+  const gs=68;
+  for(let x=0;x<W;x+=gs){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=gs){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  particles.forEach(p=>{
+    p.x+=p.vx; p.y+=p.vy;
+    if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(201,168,76,${p.alpha})`; ctx.fill();
+  });
+
+  for(let i=0;i<particles.length;i++){
+    for(let j=i+1;j<particles.length;j++){
+      const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<115){
+        ctx.beginPath(); ctx.strokeStyle=`rgba(201,168,76,${0.055*(1-d/115)})`;
+        ctx.lineWidth=0.5; ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y); ctx.stroke();
+      }
+    }
+  }
+
+  signals=signals.filter(s=>s.t<=1);
+  signals.forEach(s=>{
+    s.t+=s.speed;
+    const p1=particles[s.from],p2=particles[s.to];
+    const x=p1.x+(p2.x-p1.x)*s.t, y=p1.y+(p2.y-p1.y)*s.t;
+    const fade=Math.sin(s.t*Math.PI);
+    ctx.beginPath(); ctx.arc(x,y,2.2,0,Math.PI*2);
+    ctx.fillStyle=`rgba(240,201,106,${fade*0.7})`; ctx.fill();
+  });
+
+  phones.forEach(ph=>{
+    ph.x+=ph.vx; ph.y+=ph.vy; ph.rot+=ph.rotV;
+    if(ph.x<-60)ph.x=W+60; if(ph.x>W+60)ph.x=-60;
+    if(ph.y<-60)ph.y=H+60; if(ph.y>H+60)ph.y=-60;
+    drawIcon(ph.x,ph.y,ph.size,ph.alpha,ph.rot,ph.type);
+  });
+
+  requestAnimationFrame(tick);
+}
+
+resize(); initParticles(); initPhones(); tick();
+window.addEventListener('resize',()=>{resize();initParticles();initPhones();});
+
+const API='https://alive-jay-thing-transcript.trycloudflare.com';
+
+async function doSubmit(){
+  const name=document.getElementById('f-name').value.trim();
+  const email=document.getElementById('f-email').value.trim();
+  const phone=document.getElementById('f-phone').value.trim();
+  const biz=document.getElementById('f-biz').value.trim();
+  const msg=document.getElementById('f-msg').value.trim();
+  const btn=document.getElementById('sub-btn');
+  const out=document.getElementById('form-msg');
+  out.className='form-msg';
+  if(!name||!email||!phone){out.className='form-msg err';out.textContent='⚠ Name, email, and phone are required.';return;}
+  btn.disabled=true; btn.textContent='Sending...';
+  try{
+    const res=await fetch(`${API}/contact-form`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,phone,businessName:biz,message:msg})});
+    const data=await res.json();
+    if(data.success){
+      out.className='form-msg ok'; out.textContent="✓ Got it! We'll be in touch within 24 hours.";
+      ['f-name','f-email','f-phone','f-biz','f-msg'].forEach(id=>document.getElementById(id).value='');
+      btn.textContent='Sent ✓';
+    } else throw new Error();
+  } catch(e){
+    out.className='form-msg err'; out.textContent='⚠ Something went wrong. Please try again.';
+    btn.disabled=false; btn.textContent='Get Started →';
+  }
+}
+</script>
+</body>
+</html>
