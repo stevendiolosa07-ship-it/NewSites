@@ -144,6 +144,27 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
   footer{padding:2rem 1.5rem;flex-direction:column;text-align:center}
 }
 </style>
+
+<style>
+#help-btn{background:none;border:1px solid rgba(201,168,76,0.4);color:var(--gold);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;padding:0.4rem 1rem;cursor:pointer;transition:all 0.2s;font-family:inherit;}
+#help-btn:hover{background:var(--gold);color:#000;}
+#ai-chat-overlay{display:none;position:fixed;top:64px;left:0;right:0;bottom:0;z-index:999;background:rgba(0,0,0,0.5);}
+#ai-chat-box{position:fixed;top:64px;right:0;width:380px;height:calc(100vh - 64px);background:#0e0e12;border-left:1px solid rgba(201,168,76,0.2);z-index:1000;display:none;flex-direction:column;}
+#ai-chat-header{padding:16px 20px;border-bottom:1px solid rgba(201,168,76,0.15);display:flex;align-items:center;justify-content:space-between;}
+#ai-chat-header span{font-family:"Bebas Neue",sans-serif;font-size:1.1rem;letter-spacing:0.1em;color:var(--gold);}
+#ai-chat-close{background:none;border:none;color:#666;font-size:1.2rem;cursor:pointer;padding:4px 8px;}
+#ai-chat-close:hover{color:#fff;}
+#ai-chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;}
+.ai-msg{max-width:85%;padding:10px 14px;font-size:0.85rem;line-height:1.5;}
+.ai-msg.bot{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.15);color:#f5f0e8;align-self:flex-start;}
+.ai-msg.user{background:rgba(255,255,255,0.06);color:#f5f0e8;align-self:flex-end;}
+#ai-chat-input-row{padding:16px;border-top:1px solid rgba(201,168,76,0.15);display:flex;gap:8px;}
+#ai-chat-input{flex:1;background:rgba(255,255,255,0.04);border:1px solid rgba(201,168,76,0.2);color:#f5f0e8;font-size:0.85rem;padding:10px 12px;outline:none;font-family:inherit;}
+#ai-chat-input:focus{border-color:var(--gold);}
+#ai-chat-send{background:var(--gold);color:#000;border:none;padding:10px 16px;font-family:"Bebas Neue",sans-serif;font-size:0.9rem;letter-spacing:0.1em;cursor:pointer;}
+#ai-chat-send:hover{background:#f0c96a;}
+#ai-typing{display:none;color:#666;font-size:0.78rem;padding:0 20px 10px;font-style:italic;}
+</style>
 </head>
 <body>
 
@@ -159,7 +180,7 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
     <li><a href="#pricing">Pricing</a></li>
     <li><a href="#testimonials">Results</a></li>
   </ul>
-  <a class="nav-links-item" href="contact.html" style="color:var(--gold);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;margin-right:1.5rem;">Contact</a><a class="nav-cta" href="signin.html">Get Started</a>
+  <a class="nav-links-item" href="contact.html" style="color:var(--gold);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;margin-right:1.5rem;">Contact</a><button id="help-btn" onclick="toggleChat()">Help</button><a class="nav-cta" href="signin.html">Get Started</a>
 </nav>
 
 <!-- FEATURE PANEL -->
@@ -701,5 +722,99 @@ async function submitContact() {
 }
 </script>
 <script type="text/javascript">var Tawk_API=Tawk_API||{},Tawk_LoadStart=new Date();(function(){var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];s1.async=true;s1.src="https://embed.tawk.to/6a0c33e45838591c35af6a02/1jovqlcv6";s1.charset="UTF-8";s1.setAttribute("crossorigin","*");s0.parentNode.insertBefore(s1,s0);})();</script>
+
+<div id="ai-chat-overlay" onclick="toggleChat()"></div>
+<div id="ai-chat-box">
+  <div id="ai-chat-header">
+    <span>&#9889; NewSites AI Help</span>
+    <button id="ai-chat-close" onclick="toggleChat()">&#x2715;</button>
+  </div>
+  <div id="ai-chat-messages">
+    <div class="ai-msg bot">Hi! I am the NewSites.com AI assistant. I can answer questions about our services and help get you set up. What would you like to know?</div>
+  </div>
+  <div id="ai-typing">NewSites AI is typing...</div>
+  <div id="ai-chat-input-row">
+    <input id="ai-chat-input" type="text" placeholder="Ask me anything..." onkeydown="if(event.key==='Enter')sendChat()" />
+    <button id="ai-chat-send" onclick="sendChat()">Send</button>
+  </div>
+</div>
+
+<script>
+var chatOpen=false;
+var chatHistory=[];
+var leadCollected=false;
+
+function toggleChat(){
+  chatOpen=!chatOpen;
+  document.getElementById('ai-chat-box').style.display=chatOpen?'flex':'none';
+  document.getElementById('ai-chat-overlay').style.display=chatOpen?'block':'none';
+  if(chatOpen) document.getElementById('ai-chat-input').focus();
+}
+
+function addMsg(text,role){
+  var box=document.getElementById('ai-chat-messages');
+  var div=document.createElement('div');
+  div.className='ai-msg '+(role==='user'?'user':'bot');
+  div.textContent=text;
+  box.appendChild(div);
+  box.scrollTop=box.scrollHeight;
+}
+
+async function sendChat(){
+  var input=document.getElementById('ai-chat-input');
+  var text=input.value.trim();
+  if(!text) return;
+  input.value='';
+  addMsg(text,'user');
+  chatHistory.push({role:'user',content:text});
+  document.getElementById('ai-typing').style.display='block';
+  document.getElementById('ai-chat-send').disabled=true;
+
+  try{
+    var res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:`You are the AI assistant for NewSites.com, a B2B SaaS platform that provides AI-powered business automation for small businesses. Services include: AI call answering, SMS automation, CRM, lead management, and social media posting. Pricing: Starter $97/mo, Growth $297/mo, Empire $597/mo. Your job is to answer questions about NewSites.com and also collect lead information. After answering 1-2 questions, naturally ask for their name, phone number, and email so we can follow up. Once you have their contact info, confirm you will have someone reach out within 24 hours. Be friendly, concise, and professional. Never make up features that do not exist.`,
+        messages:chatHistory
+      })
+    });
+    var data=await res.json();
+    var reply=data.content[0].text;
+    chatHistory.push({role:'assistant',content:reply});
+    addMsg(reply,'bot');
+
+    // Check if lead info was collected and save it
+    if(!leadCollected && (reply.includes('reach out') || reply.includes('24 hours')) && chatHistory.length>4){
+      var fullConvo=chatHistory.map(m=>m.role+': '+m.content).join('
+');
+      var nameMatch=fullConvo.match(/(?:name is|I am|I'm)\s+([A-Z][a-z]+(?:\s+[A-Z][a-z]+)?)/);
+      var phoneMatch=fullConvo.match(/(\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{4})/);
+      var emailMatch=fullConvo.match(/([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})/);
+      if(phoneMatch||emailMatch){
+        leadCollected=true;
+        fetch('https://alive-jay-thing-transcript.trycloudflare.com/contact-form',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            name:nameMatch?nameMatch[1]:'Chat Lead',
+            email:emailMatch?emailMatch[1]:'',
+            phone:phoneMatch?phoneMatch[1]:'',
+            businessName:'',
+            message:'Lead from AI chat: '+fullConvo.substring(0,500)
+          })
+        });
+      }
+    }
+  }catch(e){
+    addMsg('Sorry, I had a connection issue. Please try again or email us directly.','bot');
+  }
+
+  document.getElementById('ai-typing').style.display='none';
+  document.getElementById('ai-chat-send').disabled=false;
+}
+</script>
+
 </body>
 </html>
