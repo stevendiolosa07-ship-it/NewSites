@@ -360,6 +360,85 @@ async function submitLeadCapture(){
   }catch(e){out.style.display="block";out.style.border="1px solid rgba(255,80,80,0.4)";out.style.background="rgba(255,80,80,0.08)";out.style.color="#ff8080";out.textContent="Something went wrong. Please try again.";btn.disabled=false;btn.textContent="Get Started";}
 }
 </script>
+
+<!-- TESTIMONIALS -->
+<section style="padding:100px 0;border-top:1px solid rgba(201,168,76,0.12);position:relative;z-index:1;">
+  <div style="max-width:1100px;margin:0 auto;padding:0 48px;">
+    <p style="font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:#c9a84c;margin-bottom:16px;text-align:center;">Client Results</p>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,4vw,4rem);color:#f5f0e8;text-align:center;margin-bottom:64px;line-height:0.95;">What Our <span style="color:#c9a84c;">Clients Say</span></h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;">
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.15);padding:36px;position:relative;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)'">
+        <div style="font-size:2rem;color:rgba(201,168,76,0.3);font-family:'Bebas Neue',sans-serif;line-height:1;margin-bottom:16px;">"</div>
+        <p style="font-size:0.92rem;line-height:1.7;color:#a09880;margin-bottom:28px;">We were missing 30% of our inbound calls after hours. Since NewSites set up AI answering, every call gets handled and our leads went up 40% in the first month.</p>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:42px;height:42px;background:linear-gradient(135deg,#c9a84c,#7a5f28);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#000;">MR</div>
+          <div>
+            <div style="font-size:0.88rem;color:#f5f0e8;font-weight:500;">Marcus R.</div>
+            <div style="font-size:0.72rem;color:#c9a84c;letter-spacing:0.1em;text-transform:uppercase;">Roofing Company, LA</div>
+          </div>
+        </div>
+        <div style="position:absolute;top:20px;right:20px;display:flex;gap:3px;">
+          <span style="color:#c9a84c;font-size:0.8rem;">★★★★★</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(201,168,76,0.05);border:1px solid rgba(201,168,76,0.3);padding:36px;position:relative;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(201,168,76,0.6)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.3)'">
+        <div style="font-size:2rem;color:rgba(201,168,76,0.5);font-family:'Bebas Neue',sans-serif;line-height:1;margin-bottom:16px;">"</div>
+        <p style="font-size:0.92rem;line-height:1.7;color:#c8c0a8;margin-bottom:28px;">The CRM alone is worth it. I can see every lead, every call, every follow-up in one place. My team stopped dropping the ball and revenue is up $8K a month since we started.</p>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:42px;height:42px;background:linear-gradient(135deg,#f0c96a,#c9a84c);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#000;">JT</div>
+          <div>
+            <div style="font-size:0.88rem;color:#f5f0e8;font-weight:500;">Jamie T.</div>
+            <div style="font-size:0.72rem;color:#c9a84c;letter-spacing:0.1em;text-transform:uppercase;">HVAC Business, Phoenix</div>
+          </div>
+        </div>
+        <div style="position:absolute;top:20px;right:20px;display:flex;gap:3px;">
+          <span style="color:#c9a84c;font-size:0.8rem;">★★★★★</span>
+        </div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.15);padding:36px;position:relative;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)'">
+        <div style="font-size:2rem;color:rgba(201,168,76,0.3);font-family:'Bebas Neue',sans-serif;line-height:1;margin-bottom:16px;">"</div>
+        <p style="font-size:0.92rem;line-height:1.7;color:#a09880;margin-bottom:28px;">I was spending 3 hours a day on social media. Now it posts automatically, responds to comments, and I just got my biggest client ever from an Instagram DM the AI handled.</p>
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="width:42px;height:42px;background:linear-gradient(135deg,#c9a84c,#7a5f28);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:#000;">SD</div>
+          <div>
+            <div style="font-size:0.88rem;color:#f5f0e8;font-weight:500;">Sofia D.</div>
+            <div style="font-size:0.72rem;color:#c9a84c;letter-spacing:0.1em;text-transform:uppercase;">Med Spa, Miami</div>
+          </div>
+        </div>
+        <div style="position:absolute;top:20px;right:20px;display:flex;gap:3px;">
+          <span style="color:#c9a84c;font-size:0.8rem;">★★★★★</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Stats bar -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:64px;border:1px solid rgba(201,168,76,0.15);">
+      <div style="padding:32px;text-align:center;border-right:1px solid rgba(201,168,76,0.15);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#c9a84c;letter-spacing:0.05em;">94%</div>
+        <div style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:#a09880;margin-top:4px;">Call Answer Rate</div>
+      </div>
+      <div style="padding:32px;text-align:center;border-right:1px solid rgba(201,168,76,0.15);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#c9a84c;letter-spacing:0.05em;">3.2x</div>
+        <div style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:#a09880;margin-top:4px;">Avg Lead Increase</div>
+      </div>
+      <div style="padding:32px;text-align:center;border-right:1px solid rgba(201,168,76,0.15);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#c9a84c;letter-spacing:0.05em;">48h</div>
+        <div style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:#a09880;margin-top:4px;">Setup Time</div>
+      </div>
+      <div style="padding:32px;text-align:center;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:#c9a84c;letter-spacing:0.05em;">24/7</div>
+        <div style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:#a09880;margin-top:4px;">Always On</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+<!-- END TESTIMONIALS -->
+
 <footer>
   <div class="footer-logo">NEWSITES.COM</div>
   <ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Support</a></li><li><a href="#">Contact</a></li></ul>
