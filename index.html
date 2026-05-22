@@ -784,7 +784,7 @@ async function checkout(plan) {
     const btn = event.target;
     btn.textContent = 'Loading...';
     btn.disabled = true;
-    const res = await fetch('https://screw-loops-output-amended.trycloudflare.com/create-checkout', {
+    const res = await fetch('https://164.92.110.116:3001/create-checkout', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({plan})
@@ -803,7 +803,7 @@ async function submitContact() {
   const btn = document.getElementById('cf-btn');
   btn.textContent = 'Sending...'; btn.disabled = true;
   try {
-    const res = await fetch('https://screw-loops-output-amended.trycloudflare.com/contact', {
+    const res = await fetch('https://164.92.110.116:3001/contact', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({name, email, biz, msg})
     });
@@ -926,7 +926,7 @@ async function sendMsg(){
   document.getElementById('ai-typing').style.display='block';
   document.getElementById('ai-send').disabled=true;
   try{
-    var r=await fetch('https://screw-loops-output-amended.trycloudflare.com/ai-chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:historyMsgs})});
+    var r=await fetch('https://164.92.110.116:3001/ai-chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:historyMsgs})});
     var d=await r.json();
     var reply=d.reply||'Sorry, I could not get a response. Please try again.';
     historyMsgs.push({role:'assistant',content:reply});
