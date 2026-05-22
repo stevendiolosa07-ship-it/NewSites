@@ -196,7 +196,18 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
     <li><a href="#testimonials">Results</a></li>
   </ul>
   <a class="nav-links-item" href="contact.html" style="color:var(--gold);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;margin-right:1.5rem;">Contact</a><button id="help-btn" onclick="toggleHelp()">Help</button><a class="nav-cta" href="signin.html">Get Started</a>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" style="display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px">
+    <span style="width:24px;height:2px;background:var(--gold);display:block"></span>
+    <span style="width:24px;height:2px;background:var(--gold);display:block"></span>
+    <span style="width:24px;height:2px;background:var(--gold);display:block"></span>
+  </button>
 </nav>
+<div id="mobile-menu" style="display:none;position:fixed;top:64px;left:0;right:0;background:rgba(6,6,8,0.97);z-index:99;padding:2rem;flex-direction:column;gap:1.5rem;border-bottom:1px solid var(--border)">
+  <a href="#pricing" onclick="closeMobileMenu()" style="color:var(--gold);text-decoration:none;font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase">Pricing</a>
+  <a href="#testimonials" onclick="closeMobileMenu()" style="color:var(--white-dim);text-decoration:none;font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase">Results</a>
+  <a href="contact.html" style="color:var(--white-dim);text-decoration:none;font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase">Contact</a>
+  <a href="signin.html" style="color:var(--black);background:var(--gold);padding:0.6rem 1.2rem;text-decoration:none;font-size:0.9rem;letter-spacing:0.1em;text-transform:uppercase;text-align:center">Get Started</a>
+</div>
 
 <!-- FEATURE PANEL -->
 <div id="fp">
