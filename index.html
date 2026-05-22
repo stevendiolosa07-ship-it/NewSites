@@ -491,7 +491,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFP();});
 // ── BRAIN CANVAS ──
 const bc = document.getElementById('brain-canvas');
 const bctx = bc.getContext('2d');
-const SIZE = 520;
+const SIZE = Math.min(520, window.innerWidth - 32);
 bc.width = bc.height = SIZE;
 
 // Brain shape: 3D wireframe mesh using parametric brain-like surface
