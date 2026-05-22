@@ -784,7 +784,7 @@ async function checkout(plan) {
     const btn = event.target;
     btn.textContent = 'Loading...';
     btn.disabled = true;
-    const res = await fetch('https://164.92.110.116:3001/create-checkout', {
+    const res = await fetch(https://adjustment-panels-indication-philosophy.trycloudflare.com {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({plan})
@@ -803,7 +803,7 @@ async function submitContact() {
   const btn = document.getElementById('cf-btn');
   btn.textContent = 'Sending...'; btn.disabled = true;
   try {
-    const res = await fetch('https://164.92.110.116:3001/contact', {
+    const res = await fetch(https://adjustment-panels-indication-philosophy.trycloudflare.com/contact', {
       method: 'POST', headers: {'Content-Type':'application/json'},
       body: JSON.stringify({name, email, biz, msg})
     });
