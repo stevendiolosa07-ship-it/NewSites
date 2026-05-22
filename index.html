@@ -784,7 +784,7 @@ async function checkout(plan) {
     const btn = event.target;
     btn.textContent = 'Loading...';
     btn.disabled = true;
-    const res = await fetch(https://adjustment-panels-indication-philosophy.trycloudflare.com {
+    const res = await fetch('https://adjustment-panels-indication-philosophy.trycloudflare.com/create-checkout', {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({plan})
