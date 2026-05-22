@@ -494,7 +494,7 @@ function openFeature(id){
   document.getElementById('fp').classList.add('open');
   document.body.style.overflow='hidden';
 }
-function toggleMobileMenu(){const m=document.getElementById('mobile-menu');m.style.display=m.style.display==='flex'?'none':'flex'} function closeMobileMenu(){document.getElementById('mobile-menu').style.display='none'} function toggleMobileMenu(){const m=document.getElementById('mobile-menu');m.style.display=m.style.display==='flex'?'none':'flex'} function closeMobileMenu(){document.getElementById('mobile-menu').style.display='none'} function closeFP(){document.getElementById('fp').classList.remove('open');document.body.style.overflow='';}
+function toggleMobileMenu(){const m=document.getElementById('mobile-menu');m.style.display=m.style.display==='flex'?'none':'flex'} function closeMobileMenu(){document.getElementById('mobile-menu').style.display='none'} function toggleMobileMenu(){const m=document.getElementById('mobile-menu');m.style.display=m.style.display==='flex'?'none':'flex'} function closeMobileMenu(){document.getElementById('mobile-menu').style.display='none'} function toggleMobileMenu(){const m=document.getElementById('mobile-menu');m.style.display=m.style.display==='flex'?'none':'flex'} function closeMobileMenu(){document.getElementById('mobile-menu').style.display='none'} function closeFP(){document.getElementById('fp').classList.remove('open');document.body.style.overflow='';}
 document.getElementById('fp-close').addEventListener('click',closeFP);
 document.getElementById('fp').addEventListener('click',e=>{if(e.target===document.getElementById('fp'))closeFP();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')closeFP();});
