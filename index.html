@@ -740,7 +740,18 @@ bc.addEventListener('click', e=>{
     if(p.z>-0.3 && Math.hypot(mx-p.sx,my-p.sy)<28) openFeature(h.id);
   });
 });
-
+bc.addEventListener('touchmove', e=>{
+  e.preventDefault();
+  const r=bc.getBoundingClientRect();
+  const scaleX=SIZE/r.width, scaleY=SIZE/r.height;
+  const t=e.touches[0];
+  mouse2D.x=(t.clientX-r.left)*scaleX;
+  mouse2D.y=(t.clientY-r.top)*scaleY;
+  autoRot=false;
+  targetRotY = rotY + (mouse2D.x/SIZE - 0.5)*0.8;
+  targetRotX = 0.18 + (mouse2D.y/SIZE - 0.5)*0.5;
+  setTimeout(()=>autoRot=true, 3000);
+},{passive:false});
 // Touch
 bc.addEventListener('touchend', e=>{
   e.preventDefault();
