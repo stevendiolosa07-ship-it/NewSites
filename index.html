@@ -311,10 +311,10 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
   <div class="sec-inner">
     <p class="section-eyebrow reveal">Social proof</p>
     <h2 class="section-title reveal">Real businesses.<br><em>Real results.</em></h2>
-    <div class="testi-grid">
-      <div class="testi-card reveal"><div class="testi-q">"</div><p class="testi-text">We went from missing half our calls to having a full schedule booked two weeks in advance. The AI handles everything  -  I just show up and do the work.</p><div class="testi-author">Marcus T.</div><div class="testi-biz">Apex HVAC, Houston TX</div></div>
-      <div class="testi-card reveal"><div class="testi-q">"</div><p class="testi-text">The Empire plan paid for itself in the first week. My Google reviews went from 12 to 47 in a month because of the automated requests.</p><div class="testi-author">Sandra R.</div><div class="testi-biz">Clean & Shine Detailing, Atlanta GA</div></div>
-      <div class="testi-card reveal"><div class="testi-q">"</div><p class="testi-text">The website alone looks better than anything my old agency built for $4,000. Having the bot answer calls while I'm on a job is just a bonus.</p><div class="testi-author">Derek L.</div><div class="testi-biz">Premier Landscaping, Phoenix AZ</div></div>
+    <div class="testi-grid" style="display:flex;flex-direction:column;gap:20px;max-width:600px;margin:0 auto;">
+      <div class="testi-card reveal" style="width:100%;box-sizing:border-box;"><div class="testi-q">"</div><p class="testi-text">We went from missing half our calls to having a full schedule booked two weeks in advance. The AI handles everything  -  I just show up and do the work.</p><div class="testi-author">Marcus T.</div><div class="testi-biz">Apex HVAC, Houston TX</div></div>
+      <div class="testi-card reveal" style="width:100%;box-sizing:border-box;"><div class="testi-q">"</div><p class="testi-text">The Empire plan paid for itself in the first week. My Google reviews went from 12 to 47 in a month because of the automated requests.</p><div class="testi-author">Sandra R.</div><div class="testi-biz">Clean & Shine Detailing, Atlanta GA</div></div>
+      <div class="testi-card reveal" style="width:100%;box-sizing:border-box;"><div class="testi-q">"</div><p class="testi-text">The website alone looks better than anything my old agency built for $4,000. Having the bot answer calls while I'm on a job is just a bonus.</p><div class="testi-author">Derek L.</div><div class="testi-biz">Premier Landscaping, Phoenix AZ</div></div>
     </div>
   </div>
 </section>
@@ -392,9 +392,9 @@ async function submitLeadCapture(){
   <div style="max-width:1100px;margin:0 auto;padding:0 48px;">
     <p style="font-size:0.7rem;letter-spacing:0.3em;text-transform:uppercase;color:#c9a84c;margin-bottom:16px;text-align:center;">Client Results</p>
     <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2.5rem,4vw,4rem);color:#f5f0e8;text-align:center;margin-bottom:64px;line-height:0.95;">What Our <span style="color:#c9a84c;">Clients Say</span></h2>
-    <div class="client-grid" style="display:grid<div class="client-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px;">
+    <div class="client-grid" style="display:flex;overflow-x:auto;gap:20px;padding-bottom:16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;">
 
-      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.15);padding:36px;position:relative;transition:border-color 0.3s;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)'">
+      style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.15);padding:36px;position:relative;transition:border-color 0.3s;min-width:min(100%,340px);flex-shrink:0;scroll-snap-align:start;box-sizing:border-box;" onmouseover="this.style.borderColor='rgba(201,168,76,0.4)'" onmouseout="this.style.borderColor='rgba(201,168,76,0.15)'">
         <div style="font-size:2rem;color:rgba(201,168,76,0.3);font-family:'Bebas Neue',sans-serif;line-height:1;margin-bottom:16px;">"</div>
         <p style="font-size:0.92rem;line-height:1.7;color:#a09880;margin-bottom:28px;">We were missing 30% of our inbound calls after hours. Since NewSites set up AI answering, every call gets handled and our leads went up 40% in the first month.</p>
         <div style="display:flex;align-items:center;gap:14px;">
