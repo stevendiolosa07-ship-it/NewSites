@@ -719,7 +719,7 @@ function drawBrain(){
 }
 
 // Mouse interaction on brain
-bc.addEventListener('mousemove', e=>{  bc.addEventListener('mousemove', e=>{
+bc.addEventListener('mousemove', e=>{  
   const r=bc.getBoundingClientRect();
   const scaleX=SIZE/r.width, scaleY=SIZE/r.height;
   mouse2D.x=(e.clientX-r.left)*scaleX;
