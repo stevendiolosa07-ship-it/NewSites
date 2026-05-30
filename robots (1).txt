@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://stevendiolosa07.github.io/NewSites/sitemap.xml
+Sitemap: https://stevendiolosa07-ship-it.github.io/NewSites/sitemap.xml
 
 # Block private pages
 Disallow: /dashboard.html
