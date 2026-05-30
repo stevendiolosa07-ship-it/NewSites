@@ -521,7 +521,68 @@ async function submitLeadCapture(){
 </section>
 <!-- END TESTIMONIALS -->
 
-<footer>
+<!-- FAQ Section -->
+<section id="faq" style="padding:100px 0;border-top:1px solid rgba(201,168,76,0.12)">
+  <div style="max-width:720px;margin:0 auto;padding:0 48px">
+    <p style="font-size:0.7rem;font-weight:500;letter-spacing:0.15em;text-transform:uppercase;color:#C9A84C;margin-bottom:16px;text-align:center">FAQ</p>
+    <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(2rem,4vw,3rem);color:#F5F0E8;text-align:center;margin-bottom:48px;line-height:0.95">Common Questions</h2>
+    <div style="display:flex;flex-direction:column;gap:12px">
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.12);border-radius:10px;overflow:hidden">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:none;border:none;color:#F5F0E8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-align:left">
+          How fast can my business get set up?
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;transition:transform 0.3s"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:0.88rem;line-height:1.7;color:#8A8070">Most businesses are fully live within 48 hours. Your AI call answering, SMS automation, CRM, and social media posting are all configured during onboarding. The website builder generates your site in under 60 seconds.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.12);border-radius:10px;overflow:hidden">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:none;border:none;color:#F5F0E8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-align:left">
+          Do I need any technical knowledge?
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;transition:transform 0.3s"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:0.88rem;line-height:1.7;color:#8A8070">Zero. NewSites is built for business owners, not developers. Everything is managed through a simple dashboard. We handle all the technical setup for you.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.12);border-radius:10px;overflow:hidden">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:none;border:none;color:#F5F0E8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-align:left">
+          What happens if I miss a call?
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;transition:transform 0.3s"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:0.88rem;line-height:1.7;color:#8A8070">You don't miss it. Our AI answers every call 24/7, qualifies the lead, books appointments, and logs everything to your CRM. You get an instant notification with the lead details.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.12);border-radius:10px;overflow:hidden">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:none;border:none;color:#F5F0E8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-align:left">
+          Can I cancel anytime?
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;transition:transform 0.3s"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:0.88rem;line-height:1.7;color:#8A8070">Yes. No contracts, no cancellation fees. Cancel anytime from your dashboard. We're confident you'll stay because the results speak for themselves.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.12);border-radius:10px;overflow:hidden">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:none;border:none;color:#F5F0E8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-align:left">
+          What industries does NewSites work for?
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;transition:transform 0.3s"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:0.88rem;line-height:1.7;color:#8A8070">Any service-based small business. Our clients include roofing companies, HVAC contractors, med spas, landscapers, plumbers, auto repair shops, and real estate agents. If your business takes calls and needs leads, NewSites works for you.</div>
+      </div>
+
+      <div style="background:rgba(255,255,255,0.02);border:1px solid rgba(201,168,76,0.12);border-radius:10px;overflow:hidden">
+        <button onclick="toggleFaq(this)" style="width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:none;border:none;color:#F5F0E8;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-align:left">
+          Is there a free trial?
+          <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;transition:transform 0.3s"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+        </button>
+        <div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:0.88rem;line-height:1.7;color:#8A8070">Yes — try our AI Social Media Creator free with 3 generations, no account needed. For the full platform, book a free demo and we'll show you everything live.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script>
+function toggleFaq(btn){var a=btn.nextElementSibling,ar=btn.querySelector('svg'),o=a.style.display==='block';document.querySelectorAll('.faq-answer').forEach(function(x){x.style.display='none';});document.querySelectorAll('[onclick="toggleFaq(this)"] svg').forEach(function(s){s.style.transform='rotate(0deg)';});if(!o){a.style.display='block';ar.style.transform='rotate(180deg)';}}
+</script><footer>
   <div class="footer-logo">NEWSITES.COM</div>
   <ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Terms</a></li><li><a href="#">Support</a></li><li><a href="#">Contact</a></li></ul>
   <div class="footer-copy">© 2026 NewSites.com. All rights reserved.</div>
