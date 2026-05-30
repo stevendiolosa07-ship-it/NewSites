@@ -183,7 +183,32 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
 </head>
 <body>
 
-<div id="intro" class="done">
+<!-- Sticky CTA -->
+<div id="sticky-cta" style="position:fixed;bottom:24px;right:24px;z-index:999;display:none">
+  <a href="#contact" style="display:flex;align-items:center;gap:8px;background:#C9A84C;color:#080808;padding:12px 20px;border-radius:50px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;text-decoration:none;box-shadow:0 4px 24px rgba(201,168,76,0.4)" onmouseover="this.style.background='#E8C96A'" onmouseout="this.style.background='#C9A84C'">
+    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+    Book a Free Demo
+  </a>
+</div>
+
+<!-- Exit Intent Popup -->
+<div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:9999;align-items:center;justify-content:center;padding:20px">
+  <div style="background:#111;border:1px solid rgba(201,168,76,0.3);border-radius:20px;max-width:440px;width:100%;padding:40px;text-align:center;position:relative">
+    <button onclick="closeExitPopup()" style="position:absolute;top:16px;right:16px;background:none;border:none;color:#4A4540;cursor:pointer;font-size:1.2rem">✕</button>
+    <div style="font-size:2.5rem;margin-bottom:12px">⚡</div>
+    <h3 style="font-family:'Bebas Neue',sans-serif;font-size:1.6rem;letter-spacing:0.05em;color:#F5F0E8;margin-bottom:8px">Wait — before you go</h3>
+    <p style="font-size:0.88rem;color:#8A8070;line-height:1.7;margin-bottom:24px">Book a free 15-minute demo and see exactly how NewSites can automate your business. No pitch, just results.</p>
+    <a href="#contact" onclick="closeExitPopup()" style="display:block;padding:13px;background:#C9A84C;color:#080808;border-radius:8px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;text-decoration:none;margin-bottom:10px">Book My Free Demo →</a>
+    <button onclick="closeExitPopup()" style="background:none;border:none;font-size:12px;color:#4A4540;cursor:pointer;text-decoration:underline">No thanks, I'll figure it out myself</button>
+  </div>
+</div>
+
+<script>
+window.addEventListener('scroll',function(){var c=document.getElementById('sticky-cta');if(window.scrollY>400)c.style.display='block';else c.style.display='none';});
+var exitShown=false;
+document.addEventListener('mouseleave',function(e){if(e.clientY<=0&&!exitShown&&!sessionStorage.getItem('exitSeen')){exitShown=true;sessionStorage.setItem('exitSeen','true');var p=document.getElementById('exit-popup');p.style.display='flex';}});
+function closeExitPopup(){document.getElementById('exit-popup').style.display='none';}
+</script><div id="intro" class="done">
   <div id="intro-logo">NEWSITES</div>
   <div id="intro-sub">.COM  -  AI Business Automation</div>
   <div id="intro-bar"></div>
