@@ -486,10 +486,14 @@ async function submitForm() {
     });
     const result = await res.json();
     if(result.success) {
-      document.getElementById('form-main').style.display = 'none';
-      document.getElementById('success-screen').style.display = 'block';
-      document.querySelector('.progress-wrap').style.display = 'none';
-      window.scrollTo({top:0,behavior:'smooth'});
+          if(result.checkoutUrl) {
+            window.location.href = result.checkoutUrl;
+          } else {
+            document.getElementById('form-main').style.display = 'none';
+            document.getElementById('success-screen').style.display = 'block';
+            document.querySelector('.progress-wrap').style.display = 'none';
+            window.scrollTo({top:0,behavior:'smooth'});
+          }
     } else {
       throw new Error(result.error || 'Submission failed');
     }
