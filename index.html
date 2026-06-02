@@ -239,7 +239,7 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
   }
 }
 </script></head>
-<script>
+  <script>
 (function(){
   // Remove old intro elements if any
   const old=document.getElementById('ns-intro-wrap');
@@ -261,13 +261,13 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
     // ---- WRAP ----
     const W=document.createElement('div');
     W.id='ns-intro-wrap';
-    W.style.cssText='position:fixed;inset:0;z-index:999999;background:#060608;overflow:hidden;';
+    W.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;z-index:999999;background:#060608;overflow:hidden;isolation:isolate;';
     document.body.prepend(W);
     document.body.style.overflow='hidden';
 
     // Canvas
     const cv=document.createElement('canvas');
-    cv.style.cssText='position:absolute;inset:0;width:100%;height:100%;';
+    cv.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%;display:block;z-index:1;';
     W.appendChild(cv);
 
     // UI HTML
@@ -301,7 +301,7 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
 
     const GOLD=0xC9A84C;
     const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true});
-    renderer.setSize(innerWidth,innerHeight);
+    renderer.setSize(window.innerWidth,window.innerHeight);cv.style.width='100%';cv.style.height='100%';
     renderer.setPixelRatio(Math.min(devicePixelRatio,2));
     renderer.setClearColor(0x060608,1);
     const scene=new THREE.Scene();
@@ -449,7 +449,7 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
     function prj(wp){const p=wp.clone().project(camera);return{x:(p.x*.5+.5)*innerWidth,y:(-p.y*.5+.5)*innerHeight,z:p.z};}
 
     document.addEventListener('mousemove',e=>{tmX=(e.clientX/innerWidth-.5)*2;tmY=(e.clientY/innerHeight-.5)*2;it=0;});
-    window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);wc.width=innerWidth;wc.height=innerHeight;});
+    window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);cv.style.width='100%';cv.style.height='100%';wc.width=innerWidth;wc.height=innerHeight;});
 
     function animate(){
       requestAnimationFrame(animate);
@@ -523,8 +523,6 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
     init();
   }
 })();
-</script>
-  }
 </script>
 <!-- Sticky CTA -->
 <div id="sticky-cta" style="position:fixed;bottom:24px;right:24px;z-index:999;display:none">
