@@ -306,7 +306,7 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
     renderer.setClearColor(0x060608,1);
     const scene=new THREE.Scene();
     const camera=new THREE.PerspectiveCamera(46,innerWidth/innerHeight,0.01,2000);
-    camera.position.set(0,0,5.5);
+    camera.position.set(0,0.15,5.5);
 
     // ---- STARS ----
     const SG=new THREE.Group(); scene.add(SG);
@@ -387,7 +387,7 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
     function inS(z,y){const px=Math.round((z+1)/2*(MW2-1)),py=Math.round((1-(y+1)/2)*(MH2-1));if(px<0||px>=MW2||py<0||py>=MH2)return false;return spx[(py*MW2+px)*4]>128;}
     function inB(x,y,z){return inF(x*0.9,y)&&inS(z,y);}
 
-    const BG=new THREE.Group(); scene.add(BG); BG.visible=false;
+    const BG=new THREE.Group(); scene.add(BG); BG.visible=false; BG.position.y=0.12; BG.position.y=0.12;
     const BS=1.95; BG.scale.setScalar(BS);
     const PN=80,YN=60;
     function sR(phi,y){let lo=0,hi=1;for(let i=0;i<16;i++){const m=(lo+hi)/2;if(inB(m*Math.sin(phi),y,m*Math.cos(phi)))lo=m;else hi=m;}return(lo+hi)/2;}
