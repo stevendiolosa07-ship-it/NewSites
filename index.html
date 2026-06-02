@@ -240,7 +240,12 @@ footer{border-top:1px solid var(--border);padding:3rem 4rem;display:flex;justify
 }
 </script></head>
 <body>
-
+<script>
+  if (!sessionStorage.getItem('introSeen')) {
+    sessionStorage.setItem('introSeen', 'true');
+    window.location.href = 'newsites-intro.html';
+  }
+</script>
 <!-- Sticky CTA -->
 <div id="sticky-cta" style="position:fixed;bottom:24px;right:24px;z-index:999;display:none">
   <a href="#contact" style="display:flex;align-items:center;gap:8px;background:#C9A84C;color:#080808;padding:12px 20px;border-radius:50px;font-family:'Bebas Neue',sans-serif;font-size:1rem;letter-spacing:0.08em;text-decoration:none;box-shadow:0 4px 24px rgba(201,168,76,0.4)" onmouseover="this.style.background='#E8C96A'" onmouseout="this.style.background='#C9A84C'">
