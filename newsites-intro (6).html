@@ -286,7 +286,7 @@ function sp(p){phase=p;phaseT0=clock.getElapsedTime();}
 function proj(wp){const p=wp.clone().project(camera);return{x:(p.x*.5+.5)*innerWidth,y:(-p.y*.5+.5)*innerHeight,z:p.z};}
 function setBrainOp(op){brainGrp.children.forEach(c=>{if(c.isLine)c.material.opacity=op;});}
 function setHSVis(v){hsVis=v;hotspots.forEach(h=>{h.dot.visible=v;h.glow.visible=v;h.r1.visible=v;h.r2.visible=v;});if(!v)labelEls.forEach(l=>l.style.opacity='0');}
-function fireComplete(){if(introComplete)return;introComplete=true;fadeOverlay.classList.add('fading');setTimeout(()=>{ window.location.href = '/newsites/'; }, 800);}
+function fireComplete(){if(introComplete)return;introComplete=true;setTimeout(()=>{ window.location.href = 'https://stevendiolosa07-ship-it.github.io/newsites/'; }, 800);setTimeout(()=>{ window.location.href = '/newsites/'; }, 800);}
 skipBtn.addEventListener('click',fireComplete);
 document.addEventListener('mousemove',e=>{tmX=(e.clientX/innerWidth-.5)*2;tmY=(e.clientY/innerHeight-.5)*2;iTimer=0;});
 canvas.addEventListener('click',e=>{
