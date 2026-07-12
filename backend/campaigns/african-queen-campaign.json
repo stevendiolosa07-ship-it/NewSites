@@ -1,0 +1,243 @@
+{
+  "clientKey": "african-queen-braiding",
+  "input": {
+    "businessName": "African Queen Braiding",
+    "industry": "Hair braiding salon",
+    "city": "Brooklyn, NY",
+    "address": "1629 Pitkin Ave",
+    "keyword": "BRAIDS",
+    "notes": "Specialties: knotless, boho, cornrows. Wants more bookings from TikTok/IG.",
+    "phoneDisplay": "(347) 302-9363"
+  },
+  "model": "claude-sonnet-4-6",
+  "generatedAt": "2026-07-12T01:23:08.825Z",
+  "campaign": {
+    "category": "B",
+    "classification_reason": "Brick-and-mortar braiding salon in Brooklyn. Physical craft with visible transformation \u2014 authenticity and real footage outperform any AI-generated concept. Category B: smartphone shot lists, not generated video.",
+    "pattern_recognition": {
+      "core_viral_loop": "Transformation payoff + process satisfaction. Braiding is one of the few niches where the WORK ITSELF is the content: clean parts, fast hands, and a dramatic reveal create a complete emotional arc in under 30 seconds. The loop: curiosity hook (flash of finished look or top-down part pattern) -> process retention (ASMR/timelapse) -> emotional payoff (client reaction) -> SMS CTA while dopamine is high.",
+      "funnel_blueprint": [
+        "Viewer watches transformation reel to the reveal (high completion rate signals push distribution)",
+        "End card + caption: \"Text BRAIDS to (347) 302-9363\"",
+        "Inbound SMS hits the NewSites Twilio webhook -> keyword BRAIDS matched",
+        "AI auto-reply fires in seconds: booking link + price menu + style question",
+        "Lead logged in CRM under African Queen with style interest captured",
+        "No booking in 24h -> automated follow-up text with an open-slot nudge"
+      ],
+      "platform_matrix": {
+        "tiktok": "Raw, fast-cut transformations on trending native audio \u2014 imperfect is better, polish kills reach here.",
+        "instagram": "Polished Reels + carousel style catalogs; the grid is the portfolio that closes hesitant bookers.",
+        "facebook": "Voiceover versions with local framing (\"Pitkin Ave, Brooklyn\") \u2014 this is where 30+ local bookers actually convert; boost winners to a 5-mile radius.",
+        "x": "Skip as a primary channel for this niche; repost top Reels at zero extra effort only."
+      }
+    },
+    "campaigns": [
+      {
+        "title": "The Reveal",
+        "concept": "Full before/after knotless transformation compressed into 22 seconds. Open on a 0.5s flash of the finished look (curiosity spike), hard cut to the before, sprint through the process, land on the client reaction.",
+        "primary_platform": "TikTok + Instagram Reels",
+        "shot_list": [
+          {
+            "shot": 1,
+            "phone_position": "Chest height, arm's length, like you're on FaceTime",
+            "action": "HALF a second of the FINISHED hair (steal this clip from shot 6 when you edit in CapCut), then hard cut",
+            "duration_seconds": 0.5
+          },
+          {
+            "shot": 2,
+            "phone_position": "Two hands on the phone at chest height, walk a slow half-circle around the chair",
+            "action": "The BEFORE: she's seated, natural hair out, looking at the camera like it's a normal photo",
+            "duration_seconds": 2
+          },
+          {
+            "shot": 3,
+            "phone_position": "Stand behind the chair, hold the phone FLAT over her head like you're filming a plate of food from above, about a ruler's length up",
+            "action": "The comb drawing the part line + gel going on. Volume ON \u2014 the comb and gel sound IS the video",
+            "duration_seconds": 4
+          },
+          {
+            "shot": 4,
+            "phone_position": "Prop the phone on the counter behind the chair (lean it on anything), whole chair in the screen",
+            "action": "Open Camera > Time-lapse, hit record, forget it for the whole appointment",
+            "duration_seconds": 8
+          },
+          {
+            "shot": 5,
+            "phone_position": "Crouch behind her, start the phone down by her lower back, slowly raise it straight up to the top of her head",
+            "action": "The finished braids, bottom to top, nice and slow",
+            "duration_seconds": 4
+          },
+          {
+            "shot": 6,
+            "phone_position": "Stand right next to the mirror, phone pointed at her FACE not the hair",
+            "action": "She sees herself for the FIRST time \u2014 do not let her peek before this. Her real reaction is the whole video",
+            "duration_seconds": 3
+          },
+          {
+            "shot": 7,
+            "phone_position": "Hold steady on the finished hair",
+            "action": "2 seconds of the final look \u2014 you'll type 'Text BRAIDS to (347) 302-9363' over it in CapCut",
+            "duration_seconds": 2
+          }
+        ],
+        "video_script": {
+          "hook": null,
+          "visual_direction": null,
+          "voiceover": null
+        },
+        "text_overlays": [
+          "6 hours. Watch it in 22 seconds.",
+          "The parting pattern is everything",
+          "Wait for her reaction\u2026",
+          "Text BRAIDS to (347) 302-9363 \u2014 booked in 60 seconds"
+        ],
+        "voiceover": "",
+        "cta_line": "Text BRAIDS to (347) 302-9363 \u2014 our AI answers in seconds with prices & open slots.",
+        "captions": {
+          "tiktok": "6 hours of knotless in 22 seconds \ud83d\ude2e\u200d\ud83d\udca8 Brooklyn \u2014 text BRAIDS to (347) 302-9363 and you are booked before this video ends.",
+          "instagram": "Knotless boho, medium, mid-back \u2728 Done at African Queen Braiding, Pitkin Ave BK. Text BRAIDS to (347) 302-9363 \u2014 instant prices + booking, no DM waiting.",
+          "facebook": "Brooklyn! This is a full knotless install at African Queen Braiding, 1629 Pitkin Ave. Text BRAIDS to (347) 302-9363 and our system replies instantly with prices and open slots."
+        },
+        "hashtags": [
+          "#knotlessbraids",
+          "#brooklynbraider",
+          "#braidtransformation",
+          "#bohobraids",
+          "#nycbraids",
+          "#pitkinave"
+        ],
+        "proof_of_concept": "Before/after reveal is the dominant organic format in every appearance-transformation niche (hair, detailing, renovation) because the payoff is visual, universal, and completes an emotional arc \u2014 completion rate is the strongest distribution signal on TikTok and Reels. Adding a genuine first-look reaction stacks a second archetype (reaction reveal) on top of the first."
+      },
+      {
+        "title": "Parting Pattern ASMR",
+        "concept": "No talking, no music for the first 5 seconds \u2014 just top-down crisp parting, gel, and comb audio. Pure process satisfaction for the braid-content audience that watches these on loop.",
+        "primary_platform": "TikTok",
+        "shot_list": [
+          {
+            "shot": 1,
+            "phone_position": "Flat over her head like a food video, hold as still as you can",
+            "action": "The comb draws ONE slow, perfectly straight part line. No music, no talking \u2014 real sound only",
+            "duration_seconds": 5
+          },
+          {
+            "shot": 2,
+            "phone_position": "Same spot, don't move",
+            "action": "Gel on the fresh part, fingers smoothing it down",
+            "duration_seconds": 5
+          },
+          {
+            "shot": 3,
+            "phone_position": "Step around to her side, get the phone close to her hands",
+            "action": "The first three stitches of the braid \u2014 fingers moving fast, you can see the hair pulled tight",
+            "duration_seconds": 6
+          },
+          {
+            "shot": 4,
+            "phone_position": "Back flat over the top of her head",
+            "action": "The whole finished grid of parts before any hair goes in \u2014 this is the money shot people rewatch",
+            "duration_seconds": 4
+          },
+          {
+            "shot": 5,
+            "phone_position": "Hold steady on the parts",
+            "action": "2 seconds \u2014 text goes on top in CapCut: 'This precision is why. Text BRAIDS to (347) 302-9363'",
+            "duration_seconds": 2
+          }
+        ],
+        "video_script": {
+          "hook": null,
+          "visual_direction": null,
+          "voiceover": null
+        },
+        "text_overlays": [
+          "POV: your braider actually takes her time on parts",
+          "Grid check \u2714\ufe0f",
+          "Text BRAIDS to (347) 302-9363"
+        ],
+        "voiceover": "",
+        "cta_line": "Text BRAIDS to (347) 302-9363 \u2014 our AI answers in seconds with prices & open slots.",
+        "captions": {
+          "tiktok": "The parts ARE the flex. Text BRAIDS to (347) 302-9363 \u2014 instant booking, Brooklyn.",
+          "instagram": "Precision parts, every install. African Queen Braiding, Brooklyn. Text BRAIDS to (347) 302-9363.",
+          "facebook": "This is the difference between a $90 install and ours. African Queen Braiding, 1629 Pitkin Ave. Text BRAIDS to (347) 302-9363."
+        },
+        "hashtags": [
+          "#braidasmr",
+          "#partingpattern",
+          "#neatbraids",
+          "#brooklynbraids",
+          "#satisfying"
+        ],
+        "proof_of_concept": "ASMR process content is a proven retention archetype: real work audio + visible precision holds watch time without any hook writing. In hair specifically, parting-pattern top-downs are rewatched and shared as quality proof \u2014 the part grid is the niche shorthand for \"this braider is worth the price.\""
+      },
+      {
+        "title": "The 6AM Chair",
+        "concept": "Behind-the-scenes authority: opening the shop, first client of the day in the chair while the block is still dark. Positions African Queen as the hardest-working braider on Pitkin Ave \u2014 local authority converts on Facebook.",
+        "primary_platform": "Facebook + Instagram Reels",
+        "shot_list": [
+          {
+            "shot": 1,
+            "phone_position": "Just hold the phone in one hand and walk \u2014 like you're vlogging",
+            "action": "Unlocking the gate while the street is still dark, lights flicking on inside",
+            "duration_seconds": 4
+          },
+          {
+            "shot": 2,
+            "phone_position": "Prop the phone on the counter facing the chair",
+            "action": "First client sits down, cape goes on \u2014 make sure the wall clock showing the early time is in the shot",
+            "duration_seconds": 3
+          },
+          {
+            "shot": 3,
+            "phone_position": "Same counter spot, Camera > Time-lapse",
+            "action": "The install running while the sun comes up through the window behind them",
+            "duration_seconds": 8
+          },
+          {
+            "shot": 4,
+            "phone_position": "Hold the phone and follow her \u2014 like filming a friend leaving a party",
+            "action": "She checks the mirror, smiles, walks out the door into full daylight",
+            "duration_seconds": 4
+          },
+          {
+            "shot": 5,
+            "phone_position": "Hold steady on the empty chair or the finished look",
+            "action": "2 seconds \u2014 text on top: 'Early slots go first. Text BRAIDS to (347) 302-9363'",
+            "duration_seconds": 2
+          }
+        ],
+        "video_script": {
+          "hook": null,
+          "visual_direction": null,
+          "voiceover": null
+        },
+        "text_overlays": [
+          "6:04 AM. Pitkin Ave.",
+          "She has a 9AM flight. We got her.",
+          "Early slots go first \u2014 text BRAIDS to (347) 302-9363"
+        ],
+        "voiceover": "While the block is still asleep, the chair is already full. If you need your hair done before work, before a flight, before life starts \u2014 text BRAIDS to (347) 302-9363 and our system books you in seconds.",
+        "cta_line": "Text BRAIDS to (347) 302-9363 \u2014 our AI answers in seconds with prices & open slots.",
+        "captions": {
+          "tiktok": "6AM client hours. Brooklyn braiders built different. Text BRAIDS to (347) 302-9363.",
+          "instagram": "The 6AM chair \ud83d\udd55 Early appointments at African Queen Braiding, Pitkin Ave. Text BRAIDS to (347) 302-9363.",
+          "facebook": "We open early for a reason \u2014 Brooklyn does not wait. African Queen Braiding, 1629 Pitkin Ave. Text BRAIDS to (347) 302-9363 for early slots before they go."
+        },
+        "hashtags": [
+          "#brooklynsmallbusiness",
+          "#6amclub",
+          "#braider",
+          "#pitkinave",
+          "#dayinthelife"
+        ],
+        "proof_of_concept": "Day-in-the-life / behind-the-scenes is the trust archetype: it converts local audiences who already saw a transformation reel but need a reason to choose YOU. Work-ethic framing (early hours, real street, real shop) is the strongest authority signal for location-based service businesses on Facebook, where local bookers actually transact."
+      }
+    ],
+    "posting_cadence": "Minimum 1 transformation reel per day \u2014 the tripod stays behind the chair and EVERY client becomes content (get a quick verbal OK, offer $10 off for on-camera reactions). Batch-film: one Saturday of shooting = a full week of posts. ASMR and BTS formats fill non-appointment days.",
+    "sms_flow": {
+      "keyword": "BRAIDS",
+      "number": "(347) 302-9363",
+      "auto_reply": "Thanks for texting BRAIDS! Tap to see prices & book instantly: {BOOKING_LINK}. Reply with what you want + your day, and we will lock you in."
+    }
+  }
+}
