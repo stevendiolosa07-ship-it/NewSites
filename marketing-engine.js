@@ -30,6 +30,20 @@ const express = require("express");
 const app = express();
 app.use(express.json({ limit: "1mb" }));
 
+// ---------- CORS ----------
+// The front end is served from GitHub Pages (a DIFFERENT origin from this VPS),
+// so without these headers the browser blocks every request. Lock ALLOWED_ORIGIN
+// down to your own domain once you have one.
+const ALLOWED_ORIGIN = process.env.MARKETING_ALLOWED_ORIGIN || "*";
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", ALLOWED_ORIGIN);
+  res.setHeader("Access-Control-Allow-Headers", "content-type");
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Vary", "Origin");
+  if (req.method === "OPTIONS") return res.sendStatus(204);   // preflight
+  next();
+});
+
 const PORT = process.env.MARKETING_PORT || 3005;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY || "";
 const MODEL = process.env.MARKETING_MODEL || "claude-sonnet-4-6";
