@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Marketing Engine — NewSites</title>
+<meta name="description" content="AI marketing intelligence for small businesses. Get a researched, executable content playbook — hooks, pacing, CTAs, and visual references.">
+
+<!-- ============================================================
+     NEWSITES MARKETING ENGINE — front end
+     Talks to: POST {API_BASE}/marketing/strategy   (port 3005 via Caddy)
+
+     >>> SET API_BASE BELOW. <<<
+     It MUST be an https:// origin. GitHub Pages is served over HTTPS,
+     so a plain http://IP endpoint will be blocked by the browser as
+     mixed content. Options:
+       1. Permanent domain + Caddy TLS  ->  https://yourdomain.com   (do this)
+       2. Cloudflare tunnel URL         ->  https://xxx.trycloudflare.com
+          (works, but the URL rotates on every restart and will break)
+     ============================================================ -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0a0a; --panel:#141414; --panel-2:#1c1c1c;
+  --gold:#d4af37; --gold-soft:#f0dfa0; --line:rgba(212,175,55,.22);
+  --text:#f2efe9; --dim:#9a948a; --green:#4ade80; --red:#f87171;
+  --sans:'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--black);color:var(--text);font-family:var(--sans);font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:var(--gold-soft);text-decoration:none}
+button{font-family:var(--sans);cursor:pointer;border:none;background:none;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:3px}
+
+header{border-bottom:1px solid var(--line);padding:18px clamp(16px,4vw,48px);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);z-index:20}
+.brand{font-weight:700;letter-spacing:.16em;text-transform:uppercase;font-size:.9rem}
+.brand span{color:var(--gold)}
+.back{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.back:hover{color:var(--gold)}
+
+.wrap{max-width:960px;margin:0 auto;padding:clamp(36px,7vh,72px) clamp(16px,4vw,32px) 96px}
+.eyebrow{font-size:.7rem;letter-spacing:.34em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:14px}
+h1{font-size:clamp(1.9rem,5vw,3rem);font-weight:700;letter-spacing:-.02em;line-height:1.12}
+h1 em{font-style:normal;color:var(--gold)}
+.lede{color:var(--dim);max-width:640px;margin-top:16px;font-size:1.02rem}
+
+form{margin-top:40px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:clamp(20px,3vw,30px)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.grid{grid-template-columns:1fr}}
+label{display:block;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;color:var(--dim);font-weight:600;margin-bottom:7px}
+input,select{width:100%;background:var(--panel-2);border:1px solid rgba(242,239,233,.12);border-radius:9px;padding:13px 15px;color:var(--text);font-family:var(--sans);font-size:.95rem}
+input::placeholder{color:rgba(242,239,233,.28)}
+input:focus,select:focus{border-color:var(--gold);outline:none}
+.field{margin-bottom:16px}
+.submit{width:100%;margin-top:8px;background:linear-gradient(135deg,var(--gold-soft),var(--gold));color:#0a0a0a;font-weight:700;font-size:.8rem;letter-spacing:.22em;text-transform:uppercase;padding:17px;border-radius:999px;transition:.25s}
+.submit:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 12px 32px rgba(212,175,55,.28)}
+.submit:disabled{opacity:.55;cursor:not-allowed}
+
+#status{margin-top:22px;font-size:.9rem;color:var(--dim);display:none}
+#status.show{display:block}
+#status .spin{display:inline-block;width:13px;height:13px;border:2px solid var(--line);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;vertical-align:-2px;margin-right:9px}
+@keyframes spin{to{transform:rotate(360deg)}}
+#status.err{color:var(--red)}
+
+#out{margin-top:40px;display:none}
+#out.show{display:block;animation:rise .5s ease}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.tag{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:7px 13px;border-radius:999px;border:1px solid var(--line);color:var(--gold-soft)}
+.tag.sys{border-color:rgba(74,222,128,.4);color:var(--green)}
+.tag.per{border-color:rgba(212,175,55,.5);color:var(--gold)}
+
+.summary{background:var(--panel);border-left:2px solid var(--gold);border-radius:0 12px 12px 0;padding:20px 24px;margin-bottom:32px}
+.summary h2{font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px}
+.summary p{color:var(--text);font-size:.97rem}
+
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:clamp(20px,3vw,28px);margin-bottom:20px}
+.card-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid rgba(242,239,233,.08)}
+.card-head h3{font-size:1.22rem;font-weight:600;letter-spacing:-.01em}
+.card-head .plat{font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;white-space:nowrap}
+.row{margin-bottom:15px}
+.row:last-child{margin-bottom:0}
+.row .k{font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);font-weight:600;margin-bottom:5px}
+.row .v{font-size:.96rem;color:var(--text)}
+.row.hook .v{border-left:2px solid var(--gold);padding-left:13px;font-weight:400}
+.row.cta .v{color:var(--gold-soft);font-weight:500}
+
+.ev{margin-top:6px}
+.ev li{list-style:none;display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(242,239,233,.06);font-size:.9rem}
+.ev li:first-child{border-top:none}
+.badge{flex:none;font-size:.56rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;padding:4px 8px;border-radius:5px;margin-top:2px;white-space:nowrap}
+.badge.engagement_data{background:rgba(212,175,55,.14);color:var(--gold)}
+.badge.case_study{background:rgba(74,222,128,.14);color:var(--green)}
+.badge.benchmark{background:rgba(242,239,233,.1);color:var(--dim)}
+.ev .src{display:block;color:var(--dim);font-size:.78rem;margin-top:3px}
+
+.visual{background:var(--panel-2);border:1px dashed var(--line);border-radius:11px;padding:16px 18px;margin-top:15px}
+.visual .k{font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:7px}
+.visual p{font-size:.9rem;color:var(--text)}
+.cam{background:rgba(212,175,55,.06);border:1px solid var(--line);border-radius:11px;padding:16px 18px;margin-top:12px}
+.cam .k{font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:7px}
+.cam p{font-size:.9rem}
+
+.measure{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px;margin-top:28px}
+.measure h3{font-size:.7rem;letter-spacing:.24em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:11px}
+.measure p{font-size:.95rem}
+.disc{margin-top:22px;font-size:.78rem;color:var(--dim);line-height:1.6;padding-top:18px;border-top:1px solid rgba(242,239,233,.08)}
+footer{border-top:1px solid var(--line);padding:36px 20px;text-align:center;color:var(--dim);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">NEW <span>SITES</span></div>
+  <a class="back" href="./index.html">← Back to site</a>
+</header>
+
+<div class="wrap">
+  <div class="eyebrow">Marketing Engine</div>
+  <h1>What's working <em>right now</em> — and exactly how to run it.</h1>
+  <p class="lede">Live research into what's actually performing in your niche, turned into three executable plays: the hook, the pacing, the call to action, a visual reference, and camera directions if a real person needs to be on screen.</p>
+
+  <form id="f" autocomplete="off">
+    <div class="grid">
+      <div class="field">
+        <label for="business">Business name</label>
+        <input id="business" required placeholder="African Queen Braiding">
+      </div>
+      <div class="field">
+        <label for="industry">Industry</label>
+        <input id="industry" required placeholder="Hair braiding salon">
+      </div>
+      <div class="field">
+        <label for="city">City <span style="text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input id="city" placeholder="Brooklyn, NY">
+      </div>
+      <div class="field">
+        <label for="platform">Priority platform</label>
+        <select id="platform">
+          <option value="">Let the engine choose</option>
+          <option>TikTok</option><option>Instagram</option><option>YouTube Shorts</option>
+          <option>Facebook</option><option>X</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label for="goal">Primary goal</label>
+      <select id="goal">
+        <option value="generate inbound leads">Generate inbound leads</option>
+        <option value="fill the appointment calendar">Fill the appointment calendar</option>
+        <option value="build local brand awareness">Build local brand awareness</option>
+        <option value="drive online sales">Drive online sales</option>
+        <option value="grow follower base">Grow follower base</option>
+      </select>
+    </div>
+    <button class="submit" id="go" type="submit">Build my playbook</button>
+  </form>
+
+  <div id="status"></div>
+  <div id="out"></div>
+</div>
+
+<footer>New Sites · New Heights</footer>
+
+<script>
+"use strict";
+
+/* ==== SET THIS. Must be an https:// origin (see comment at top of file). ==== */
+const API_BASE = "";   // e.g. "https://yourdomain.com"  or  "https://xxxx.trycloudflare.com"
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[<>&"]/g, c => ({ "<":"&lt;", ">":"&gt;", "&":"&amp;", '"':"&quot;" }[c]));
+
+function status(msg, isErr) {
+  const el = $("#status");
+  el.className = "show" + (isErr ? " err" : "");
+  el.innerHTML = isErr ? esc(msg) : '<span class="spin"></span>' + esc(msg);
+}
+function clearStatus(){ $("#status").className = ""; }
+
+$("#f").addEventListener("submit", async e => {
+  e.preventDefault();
+
+  if (!API_BASE) {
+    status("API_BASE is not configured. Open marketing.html and set API_BASE to your https:// endpoint.", true);
+    return;
+  }
+
+  const body = {
+    business: $("#business").value.trim(),
+    industry: $("#industry").value.trim(),
+    city: $("#city").value.trim(),
+    platform: $("#platform").value,
+    goal: $("#goal").value
+  };
+  if (!body.business || !body.industry) return;
+
+  $("#go").disabled = true;
+  $("#out").className = "";
+  status("Researching what's live in your niche… this takes 30–60 seconds.");
+
+  try {
+    const r = await fetch(API_BASE.replace(/\/$/, "") + "/marketing/strategy", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(body)
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || ("Request failed (" + r.status + ")"));
+    clearStatus();
+    render(j.playbook, j.cached);
+  } catch (err) {
+    status("Could not reach the marketing engine: " + err.message, true);
+  } finally {
+    $("#go").disabled = false;
+  }
+});
+
+function render(p, cached) {
+  const per = p.classification === "personality_driven";
+  const classLabel = per ? "Personality-driven" : "System-driven";
+
+  const strategies = (p.strategies || []).map((s, i) => {
+    const ev = (s.evidence || []).map(e => `
+      <li>
+        <span class="badge ${esc(e.type || "benchmark")}">${esc((e.type || "benchmark").replace(/_/g, " "))}</span>
+        <span>${esc(e.detail)}${e.source ? `<span class="src">${esc(e.source)}</span>` : ""}</span>
+      </li>`).join("");
+
+    return `
+    <article class="card">
+      <div class="card-head">
+        <h3>${i + 1}. ${esc(s.name)}</h3>
+        <span class="plat">${esc(s.platform || "")}${s.format ? " · " + esc(s.format) : ""}</span>
+      </div>
+      <div class="row hook"><div class="k">Hook — first 3 seconds</div><div class="v">${esc(s.hook)}</div></div>
+      <div class="row"><div class="k">Pacing</div><div class="v">${esc(s.pacing)}</div></div>
+      <div class="row cta"><div class="k">Call to action</div><div class="v">${esc(s.cta)}</div></div>
+      <div class="row"><div class="k">Cadence</div><div class="v">${esc(s.posting_cadence)}</div></div>
+      ${ev ? `<div class="row"><div class="k">Why this works — public evidence</div><ul class="ev">${ev}</ul></div>` : ""}
+      ${s.visual_example ? `<div class="visual"><div class="k">Visual reference</div><p>${esc(s.visual_example)}</p></div>` : ""}
+      ${s.camera_directions ? `<div class="cam"><div class="k">Camera directions — film this yourself</div><p>${esc(s.camera_directions)}</p></div>` : ""}
+    </article>`;
+  }).join("");
+
+  $("#out").innerHTML = `
+    <div class="meta">
+      <span class="tag ${per ? "per" : "sys"}">${classLabel}</span>
+      <span class="tag">${esc(p.industry || "")}</span>
+      ${cached ? '<span class="tag">Cached</span>' : ""}
+    </div>
+    ${p.trend_summary ? `<div class="summary"><h2>What's winning right now</h2><p>${esc(p.trend_summary)}</p></div>` : ""}
+    ${strategies}
+    ${p.measurement ? `<div class="measure"><h3>How you'll know it worked</h3><p>${esc(p.measurement)}</p></div>` : ""}
+    ${p.disclaimer ? `<p class="disc">${esc(p.disclaimer)}</p>` : ""}
+  `;
+  $("#out").className = "show";
+  $("#out").scrollIntoView({ behavior: "smooth", block: "start" });
+}
+</script>
+</body>
+</html>
