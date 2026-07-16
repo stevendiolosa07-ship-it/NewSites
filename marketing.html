@@ -170,7 +170,7 @@ footer{border-top:1px solid var(--line);padding:36px 20px;text-align:center;colo
 "use strict";
 
 /* ==== SET THIS. Must be an https:// origin (see comment at top of file). ==== */
-const API_BASE = "";   // e.g. "https://yourdomain.com"  or  "https://xxxx.trycloudflare.com"
+const API_BASE = "https://164.92.110.116.nip.io";   // live NewSites VPS (Caddy TLS via nip.io). Swap to your own domain when you buy one.
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s == null ? "" : s).replace(/[<>&"]/g, c => ({ "<":"&lt;", ">":"&gt;", "&":"&amp;", '"':"&quot;" }[c]));
