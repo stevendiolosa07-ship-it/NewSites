@@ -118,7 +118,7 @@ HARD RULES (violations make the output worthless):
    NEVER state or imply a sales-conversion rate for content unless it comes from a published case study — per-post conversion data is private and claiming it is fabrication. If evidence is thin, say so in the evidence text.
 2. CLASSIFICATION. Classify the business as "personality_driven" (trust is sold through a visible human: salons, realtors, coaches, restaurants) or "system_driven" (the product demos itself: SaaS, automation, e-commerce utility). Personality-driven strategies MUST include camera_directions (framing, angle, movement, lighting) so a real person can film it. System-driven strategies may be fully AI-producible.
 3. EXECUTABILITY. Every strategy must contain: name, format (e.g. "9:16 vertical, 20-35s"), hook (the literal first-3-seconds mechanic, written out), pacing (shot rhythm / text-overlay cadence), cta (the literal ask + where it points), posting_cadence, evidence[], visual_example (a precise one-paragraph spec an artist or Canva user could build a reference image from), and camera_directions (personality_driven only, else null).
-4. OUTPUT: Respond with ONLY a valid JSON object. No markdown fences, no preamble, no commentary. Schema:
+4. OUTPUT: Respond with ONLY a valid JSON object. No markdown fences, no preamble, no commentary. CRITICAL: no trailing commas anywhere; escape all quotes inside strings; keep the entire response under the token limit so the JSON is never truncated. Schema:
 {
   "business": string, "industry": string, "classification": "personality_driven"|"system_driven",
   "classification_reason": string,
@@ -130,6 +130,18 @@ HARD RULES (violations make the output worthless):
   "measurement": string (how to attribute results through the NewSites CRM lead-source field — the client's OWN conversion data is the only conversion truth),
   "disclaimer": "Evidence reflects public engagement signals and published case studies; sales conversion varies by business and is measured via your NewSites CRM."
 }`;
+
+function repairJson(s) {
+  // Fix the quirks LLMs occasionally emit that strict JSON.parse rejects.
+  return s
+    // trailing commas before a closing } or ]
+    .replace(/,(\s*[}\]])/g, "$1")
+    // smart quotes -> straight quotes
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2018\u2019]/g, "'")
+    // stray control chars inside the payload
+    .replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g, "");
+}
 
 function extractJson(resp) {
   // Collect all text blocks (web-search responses interleave tool blocks)
@@ -143,7 +155,18 @@ function extractJson(resp) {
   const start = clean.indexOf("{");
   const end = clean.lastIndexOf("}");
   if (start === -1 || end === -1) throw new Error("No JSON object in model output");
-  return JSON.parse(clean.slice(start, end + 1));
+  const candidate = clean.slice(start, end + 1);
+
+  // 1) try as-is
+  try { return JSON.parse(candidate); } catch (_) {}
+  // 2) try after repairing common quirks (trailing commas, smart quotes, control chars)
+  try { return JSON.parse(repairJson(candidate)); } catch (e) {
+    const m = /position (\d+)/.exec(e.message || "");
+    const near = m ? candidate.slice(Math.max(0, +m[1] - 60), +m[1] + 60) : candidate.slice(0, 120);
+    const err = new Error("Model returned unparseable JSON: " + (e.message || "") + " | near: " + near);
+    err.parseFail = true;
+    throw err;
+  }
 }
 
 // ---------- routes ----------
@@ -181,7 +204,7 @@ app.post("/marketing/strategy", async (req, res) => {
   try {
     const resp = await anthropic({
       model: MODEL,
-      max_tokens: 4000,
+      max_tokens: 8000,
       system: SYSTEM_PROMPT,
       messages: [{ role: "user", content: userPrompt }],
       tools: [{ type: "web_search_20250305", name: "web_search", max_uses: MAX_WEB_SEARCHES }]
