@@ -350,6 +350,34 @@
     .brand-tag { letter-spacing:0.32em; }
     .book-demo { padding:12px 18px; font-size:11px; bottom:16px; right:16px; }
   }
+  /* ---- PATH FORK ---- */
+  .fork-sec { max-width:1180px; margin:0 auto clamp(40px,8vh,100px); scroll-margin-top:110px; text-align:center; }
+  .fork-sec .fork-head { max-width:680px; margin:0 auto clamp(26px,4vh,44px); }
+  .fork-sec .eyebrow { display:block; font-size:11.5px; letter-spacing:0.36em; font-weight:700; text-transform:uppercase; color:var(--gold); margin-bottom:16px; }
+  .fork-sec h2 { font-family:'Cinzel',serif; font-weight:500; font-size:clamp(26px,4.4vw,46px); letter-spacing:0.03em; line-height:1.12; color:#fbf4dc; text-shadow:0 0 40px rgba(212,175,55,0.22); margin-bottom:14px; }
+  .fork-sec .fork-sub { color:rgba(244,236,210,0.72); font-size:clamp(14px,1.4vw,16.5px); line-height:1.6; }
+  .fork-cards { display:grid; grid-template-columns:1fr; gap:clamp(16px,2vw,22px); perspective:1400px; }
+  @media (min-width:820px){ .fork-cards { grid-template-columns:1fr 1fr; } }
+  .fork-card { position:relative; display:block; text-align:left; text-decoration:none; color:inherit; overflow:hidden;
+    padding:clamp(26px,3vw,36px); border-radius:20px;
+    backdrop-filter:blur(12px); background:rgba(10,10,10,0.7); border:1px solid rgba(212,175,55,0.2); box-shadow:0 12px 50px rgba(0,0,0,0.4);
+    transform:translateZ(-360px) translateY(60px) rotateX(22deg); opacity:0;
+    transition:transform 1s cubic-bezier(0.16,1,0.3,1), opacity 1s ease, border-color .4s ease, box-shadow .4s ease; }
+  .fork-sec.in-view .fork-card { transform:translateZ(0) translateY(0) rotateX(0); opacity:1; }
+  .fork-sec.in-view .fork-card.b { transition-delay:.16s; }
+  .fork-card:hover { transform:translateY(-8px) !important; border-color:rgba(212,175,55,0.55); box-shadow:0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(212,175,55,0.25); }
+  .fork-card .fc-glow { position:absolute; inset:0; opacity:0; pointer-events:none; transition:opacity .4s ease; background:radial-gradient(460px 240px at 30% 0%, rgba(212,175,55,0.16), transparent 68%); }
+  .fork-card.b .fc-glow { background:radial-gradient(460px 240px at 70% 0%, rgba(242,212,121,0.18), transparent 68%); }
+  .fork-card:hover .fc-glow { opacity:1; }
+  .fork-card .fc-ic { position:relative; width:48px; height:48px; border-radius:12px; display:grid; place-items:center; border:1px solid rgba(212,175,55,0.4); font-family:'Cinzel',serif; font-size:22px; font-weight:600; color:var(--gold-bright); box-shadow:0 0 24px rgba(212,175,55,0.12) inset; }
+  .fork-card .fc-tag { position:relative; margin-top:16px; font-size:10.5px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); font-weight:700; }
+  .fork-card h3 { position:relative; font-family:'Cinzel',serif; font-weight:500; font-size:clamp(22px,2.4vw,28px); letter-spacing:0.02em; color:#fbf4dc; margin:10px 0 12px; }
+  .fork-card p { position:relative; color:rgba(244,236,210,0.7); font-size:14.5px; line-height:1.6; margin:0 0 24px; }
+  .fork-card .fc-go { position:relative; display:inline-flex; align-items:center; gap:10px; font-weight:700; font-size:13.5px; letter-spacing:0.02em; color:var(--gold-bright); }
+  .fork-card .fc-go .fc-arr { transition:transform .3s ease; }
+  .fork-card:hover .fc-go .fc-arr { transform:translateX(6px); }
+  .fork-card .fc-badge { position:absolute; top:18px; right:18px; font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-bright); border:1px solid rgba(212,175,55,0.4); border-radius:999px; padding:5px 11px; }
+  @media (prefers-reduced-motion: reduce){ .fork-card { transform:none; opacity:1; transition:none; } }
 </style>
 </head>
 <body>
@@ -409,6 +437,34 @@
         <h2>Your business, <span class="em">fully automated.</span></h2>
         <p>One AI brain answering calls, capturing leads, building sites, and following up &mdash; around the clock. From local shops to enterprise teams running thousands of leads a month. Tap any node on the brain to jump straight to that capability.</p>
       </div>
+
+      <!-- PATH FORK -->
+      <section class="fork-sec reveal" id="fork">
+        <div class="fork-head">
+          <span class="eyebrow">Choose your path</span>
+          <h2>Two ways we deploy intelligence.</h2>
+          <p class="fork-sub">One track runs ready-made AI campaigns for your business today. The other architects a custom AI system into your existing stack.</p>
+        </div>
+        <div class="fork-cards">
+          <a class="fork-card a" href="#crm">
+            <span class="fc-glow"></span>
+            <span class="fc-ic">A</span>
+            <div class="fc-tag">Path A &middot; Ready to run</div>
+            <h3>High-Velocity Marketing</h3>
+            <p>For high-growth consumer brands, retail, and local services that want live AI answering, lead capture, sites, and social &mdash; running fast.</p>
+            <span class="fc-go">Explore the platform <span class="fc-arr">&rarr;</span></span>
+          </a>
+          <a class="fork-card b" href="#enterprise">
+            <span class="fc-badge">50+ team &middot; high volume</span>
+            <span class="fc-glow"></span>
+            <span class="fc-ic">B</span>
+            <div class="fc-tag">Path B &middot; Custom build</div>
+            <h3>Enterprise Custom AI</h3>
+            <p>For mid-market and enterprise teams needing custom integrations, dedicated onboarding, volume pricing, and a system built around how you sell.</p>
+            <span class="fc-go">See enterprise builds <span class="fc-arr">&rarr;</span></span>
+          </a>
+        </div>
+      </section>
 
       <!-- CRM + pipeline -->
       <section class="section split glass reveal" id="crm">
