@@ -1161,13 +1161,20 @@
       tl.to(coreGroup.rotation, { x:fr.x, y:fr.y, duration:1.5, ease:"power2.inOut" }, 0);
       tl.to(camera.position,    { z:CAM_DIVE, duration:1.5, ease:"power3.in" }, 1.0);
     }
-    var CAM_USA = 34; /* pull-out distance framing the full USA — tune 30–40 */
+    var CAM_USA = 42; /* pull-out distance framing the full USA — tune 30–40 */
+    function usaEuler(){
+      var v=llToVec(39.5,-98.5,1).normalize();
+      var q=new THREE.Quaternion().setFromUnitVectors(v, new THREE.Vector3(0,0,1));
+      var e=new THREE.Euler().setFromQuaternion(q,"YXZ");
+      e.y += Math.round((coreGroup.rotation.y - e.y)/(Math.PI*2))*(Math.PI*2);
+      return e;
+    }
     function usaPullOut(){
       if(stage!=="zoom") return;
       ui.stateText.textContent="United States";
-      var fr=faceRot(39.5,-98.5);
+      var e2=usaEuler();
       var tl2=gsap.timeline({ onComplete:function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(e){} } });
-      tl2.to(coreGroup.rotation, { x:fr.x, y:fr.y, duration:1.7, ease:"power2.inOut" }, 0);
+      tl2.to(coreGroup.rotation, { x:e2.x, y:e2.y, z:e2.z, duration:1.7, ease:"power2.inOut" }, 0);
       tl2.to(camera.position,    { z:CAM_USA, duration:1.9, ease:"power2.out" }, 0.1);
     }
     window.addEventListener("ns:skipIntro", function(){
@@ -1176,11 +1183,11 @@
       if(geoEl){ if(geoEl.parentNode) geoEl.parentNode.removeChild(geoEl); geoEl=null; }
       activeGeoAnchor=null; globeSpin=false; stage="zoom";
       ui.stateText.textContent="United States";
-      var fr=faceRot(39.5,-98.5);
-      gsap.to(coreGroup.rotation, { x:fr.x, y:fr.y, duration:0.7, ease:"power2.out" });
+      var e3=usaEuler();
+      gsap.to(coreGroup.rotation, { x:e3.x, y:e3.y, z:e3.z, duration:0.7, ease:"power2.out" });
       gsap.to(camera.position, { z:CAM_USA, duration:0.7, ease:"power2.out", onComplete:function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(e){} } });
     });
-    window.__nsEnterSite = function(){ if(stage==="zoom" || stage==="globe"){ triggerWarp(); } };
+    window.__nsEnterSite = function(){ if(stage==="zoom" || stage==="globe"){ gsap.to(coreGroup.rotation, { z:0, duration:1.0, ease:"power2.inOut" }); triggerWarp(); } };
     function triggerWarp(){
       stage="warp"; brainLines.visible=true; ui.stateText.textContent="Neural Network";
       var tl=gsap.timeline({ onComplete:function(){ stage="brain"; baseY=coreGroup.rotation.y; baseX=coreGroup.rotation.x; brainT0=performance.now(); rot.y=0; rot.x=0; rot.vx=0; rot.vy=0; mouse.x=pointer.tx*1.5; mouse.y=-pointer.ty*1.5; showLabels(); var hf=document.querySelector(".hero-foot"); if(hf) hf.classList.add("show"); var mk=document.querySelector(".mark"); if(mk) mk.classList.add("big"); }});
