@@ -407,6 +407,9 @@
   .eb-ok.show { display:block; }
   .eb-ok a { color:var(--gold-bright); }
   .eb-lock { font-size:11.5px; color:rgba(244,236,210,0.5); margin-top:10px; letter-spacing:0.03em; }
+  #nsgSkip { position:fixed; right:22px; bottom:78px; z-index:55; font-family:'Manrope',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:rgba(244,236,210,0.8); background:rgba(8,9,16,0.6); border:1px solid rgba(212,175,55,0.4); border-radius:999px; padding:11px 20px; cursor:pointer; backdrop-filter:blur(8px); transition:color .2s ease, border-color .2s ease; }
+  #nsgSkip:hover { color:var(--gold-bright); border-color:rgba(212,175,55,0.8); }
+  #nsgSkip.hidden { display:none; }
   /* ---- ENTER -> FORK front-door overlay ---- */
   #nsGate { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:24px; }
   #nsGate.hidden { display:none; }
@@ -1119,10 +1122,30 @@
     function startBeverlyHillsZoom(){
       if(stage!=="globe") return; stage="zoom"; globeSpin=false; ui.stateText.textContent="Beverly Hills, CA";
       var fr=faceRot(34.0736,-118.4004);
-      var tl=gsap.timeline({ onComplete:triggerWarp });
+      var tl=gsap.timeline({ onComplete:usaPullOut });
       tl.to(coreGroup.rotation, { x:fr.x, y:fr.y, duration:1.5, ease:"power2.inOut" }, 0);
       tl.to(camera.position,    { z:CAM_DIVE, duration:1.5, ease:"power3.in" }, 1.0);
     }
+    var CAM_USA = 34; /* pull-out distance framing the full USA — tune 30–40 */
+    function usaPullOut(){
+      if(stage!=="zoom") return;
+      ui.stateText.textContent="United States";
+      var fr=faceRot(39.5,-98.5);
+      var tl2=gsap.timeline({ onComplete:function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(e){} } });
+      tl2.to(coreGroup.rotation, { x:fr.x, y:fr.y, duration:1.7, ease:"power2.inOut" }, 0);
+      tl2.to(camera.position,    { z:CAM_USA, duration:1.9, ease:"power2.out" }, 0.1);
+    }
+    window.addEventListener("ns:skipIntro", function(){
+      if(stage!=="globe" && stage!=="zoom") return;
+      gsap.killTweensOf(coreGroup.rotation); gsap.killTweensOf(camera.position);
+      if(geoEl){ if(geoEl.parentNode) geoEl.parentNode.removeChild(geoEl); geoEl=null; }
+      activeGeoAnchor=null; globeSpin=false; stage="zoom";
+      ui.stateText.textContent="United States";
+      var fr=faceRot(39.5,-98.5);
+      gsap.to(coreGroup.rotation, { x:fr.x, y:fr.y, duration:0.7, ease:"power2.out" });
+      gsap.to(camera.position, { z:CAM_USA, duration:0.7, ease:"power2.out", onComplete:function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(e){} } });
+    });
+    window.__nsEnterSite = function(){ if(stage==="zoom" || stage==="globe"){ triggerWarp(); } };
     function triggerWarp(){
       stage="warp"; brainLines.visible=true; ui.stateText.textContent="Neural Network";
       var tl=gsap.timeline({ onComplete:function(){ stage="brain"; baseY=coreGroup.rotation.y; baseX=coreGroup.rotation.x; brainT0=performance.now(); rot.y=0; rot.x=0; rot.vx=0; rot.vy=0; mouse.x=pointer.tx*1.5; mouse.y=-pointer.ty*1.5; showLabels(); var hf=document.querySelector(".hero-foot"); if(hf) hf.classList.add("show"); var mk=document.querySelector(".mark"); if(mk) mk.classList.add("big"); }});
@@ -1589,6 +1612,7 @@
   })();
   </script>
   <!-- ENTER -> FORK front door (additive overlay; globe engine untouched) -->
+  <button id="nsgSkip" type="button">Skip intro &rarr;</button>
   <div id="nsGate">
     <div class="nsg-screen on" id="nsgIntro">
       <div class="nsg-box glass">
@@ -1633,13 +1657,24 @@
     var intro   = document.getElementById('nsgIntro');
     var fork    = document.getElementById('nsgFork');
     document.body.style.overflow = 'hidden';
-    gate.classList.add('hidden'); /* keep the ENTER gate hidden while the globe intro plays */
-    var NSG_INTRO_DELAY = 4500; /* ms the globe intro shows before the gate appears — tune to taste */
-    setTimeout(function(){
+    gate.classList.add('hidden'); /* hidden until the cinematic completes or Skip Intro is clicked */
+    var nsgShown = false;
+    function revealGate(){
+      if(nsgShown) return; nsgShown = true;
       if(stageEl) stageEl.style.visibility = 'hidden';
       if(geo) geo.style.visibility = 'hidden';
+      var sk = document.getElementById('nsgSkip');
+      if(sk) sk.classList.add('hidden');
       gate.classList.remove('hidden');
-    }, NSG_INTRO_DELAY);
+      if(window.gsap){ gsap.fromTo(gate, { opacity:0 }, { opacity:1, duration:0.8, ease:'power2.out' }); }
+    }
+    window.addEventListener('ns:introComplete', revealGate);
+    var skipBtn = document.getElementById('nsgSkip');
+    if(skipBtn) skipBtn.addEventListener('click', function(){
+      try{ window.dispatchEvent(new Event('ns:skipIntro')); }catch(e){}
+      setTimeout(revealGate, 900); /* reveal even if the engine listener is absent */
+    });
+    setTimeout(revealGate, 25000); /* safety net if WebGL or the intro fails */
 
     function toFork(){
       intro.classList.remove('on');
@@ -1666,6 +1701,7 @@
     }
     function choosePath(path, targetId){
       applyPath(path);
+      if(window.__nsEnterSite) window.__nsEnterSite();
       gate.classList.add('fade');
       document.body.style.overflow = '';
       if(stageEl) stageEl.style.visibility = '';
