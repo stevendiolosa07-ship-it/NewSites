@@ -1633,8 +1633,13 @@
     var intro   = document.getElementById('nsgIntro');
     var fork    = document.getElementById('nsgFork');
     document.body.style.overflow = 'hidden';
-    if(stageEl) stageEl.style.visibility = 'hidden';
-    if(geo) geo.style.visibility = 'hidden';
+    gate.classList.add('hidden'); /* keep the ENTER gate hidden while the globe intro plays */
+    var NSG_INTRO_DELAY = 4500; /* ms the globe intro shows before the gate appears — tune to taste */
+    setTimeout(function(){
+      if(stageEl) stageEl.style.visibility = 'hidden';
+      if(geo) geo.style.visibility = 'hidden';
+      gate.classList.remove('hidden');
+    }, NSG_INTRO_DELAY);
 
     function toFork(){
       intro.classList.remove('on');
