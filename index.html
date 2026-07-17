@@ -443,6 +443,7 @@
   .nsg-p { color:rgba(244,236,210,0.7); font-size:13.5px; line-height:1.55; margin-bottom:20px; }
   .nsg-go { font-weight:700; font-size:13px; color:var(--gold-bright); }
   .nsg-badge { position:absolute !important; top:18px; right:18px; width:auto !important; font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-bright); border:1px solid rgba(212,175,55,0.4); border-radius:999px; padding:5px 11px; }
+  .nsg-badge.inflow { position:static !important; width:max-content !important; margin:0 0 12px; }
 </style>
 </head>
 <body>
@@ -1073,6 +1074,21 @@
 
     var coreGroup=new THREE.Group(); coreGroup.rotation.order="YXZ";
     coreGroup.add(bodyGlow, innerSphere, brainLines, points); scene.add(coreGroup);
+    /* USA landmass illumination — dense CONUS fill so the States light fully when centered */
+    var usaMat=null, usaPts=null;
+    (function(){
+      var CONUS=[[-124.5,48.4],[-95.1,49.0],[-88.4,48.2],[-82.0,44.5],[-79.0,43.2],[-76.4,44.1],[-70.7,45.4],[-67.0,44.8],[-70.0,41.6],[-74.0,39.0],[-75.5,35.2],[-80.9,32.0],[-80.0,26.7],[-80.4,25.2],[-81.8,25.9],[-83.9,29.7],[-89.1,29.2],[-94.7,29.3],[-97.2,26.0],[-99.2,26.9],[-101.5,29.8],[-104.9,30.6],[-106.5,31.8],[-111.1,31.3],[-114.8,32.5],[-117.2,32.6],[-120.6,34.5],[-123.8,38.9],[-124.4,43.3],[-124.5,48.4]];
+      var arr=[], made=0, guard=0;
+      while(made<900 && guard<60000){ guard++;
+        var la=24+Math.random()*25.5, lo=-125+Math.random()*58.5;
+        if(!inPoly(lo,la,CONUS)) continue;
+        var v=llToVec(la,lo,R_GLOBE*(0.988+Math.random()*0.02));
+        arr.push(v.x,v.y,v.z); made++; }
+      var g2=new THREE.BufferGeometry(); g2.setAttribute("position",new THREE.BufferAttribute(new Float32Array(arr),3));
+      usaMat=ptMat.clone(); usaMat.size=ptMat.size*1.12;
+      usaPts=new THREE.Points(g2,usaMat); usaPts.renderOrder=2;
+      coreGroup.add(usaPts);
+    })();
 
     var V=function(x,y,z){return new THREE.Vector3(x,y,z);};
     var nodeAnchors={ "crm":V(S*0.30,S*0.34,S*0.50),"leads":V(-S*0.30,S*0.34,S*0.50),"calls":V(S*0.55,-S*0.06,S*0.22),"sms":V(-S*0.55,-S*0.06,S*0.22),"website":V(0,S*0.06,S*0.54),"social":V(0,S*0.50,S*0.02),"scheduling":V(0,-S*0.30,-S*0.58),"cost":V(S*0.42,-S*0.34,S*0.34),"guard":V(-S*0.42,-S*0.34,S*0.34),"tree":V(0,-S*0.55,S*0.24) };
@@ -1267,6 +1283,7 @@
 
       var hp=heroP;
       ptMat.opacity = introDone ? introOp.o*(1-hp) : introOp.o;
+      if(usaMat){ usaMat.opacity = (stage==="globe"||stage==="zoom") ? ptMat.opacity : Math.max(0, usaMat.opacity - 0.03); }
       glowMat.opacity = (stage==="brain"?0.14:0.16)*(1-hp);
       if(stage==="brain"){ lnMat.opacity=(0.14+Math.sin(t*0.9)*0.05)*(1-hp); }
 
@@ -1636,6 +1653,7 @@
         </div>
         <div class="nsg-cards">
           <button class="nsg-card a glass" id="nsgA" type="button">
+            <span class="nsg-badge inflow">Local &amp; high-growth brands &middot; 1-50 team</span>
             <span class="nsg-ic">A</span>
             <span class="nsg-tag">Path A &middot; Ready to run</span>
             <span class="nsg-h3">High-Velocity Marketing</span>
