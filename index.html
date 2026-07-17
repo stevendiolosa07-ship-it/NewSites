@@ -414,7 +414,6 @@
   #enterprise-build { margin-bottom:clamp(10px,2vh,24px); }
   .eb-brainwin { position:relative; height:56vh; min-height:320px; pointer-events:none; }
   .eb-scrollhint { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:10px; letter-spacing:0.34em; text-transform:uppercase; color:rgba(244,236,210,0.45); white-space:nowrap; }
-  #enterprise-caps .eb-grid { grid-template-columns:1fr; max-width:560px; margin:0 auto; }
   .eb-cap { opacity:0; transform:translateY(26px); transition:opacity .7s ease, transform .7s cubic-bezier(0.16,1,0.3,1), border-color .3s ease, background .3s ease; }
   .eb-cap.in { opacity:1; transform:none; }
   .eb-cap.in:hover { transform:translateY(-2px); }
@@ -481,6 +480,18 @@
     <div class="node ent" data-node="cost"       style="display:none;"><span class="label">Cost-Arbitrage</span><span class="dot"></span></div>
     <div class="node ent" data-node="guard"      style="display:none;"><span class="label">Guardrails</span><span class="dot"></span></div>
     <div class="node ent" data-node="tree"       style="display:none;"><span class="label">Skill Tree</span><span class="dot"></span></div>
+    <div class="node ent" data-node="score"      style="display:none;"><span class="label">Lead Scoring</span><span class="dot"></span></div>
+    <div class="node ent" data-node="map"        style="display:none;"><span class="label">Data Mapping</span><span class="dot"></span></div>
+    <div class="node ent" data-node="agents"     style="display:none;"><span class="label">Multi-Agent</span><span class="dot"></span></div>
+    <div class="node ent" data-node="api"        style="display:none;"><span class="label">API Hooking</span><span class="dot"></span></div>
+    <div class="node ent" data-node="nurture"    style="display:none;"><span class="label">Auto-Nurture</span><span class="dot"></span></div>
+    <div class="node ent" data-node="enrich"     style="display:none;"><span class="label">Enrichment</span><span class="dot"></span></div>
+    <div class="node ent" data-node="flows"      style="display:none;"><span class="label">Workflows</span><span class="dot"></span></div>
+    <div class="node ent" data-node="intake"     style="display:none;"><span class="label">Doc Intake</span><span class="dot"></span></div>
+    <div class="node ent" data-node="churn"      style="display:none;"><span class="label">Churn AI</span><span class="dot"></span></div>
+    <div class="node ent" data-node="onboard"    style="display:none;"><span class="label">White-Glove</span><span class="dot"></span></div>
+    <div class="node ent" data-node="secure"     style="display:none;"><span class="label">Security</span><span class="dot"></span></div>
+    <div class="node ent" data-node="custom"     style="display:none;"><span class="label">Custom</span><span class="dot"></span></div>
   </div>
 
   <div class="page">
@@ -783,6 +794,7 @@
           <div class="eb-cap"><span class="cd"></span><span>Predictive Churn Detection</span></div>
           <div class="eb-cap"><span class="cd"></span><span>White-Glove Onboarding</span></div>
           <div class="eb-cap"><span class="cd"></span><span>Enterprise Security (TLS 1.3)</span></div>
+          <div class="eb-cap"><span class="cd"></span><span>Custom</span></div>
         </div>
         <div class="eb-qual" id="entQual">
           <label>Confirm fit to unlock your call &mdash; current annual recurring revenue</label>
@@ -1103,8 +1115,8 @@
     })();
 
     var V=function(x,y,z){return new THREE.Vector3(x,y,z);};
-    var nodeAnchors={ "crm":V(S*0.30,S*0.34,S*0.50),"leads":V(-S*0.30,S*0.34,S*0.50),"calls":V(S*0.55,-S*0.06,S*0.22),"sms":V(-S*0.55,-S*0.06,S*0.22),"website":V(0,S*0.06,S*0.54),"social":V(0,S*0.50,S*0.02),"scheduling":V(0,-S*0.30,-S*0.58),"cost":V(S*0.42,-S*0.34,S*0.34),"guard":V(-S*0.42,-S*0.34,S*0.34),"tree":V(0,-S*0.55,S*0.24) };
-    var nodeSection={ crm:"crm", leads:"leads", website:"website", calls:"conversations", sms:"conversations", scheduling:"conversations", social:"social", cost:"enterprise-build", guard:"enterprise-build", tree:"enterprise-build" };
+    var nodeAnchors={ "crm":V(S*0.30,S*0.34,S*0.50),"leads":V(-S*0.30,S*0.34,S*0.50),"calls":V(S*0.55,-S*0.06,S*0.22),"sms":V(-S*0.55,-S*0.06,S*0.22),"website":V(0,S*0.06,S*0.54),"social":V(0,S*0.50,S*0.02),"scheduling":V(0,-S*0.30,-S*0.58),"cost":V(S*0.42,-S*0.34,S*0.34),"guard":V(-S*0.42,-S*0.34,S*0.34),"tree":V(0,-S*0.55,S*0.24),"score":V(S*0.18,S*0.52,S*0.28),"map":V(-S*0.18,S*0.52,S*0.28),"agents":V(S*0.52,S*0.18,-S*0.30),"api":V(-S*0.52,S*0.18,-S*0.30),"nurture":V(S*0.22,S*0.42,-S*0.44),"enrich":V(-S*0.22,S*0.42,-S*0.44),"flows":V(S*0.48,-S*0.10,-S*0.44),"intake":V(-S*0.48,-S*0.10,-S*0.44),"churn":V(S*0.26,-S*0.44,-S*0.40),"onboard":V(-S*0.26,-S*0.44,-S*0.40),"secure":V(S*0.10,S*0.16,-S*0.62),"custom":V(-S*0.10,-S*0.05,-S*0.62) };
+    var nodeSection={ crm:"crm", leads:"leads", website:"website", calls:"conversations", sms:"conversations", scheduling:"conversations", social:"social", cost:"enterprise-caps", guard:"enterprise-caps", tree:"enterprise-caps", score:"enterprise-caps", map:"enterprise-caps", agents:"enterprise-caps", api:"enterprise-caps", nurture:"enterprise-caps", enrich:"enterprise-caps", flows:"enterprise-caps", intake:"enterprise-caps", churn:"enterprise-caps", onboard:"enterprise-caps", secure:"enterprise-caps", custom:"enterprise-caps" };
     var ui={ stateText:document.getElementById("stateText"), nodes:Array.prototype.slice.call(document.querySelectorAll(".node")) };
     ui.nodes.forEach(function(n){ n._anchor=nodeAnchors[n.getAttribute("data-node")]||null; n._normal=new THREE.Vector3(); n._world=new THREE.Vector3(); n._toCam=new THREE.Vector3(); });
 
