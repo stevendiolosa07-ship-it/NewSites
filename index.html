@@ -1772,8 +1772,7 @@
       if(geo) geo.style.visibility = '';
       setTimeout(function(){
         gate.classList.add('hidden');
-        var el = document.getElementById(targetId);
-        if(el) el.scrollIntoView({ behavior:'smooth' });
+        window.scrollTo({ top: 0, behavior: 'auto' }); /* land on the AI brain; the reading is one scroll below */
       }, 620);
     }
     document.getElementById('nsgEnter').addEventListener('click', toFork);
