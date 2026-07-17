@@ -1647,7 +1647,25 @@
       fork.classList.remove('rise'); void fork.offsetWidth;
       requestAnimationFrame(function(){ fork.classList.add('rise'); });
     }
-    function dismiss(targetId){
+    /* Path B only = enterprise sections. Everything else is shared (shown for both). */
+    function applyPath(path){
+      var content = document.querySelector('main.content');
+      var forkSec = document.getElementById('fork');            /* leftover in-content fork */
+      var entBuild = document.getElementById('enterprise-build');
+      var ent = document.getElementById('enterprise');
+      if(forkSec) forkSec.style.display = 'none';               /* the gate already handled the choice */
+      if(path === 'a'){
+        if(entBuild) entBuild.style.display = 'none';
+        if(ent) ent.style.display = 'none';
+      } else if(content){
+        var lead = content.querySelector('.lead');
+        var ref = lead ? lead.nextSibling : content.firstChild;
+        if(ent){ ent.style.display = ''; ent.classList.add('in-view'); content.insertBefore(ent, ref); }
+        if(entBuild){ entBuild.style.display = ''; entBuild.classList.add('in-view'); content.insertBefore(entBuild, ent); }
+      }
+    }
+    function choosePath(path, targetId){
+      applyPath(path);
       gate.classList.add('fade');
       document.body.style.overflow = '';
       if(stageEl) stageEl.style.visibility = '';
@@ -1659,8 +1677,8 @@
       }, 620);
     }
     document.getElementById('nsgEnter').addEventListener('click', toFork);
-    document.getElementById('nsgA').addEventListener('click', function(){ dismiss('crm'); });
-    document.getElementById('nsgB').addEventListener('click', function(){ dismiss('enterprise-build'); });
+    document.getElementById('nsgA').addEventListener('click', function(){ choosePath('a','crm'); });
+    document.getElementById('nsgB').addEventListener('click', function(){ choosePath('b','enterprise-build'); });
   })();
   </script>
 </body>
