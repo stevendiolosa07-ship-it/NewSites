@@ -600,7 +600,18 @@
             <span style="font-family:'Cinzel',serif; font-size:clamp(34px,7vw,56px); color:var(--gold-bright); letter-spacing:0.02em; text-shadow:0 0 30px rgba(212,175,55,0.4);">$81,900</span>
             <div style="font-size:13px; color:rgba(244,236,210,0.6); letter-spacing:0.04em; margin-top:4px;">is the average a local business loses to missed calls each year</div>
           </div>
-          <a class="cta-link" href="calculator.html" style="display:inline-block; margin-top:18px; font-size:14px; padding:16px 34px;">Calculate your number &rarr;</a>
+          <div id="calcBox" style="max-width:520px; margin:22px auto 0; text-align:left;">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div><label for="calcMissed" style="display:block; font-size:12px; letter-spacing:0.05em; color:rgba(244,236,210,0.7); margin-bottom:8px;">Missed calls per week</label><input id="calcMissed" type="number" min="0" inputmode="numeric" placeholder="e.g. 10" style="width:100%; padding:13px 14px; border-radius:11px; border:1px solid rgba(212,175,55,0.25); background:rgba(10,10,10,0.6); color:#f4ecd2; font-family:'Manrope',sans-serif; font-size:14px;" /></div>
+              <div><label for="calcValue" style="display:block; font-size:12px; letter-spacing:0.05em; color:rgba(244,236,210,0.7); margin-bottom:8px;">Average job value ($)</label><input id="calcValue" type="number" min="0" inputmode="numeric" placeholder="e.g. 250" style="width:100%; padding:13px 14px; border-radius:11px; border:1px solid rgba(212,175,55,0.25); background:rgba(10,10,10,0.6); color:#f4ecd2; font-family:'Manrope',sans-serif; font-size:14px;" /></div>
+            </div>
+            <button class="eb-cta" id="calcGo" type="button" style="display:block; width:100%; margin-top:14px;">Calculate your number &rarr;</button>
+            <div id="calcOut" style="display:none; text-align:center; margin-top:18px;">
+              <div id="calcNum" style="font-family:'Cinzel',serif; font-size:clamp(30px,6vw,48px); color:var(--gold-bright); letter-spacing:0.02em; text-shadow:0 0 30px rgba(212,175,55,0.4);">$0</div>
+              <div id="calcSub" style="font-size:13px; color:rgba(244,236,210,0.7); margin-top:6px;"></div>
+            </div>
+            <div style="font-size:11.5px; color:rgba(244,236,210,0.5); margin-top:12px; text-align:center;">Free &mdash; runs right here. No signup, no card, no gate.</div>
+          </div>
           <div style="font-size:12px; color:rgba(244,236,210,0.5); margin-top:14px; letter-spacing:0.04em;">Takes 15 seconds &middot; no signup to see your result</div>
         </div>
       </section>
@@ -1783,6 +1794,20 @@
       entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
     }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
     for(var i=0;i<tiles.length;i++){ tiles[i].style.transitionDelay = (Math.min(i,8)*45) + 'ms'; io.observe(tiles[i]); }
+  })();
+  </script>
+  <script>
+  /* Missed-calls calculator: free, inline, no gate */
+  (function(){
+    var go=document.getElementById('calcGo'); if(!go) return;
+    go.addEventListener('click', function(){
+      var m=parseFloat(document.getElementById('calcMissed').value)||0;
+      var v=parseFloat(document.getElementById('calcValue').value)||0;
+      var yearly=Math.round(m*v*52);
+      document.getElementById('calcNum').textContent='$'+yearly.toLocaleString('en-US');
+      document.getElementById('calcSub').textContent = yearly>0 ? 'a year walking out the door \u2014 recovering even 30% of it is $'+Math.round(yearly*0.3).toLocaleString('en-US')+'/yr back' : 'enter your two numbers above, then hit calculate';
+      document.getElementById('calcOut').style.display='block';
+    });
   })();
   </script>
 </body>
