@@ -407,6 +407,38 @@
   .eb-ok.show { display:block; }
   .eb-ok a { color:var(--gold-bright); }
   .eb-lock { font-size:11.5px; color:rgba(244,236,210,0.5); margin-top:10px; letter-spacing:0.03em; }
+  /* ---- ENTER -> FORK front-door overlay ---- */
+  #nsGate { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:24px; }
+  #nsGate.hidden { display:none; }
+  #nsGate.fade { opacity:0; transition:opacity .6s ease; pointer-events:none; }
+  .nsg-screen { position:absolute; inset:0; display:none; align-items:center; justify-content:center; padding:24px; }
+  .nsg-screen.on { display:flex; }
+  #nsgFork { perspective:1400px; }
+  .nsg-box { text-align:center; max-width:560px; padding:38px 44px; border-radius:20px; opacity:0; transform:translateY(16px); animation:nsgUp .8s ease forwards; }
+  @keyframes nsgUp { to { opacity:1; transform:none; } }
+  .nsg-box h1 { font-family:'Cinzel',serif; font-weight:500; font-size:clamp(28px,5vw,50px); letter-spacing:0.02em; line-height:1.08; color:#fbf4dc; text-shadow:0 0 40px rgba(212,175,55,0.25); margin-bottom:12px; }
+  .nsg-box p { color:rgba(244,236,210,0.72); font-size:15px; line-height:1.6; max-width:440px; margin:0 auto 30px; }
+  .nsg-enter { font-family:'Manrope',sans-serif; border:none; cursor:pointer; font-size:14px; font-weight:700; letter-spacing:0.26em; text-transform:uppercase; color:var(--ink); background:linear-gradient(120deg,var(--gold-bright),var(--gold) 70%); padding:17px 46px; border-radius:999px; box-shadow:0 8px 30px rgba(212,175,55,0.3); transition:transform .2s ease, filter .2s ease; }
+  .nsg-enter:hover { transform:translateY(-2px); filter:brightness(1.07); }
+  .nsg-forkwrap { width:100%; max-width:900px; }
+  .nsg-forkhead { text-align:center; max-width:620px; margin:0 auto 30px; padding:24px 32px; border-radius:18px; }
+  .nsg-eyebrow { display:block; font-size:11px; letter-spacing:0.36em; font-weight:700; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+  .nsg-forkhead h2 { font-family:'Cinzel',serif; font-weight:500; font-size:clamp(24px,4vw,42px); letter-spacing:0.03em; line-height:1.1; color:#fbf4dc; }
+  .nsg-cards { display:grid; grid-template-columns:1fr; gap:18px; transform-style:preserve-3d; }
+  @media (min-width:760px){ .nsg-cards { grid-template-columns:1fr 1fr; } }
+  .nsg-card { position:relative; display:block; width:100%; text-align:left; cursor:pointer; overflow:hidden; padding:30px 28px; border-radius:20px; font-family:'Manrope',sans-serif;
+    transform:translateZ(-420px) translateY(70px) rotateX(24deg); opacity:0;
+    transition:transform 1s cubic-bezier(0.16,1,0.3,1), opacity 1s ease, border-color .35s ease, box-shadow .4s ease; }
+  #nsgFork.rise .nsg-card { transform:none; opacity:1; }
+  #nsgFork.rise .nsg-card.b { transition-delay:.18s; }
+  .nsg-card:hover { transform:translateY(-8px) !important; border-color:rgba(212,175,55,0.55); box-shadow:0 30px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(212,175,55,0.25); }
+  .nsg-card > span { display:block; }
+  .nsg-ic { width:46px; height:46px; border-radius:12px; display:grid !important; place-items:center; border:1px solid rgba(212,175,55,0.4); font-family:'Cinzel',serif; font-size:21px; font-weight:600; color:var(--gold-bright); }
+  .nsg-tag { margin-top:15px; font-size:10.5px; letter-spacing:0.22em; text-transform:uppercase; color:var(--gold); font-weight:700; }
+  .nsg-h3 { font-family:'Cinzel',serif; font-weight:500; font-size:clamp(20px,2.3vw,26px); color:#fbf4dc; margin:9px 0 11px; letter-spacing:0.02em; }
+  .nsg-p { color:rgba(244,236,210,0.7); font-size:13.5px; line-height:1.55; margin-bottom:20px; }
+  .nsg-go { font-weight:700; font-size:13px; color:var(--gold-bright); }
+  .nsg-badge { position:absolute !important; top:18px; right:18px; width:auto !important; font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--gold-bright); border:1px solid rgba(212,175,55,0.4); border-radius:999px; padding:5px 11px; }
 </style>
 </head>
 <body>
@@ -1554,6 +1586,76 @@
         }, 1000);
       });
     }
+  })();
+  </script>
+  <!-- ENTER -> FORK front door (additive overlay; globe engine untouched) -->
+  <div id="nsGate">
+    <div class="nsg-screen on" id="nsgIntro">
+      <div class="nsg-box glass">
+        <h1>Your business, at new heights.</h1>
+        <p>An autonomous AI brain that answers, captures, scores, and books &mdash; wired into the systems you already run.</p>
+        <button class="nsg-enter" id="nsgEnter" type="button">Enter</button>
+      </div>
+    </div>
+    <div class="nsg-screen" id="nsgFork">
+      <div class="nsg-forkwrap">
+        <div class="nsg-forkhead glass">
+          <span class="nsg-eyebrow">Choose your path</span>
+          <h2>Two ways we deploy intelligence.</h2>
+        </div>
+        <div class="nsg-cards">
+          <button class="nsg-card a glass" id="nsgA" type="button">
+            <span class="nsg-ic">A</span>
+            <span class="nsg-tag">Path A &middot; Ready to run</span>
+            <span class="nsg-h3">High-Velocity Marketing</span>
+            <span class="nsg-p">Live AI answering, lead capture, sites, and social &mdash; running fast for consumer brands, retail, and local services.</span>
+            <span class="nsg-go">Enter marketing track &rarr;</span>
+          </button>
+          <button class="nsg-card b glass" id="nsgB" type="button">
+            <span class="nsg-badge">50+ team &middot; high volume</span>
+            <span class="nsg-ic">B</span>
+            <span class="nsg-tag">Path B &middot; Custom build</span>
+            <span class="nsg-h3">Enterprise Custom AI</span>
+            <span class="nsg-p">A custom system wired into your CRM, databases, and pipelines &mdash; dedicated onboarding, built around how you sell.</span>
+            <span class="nsg-go">Enter the build &rarr;</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  /* Front-door gate: ENTER -> fork -> route. Additive; does not modify the globe engine. */
+  (function(){
+    var gate = document.getElementById('nsGate');
+    if(!gate) return;
+    var stageEl = document.getElementById('stage');
+    var geo     = document.getElementById('geonotifs');
+    var intro   = document.getElementById('nsgIntro');
+    var fork    = document.getElementById('nsgFork');
+    document.body.style.overflow = 'hidden';
+    if(stageEl) stageEl.style.visibility = 'hidden';
+    if(geo) geo.style.visibility = 'hidden';
+
+    function toFork(){
+      intro.classList.remove('on');
+      fork.classList.add('on');
+      fork.classList.remove('rise'); void fork.offsetWidth;
+      requestAnimationFrame(function(){ fork.classList.add('rise'); });
+    }
+    function dismiss(targetId){
+      gate.classList.add('fade');
+      document.body.style.overflow = '';
+      if(stageEl) stageEl.style.visibility = '';
+      if(geo) geo.style.visibility = '';
+      setTimeout(function(){
+        gate.classList.add('hidden');
+        var el = document.getElementById(targetId);
+        if(el) el.scrollIntoView({ behavior:'smooth' });
+      }, 620);
+    }
+    document.getElementById('nsgEnter').addEventListener('click', toFork);
+    document.getElementById('nsgA').addEventListener('click', function(){ dismiss('crm'); });
+    document.getElementById('nsgB').addEventListener('click', function(){ dismiss('enterprise-build'); });
   })();
   </script>
 </body>
