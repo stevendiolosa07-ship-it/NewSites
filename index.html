@@ -415,6 +415,10 @@
   .eb-cap { opacity:0; transform:translateY(26px); transition:opacity .7s ease, transform .7s cubic-bezier(0.16,1,0.3,1), border-color .3s ease, background .3s ease; }
   .eb-cap.in { opacity:1; transform:none; }
   .eb-cap.in:hover { transform:translateY(-2px); }
+  .f-path-b { display:none; }
+  body.ns-path-b .f-path-a { display:none; }
+  body.ns-path-b .f-path-b { display:block; }
+  .f-path-b textarea { width:100%; padding:13px 14px; border-radius:11px; border:1px solid rgba(212,175,55,0.25); background:rgba(10,10,10,0.6); color:#f4ecd2; font-family:'Manrope',sans-serif; font-size:14px; resize:vertical; }
   /* ---- ENTER -> FORK front-door overlay ---- */
   #nsGate { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:24px; }
   #nsGate.hidden { display:none; }
@@ -884,7 +888,7 @@
           <form id="demoForm" novalidate>
             <div class="field"><label for="f-name">Your name</label><input id="f-name" type="text" required placeholder="Jane Smith" /></div>
             <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" required placeholder="jane@yourbusiness.com" /></div>
-            <div class="field"><label for="f-focus">Where should we start?</label>
+            <div class="field f-path-a"><label for="f-focus">Where should we start?</label>
               <select id="f-focus">
                 <option value="crm">CRM &amp; Lead Pipeline</option>
                 <option value="calls">AI Calls &amp; SMS</option>
@@ -892,6 +896,9 @@
                 <option value="social">Social &amp; Scheduling</option>
                 <option value="all">The full AI brain</option>
               </select>
+            </div>
+            <div class="field f-path-b"><label for="f-custom">Where should we start? Tell us what you really want</label>
+              <textarea id="f-custom" rows="3" placeholder="e.g. Our CRM needs to talk to billing, and calls answered after hours..."></textarea>
             </div>
             <button class="submit-btn" type="submit">Get Started</button>
           </form>
@@ -1348,10 +1355,16 @@
           if(!name){ document.getElementById("f-name").focus(); } else { document.getElementById("f-email").focus(); }
           return;
         }
-        var focusSel=document.getElementById("f-focus");
-        var focus=focusSel.options[focusSel.selectedIndex].text;
+        var customEl=document.getElementById("f-custom");
+        var msg;
+        if(document.body.classList.contains("ns-path-b") && customEl && customEl.value.trim()){
+          msg="Thanks "+name+" - we got your build request and we'll reach out shortly.";
+        } else {
+          var focusSel=document.getElementById("f-focus");
+          msg="Thanks "+name+" - we'll reach out to set up your "+focusSel.options[focusSel.selectedIndex].text+" automation shortly.";
+        }
         document.getElementById("formWrap").style.display="none";
-        document.getElementById("okMsg").textContent="Thanks "+name+" - we'll reach out to set up your "+focus+" automation shortly.";
+        document.getElementById("okMsg").textContent=msg;
         document.getElementById("formOk").style.display="block";
       });
     }
