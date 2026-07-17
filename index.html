@@ -411,6 +411,13 @@
   #nsgSkip:hover { color:var(--gold-bright); border-color:rgba(212,175,55,0.8); }
   #nsgSkip.hidden { display:none; }
   body.ns-path-a .node.ent { display:none !important; }
+  #enterprise-build { margin-bottom:clamp(10px,2vh,24px); }
+  .eb-brainwin { position:relative; height:56vh; min-height:320px; pointer-events:none; }
+  .eb-scrollhint { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); font-size:10px; letter-spacing:0.34em; text-transform:uppercase; color:rgba(244,236,210,0.45); white-space:nowrap; }
+  #enterprise-caps .eb-grid { grid-template-columns:1fr; max-width:560px; margin:0 auto; }
+  .eb-cap { opacity:0; transform:translateY(26px); transition:opacity .7s ease, transform .7s cubic-bezier(0.16,1,0.3,1), border-color .3s ease, background .3s ease; }
+  .eb-cap.in { opacity:1; transform:none; }
+  .eb-cap.in:hover { transform:translateY(-2px); }
   /* ---- ENTER -> FORK front-door overlay ---- */
   #nsGate { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:24px; }
   #nsGate.hidden { display:none; }
@@ -755,6 +762,11 @@
           <button class="eb-cta" id="entBuildCta" type="button">Secure your system build &nbsp;&middot;&nbsp; book a call</button>
           <div class="eb-note">Qualified enterprise slots &middot; limited build bandwidth</div>
         </div>
+      </section>
+
+      <div class="eb-brainwin" id="enterprise-brainwin" aria-hidden="true"><span class="eb-scrollhint">Explore the brain &middot; scroll to discover</span></div>
+
+      <section class="ent-build reveal" id="enterprise-caps">
         <div class="eb-grid">
           <div class="eb-cap"><span class="cd"></span><span>Dynamic Cost-Arbitrage Engine</span></div>
           <div class="eb-cap"><span class="cd"></span><span>Executive Guardrail Gateways</span></div>
@@ -1714,16 +1726,22 @@
       var content = document.querySelector('main.content');
       var forkSec = document.getElementById('fork');            /* leftover in-content fork */
       var entBuild = document.getElementById('enterprise-build');
+      var brainWin = document.getElementById('enterprise-brainwin');
+      var entCaps = document.getElementById('enterprise-caps');
       var ent = document.getElementById('enterprise');
       if(forkSec) forkSec.style.display = 'none';               /* the gate already handled the choice */
       if(path === 'a'){
         if(entBuild) entBuild.style.display = 'none';
+        if(brainWin) brainWin.style.display = 'none';
+        if(entCaps) entCaps.style.display = 'none';
         if(ent) ent.style.display = 'none';
       } else if(content){
         var lead = content.querySelector('.lead');
         var ref = lead ? lead.nextSibling : content.firstChild;
         if(ent){ ent.style.display = ''; ent.classList.add('in-view'); content.insertBefore(ent, ref); }
-        if(entBuild){ entBuild.style.display = ''; entBuild.classList.add('in-view'); content.insertBefore(entBuild, ent); }
+        if(entCaps){ entCaps.style.display = ''; entCaps.classList.add('in-view'); content.insertBefore(entCaps, ent); }
+        if(brainWin){ brainWin.style.display = ''; content.insertBefore(brainWin, entCaps); }
+        if(entBuild){ entBuild.style.display = ''; entBuild.classList.add('in-view'); content.insertBefore(entBuild, brainWin); }
       }
     }
     function choosePath(path, targetId){
@@ -1742,6 +1760,18 @@
     document.getElementById('nsgEnter').addEventListener('click', toFork);
     document.getElementById('nsgA').addEventListener('click', function(){ choosePath('a','crm'); });
     document.getElementById('nsgB').addEventListener('click', function(){ choosePath('b','enterprise-build'); });
+  })();
+  </script>
+  <script>
+  /* Capability tiles: slide-up reveal in a single column as the user scrolls past the brain */
+  (function(){
+    var tiles = Array.prototype.slice.call(document.querySelectorAll('.eb-cap'));
+    if(!tiles.length) return;
+    if(!('IntersectionObserver' in window)){ for(var i=0;i<tiles.length;i++){ tiles[i].classList.add('in'); } return; }
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+    for(var i=0;i<tiles.length;i++){ tiles[i].style.transitionDelay = (Math.min(i,8)*45) + 'ms'; io.observe(tiles[i]); }
   })();
   </script>
 </body>
