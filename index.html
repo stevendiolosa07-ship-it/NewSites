@@ -410,6 +410,7 @@
   #nsgSkip { position:fixed; right:22px; bottom:78px; z-index:55; font-family:'Manrope',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:rgba(244,236,210,0.8); background:rgba(8,9,16,0.6); border:1px solid rgba(212,175,55,0.4); border-radius:999px; padding:11px 20px; cursor:pointer; backdrop-filter:blur(8px); transition:color .2s ease, border-color .2s ease; }
   #nsgSkip:hover { color:var(--gold-bright); border-color:rgba(212,175,55,0.8); }
   #nsgSkip.hidden { display:none; }
+  body.ns-path-a .node.ent { display:none !important; }
   /* ---- ENTER -> FORK front-door overlay ---- */
   #nsGate { position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center; padding:24px; }
   #nsGate.hidden { display:none; }
@@ -469,6 +470,9 @@
     <div class="node" data-node="website"    style="display:none;"><span class="label">Website AI</span><span class="dot"></span></div>
     <div class="node" data-node="social"     style="display:none;"><span class="label">Social</span><span class="dot"></span></div>
     <div class="node" data-node="scheduling" style="display:none;"><span class="label">Scheduling</span><span class="dot"></span></div>
+    <div class="node ent" data-node="cost"       style="display:none;"><span class="label">Cost-Arbitrage</span><span class="dot"></span></div>
+    <div class="node ent" data-node="guard"      style="display:none;"><span class="label">Guardrails</span><span class="dot"></span></div>
+    <div class="node ent" data-node="tree"       style="display:none;"><span class="label">Skill Tree</span><span class="dot"></span></div>
   </div>
 
   <div class="page">
@@ -1071,8 +1075,8 @@
     coreGroup.add(bodyGlow, innerSphere, brainLines, points); scene.add(coreGroup);
 
     var V=function(x,y,z){return new THREE.Vector3(x,y,z);};
-    var nodeAnchors={ "crm":V(S*0.30,S*0.34,S*0.50),"leads":V(-S*0.30,S*0.34,S*0.50),"calls":V(S*0.55,-S*0.06,S*0.22),"sms":V(-S*0.55,-S*0.06,S*0.22),"website":V(0,S*0.06,S*0.54),"social":V(0,S*0.50,S*0.02),"scheduling":V(0,-S*0.30,-S*0.58) };
-    var nodeSection={ crm:"crm", leads:"leads", website:"website", calls:"conversations", sms:"conversations", scheduling:"conversations", social:"social" };
+    var nodeAnchors={ "crm":V(S*0.30,S*0.34,S*0.50),"leads":V(-S*0.30,S*0.34,S*0.50),"calls":V(S*0.55,-S*0.06,S*0.22),"sms":V(-S*0.55,-S*0.06,S*0.22),"website":V(0,S*0.06,S*0.54),"social":V(0,S*0.50,S*0.02),"scheduling":V(0,-S*0.30,-S*0.58),"cost":V(S*0.42,-S*0.34,S*0.34),"guard":V(-S*0.42,-S*0.34,S*0.34),"tree":V(0,-S*0.55,S*0.24) };
+    var nodeSection={ crm:"crm", leads:"leads", website:"website", calls:"conversations", sms:"conversations", scheduling:"conversations", social:"social", cost:"enterprise-build", guard:"enterprise-build", tree:"enterprise-build" };
     var ui={ stateText:document.getElementById("stateText"), nodes:Array.prototype.slice.call(document.querySelectorAll(".node")) };
     ui.nodes.forEach(function(n){ n._anchor=nodeAnchors[n.getAttribute("data-node")]||null; n._normal=new THREE.Vector3(); n._world=new THREE.Vector3(); n._toCam=new THREE.Vector3(); });
 
@@ -1687,6 +1691,8 @@
     }
     /* Path B only = enterprise sections. Everything else is shared (shown for both). */
     function applyPath(path){
+      document.body.classList.remove('ns-path-a','ns-path-b');
+      document.body.classList.add(path === 'a' ? 'ns-path-a' : 'ns-path-b');
       var content = document.querySelector('main.content');
       var forkSec = document.getElementById('fork');            /* leftover in-content fork */
       var entBuild = document.getElementById('enterprise-build');
