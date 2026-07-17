@@ -1181,11 +1181,13 @@
     }
 
     function startBeverlyHillsZoom(){
-      if(stage!=="globe") return; stage="zoom"; globeSpin=false; ui.stateText.textContent="Beverly Hills, CA";
-      var fr=faceRot(34.0736,-118.4004);
-      var tl=gsap.timeline({ onComplete:usaPullOut });
-      tl.to(coreGroup.rotation, { x:fr.x, y:fr.y, duration:1.5, ease:"power2.inOut" }, 0);
-      tl.to(camera.position,    { z:CAM_DIVE, duration:1.5, ease:"power3.in" }, 1.0);
+      if(stage!=="globe") return; stage="zoom"; globeSpin=false; ui.stateText.textContent="United States";
+      var e=usaEuler();
+      var tl=gsap.timeline();
+      tl.to(coreGroup.rotation, { x:e.x, y:e.y, z:e.z, duration:1.5, ease:"power2.inOut" }, 0);
+      tl.to(camera.position,    { z:CAM_USA, duration:1.5, ease:"power2.inOut" }, 0);
+      tl.call(function(){ showGeoNotif(GEO[GEO.length-1]); }, null, 1.35);
+      tl.call(function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(err){} }, null, 2.4);
     }
     var CAM_USA = 42; /* pull-out distance framing the full USA — tune 30–40 */
     function usaEuler(){
@@ -1194,14 +1196,6 @@
       var e=new THREE.Euler().setFromQuaternion(q,"YXZ");
       e.y += Math.round((coreGroup.rotation.y - e.y)/(Math.PI*2))*(Math.PI*2);
       return e;
-    }
-    function usaPullOut(){
-      if(stage!=="zoom") return;
-      ui.stateText.textContent="United States";
-      var e2=usaEuler();
-      var tl2=gsap.timeline({ onComplete:function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(e){} } });
-      tl2.to(coreGroup.rotation, { x:e2.x, y:e2.y, z:e2.z, duration:1.7, ease:"power2.inOut" }, 0);
-      tl2.to(camera.position,    { z:CAM_USA, duration:1.9, ease:"power2.out" }, 0.1);
     }
     window.addEventListener("ns:skipIntro", function(){
       if(stage!=="globe" && stage!=="zoom") return;
