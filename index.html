@@ -1028,9 +1028,10 @@
     </div>
   </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script>
+  document.addEventListener("DOMContentLoaded", function () {
   (function () {
     "use strict";
     var vw0 = window.innerWidth;
@@ -1647,6 +1648,7 @@
       document.getElementById("doneClose").addEventListener("click", closeModal);
     }
   })();
+  });
   </script>
   <script>
   (function(){
