@@ -1173,38 +1173,30 @@
     function hideGeoNotif(cb){ if(geoEl){ geoEl.classList.remove("in"); var el=geoEl; geoEl=null; activeGeoAnchor=null; setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); cb&&cb(); }, 450); } else { cb&&cb(); } }
     function runGeo(idx){
       if(stage!=="globe") return;
-      if(idx>=GEO.length-1){ setTimeout(startBeverlyHillsZoom, 400); return; } /* last (North America) entry is reserved for the finale */
+      if(idx>=GEO.length){ return; }
       var g=GEO[idx]; globeSpin=false; ui.stateText.textContent=g.region; var fr=faceRot(g.lat,g.lon);
+      var last=(idx===GEO.length-1);
       gsap.to(coreGroup.rotation, { x:fr.x, y:fr.y, duration:1.4, ease:"power2.inOut", onComplete:function(){
-        showGeoNotif(g); setTimeout(function(){ hideGeoNotif(function(){ runGeo(idx+1); }); }, 2500);
+        showGeoNotif(g);
+        if(last){ setTimeout(startBeverlyHillsZoom, 1600); } /* America stays centered, notif stays up, then ENTER */
+        else { setTimeout(function(){ hideGeoNotif(function(){ runGeo(idx+1); }); }, 2500); }
       }});
     }
 
     function startBeverlyHillsZoom(){
-      if(stage!=="globe") return; stage="zoom"; globeSpin=false; ui.stateText.textContent="United States";
-      var e=usaEuler();
-      var tl=gsap.timeline();
-      tl.to(coreGroup.rotation, { x:e.x, y:e.y, z:e.z, duration:1.5, ease:"power2.inOut" }, 0); /* 0-1.5: settle into the America framing */
-      tl.to(camera.position,    { z:CAM_USA, duration:1.5, ease:"power2.inOut" }, 0);
-      tl.call(function(){ showGeoNotif(GEO[GEO.length-1]); }, null, 1.6);                        /* 1.6: Meeting Booked on the settled continent */
-      tl.call(function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(err){} }, null, 2.4); /* 2.4: Your business, at new heights */
+      if(stage!=="globe") return; stage="zoom"; globeSpin=false;
+      gsap.to(camera.position, { z:CAM_USA, duration:1.2, ease:"power2.inOut" }); /* gentle push as ENTER arrives */
+      try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(err){}
     }
     var CAM_USA = 42; /* pull-out distance framing the full USA — tune 30–40 */
-    function usaEuler(){
-      var v=llToVec(39.5,-98.5,1).normalize();
-      var q=new THREE.Quaternion().setFromUnitVectors(v, new THREE.Vector3(0,0,1));
-      var e=new THREE.Euler().setFromQuaternion(q,"YXZ");
-      e.y += Math.round((coreGroup.rotation.y - e.y)/(Math.PI*2))*(Math.PI*2);
-      return e;
-    }
     window.addEventListener("ns:skipIntro", function(){
       if(stage!=="globe" && stage!=="zoom") return;
       gsap.killTweensOf(coreGroup.rotation); gsap.killTweensOf(camera.position);
       if(geoEl){ if(geoEl.parentNode) geoEl.parentNode.removeChild(geoEl); geoEl=null; }
       activeGeoAnchor=null; globeSpin=false; stage="zoom";
       ui.stateText.textContent="United States";
-      var e3=usaEuler();
-      gsap.to(coreGroup.rotation, { x:e3.x, y:e3.y, z:e3.z, duration:0.7, ease:"power2.out" });
+      var fr=faceRot(39.5,-98.5);
+      gsap.to(coreGroup.rotation, { x:fr.x, y:fr.y, z:0, duration:0.7, ease:"power2.out" });
       gsap.to(camera.position, { z:CAM_USA, duration:0.7, ease:"power2.out", onComplete:function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(e){} } });
     });
     window.__nsEnterSite = function(){ if(stage==="zoom" || stage==="globe"){ gsap.to(coreGroup.rotation, { z:0, duration:1.0, ease:"power2.inOut" }); triggerWarp(); } };
