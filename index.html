@@ -391,10 +391,20 @@
   .eb-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
   @media (min-width:640px){ .eb-grid { grid-template-columns:repeat(3,1fr); } }
   @media (min-width:980px){ .eb-grid { grid-template-columns:repeat(4,1fr); } }
-  .eb-cap { display:flex; align-items:center; gap:11px; padding:14px 16px; border-radius:12px; border:1px solid rgba(212,175,55,0.16); background:rgba(255,255,255,0.02); transition:border-color .3s ease, background .3s ease, transform .3s ease; }
+  .eb-cap { display:flex; align-items:center; gap:11px; padding:14px 16px; border-radius:12px; border:1px solid rgba(212,175,55,0.16); background:rgba(255,255,255,0.02); cursor:pointer; }
   .eb-cap:hover { border-color:rgba(212,175,55,0.45); background:rgba(212,175,55,0.05); transform:translateY(-2px); }
+  .eb-cap.flash { border-color:rgba(242,212,121,0.85); box-shadow:0 0 0 1px rgba(242,212,121,0.5), 0 0 60px rgba(212,175,55,0.35); }
   .eb-cap .cd { width:7px; height:7px; border-radius:50%; flex:none; background:var(--gold-bright); box-shadow:0 0 10px var(--gold-bright); }
-  .eb-cap span:last-child { font-size:13px; color:#f4ecd2; letter-spacing:0.01em; }
+  .eb-cap .cap-body { flex:1; min-width:0; }
+  .eb-cap h4 { font-size:13px; font-weight:500; color:#f4ecd2; letter-spacing:0.01em; text-transform:none; margin:0; }
+  .eb-cap .cap-n { display:none; }
+  .eb-cap p { display:none; font-size:13.5px; line-height:1.65; color:rgba(244,236,210,0.78); margin:8px 0 0; max-width:76ch; }
+  .eb-cap.open { grid-column:1 / -1; align-items:flex-start; gap:18px; padding:22px 26px; border-radius:14px; border-color:rgba(212,175,55,0.4); background:linear-gradient(120deg, rgba(255,255,255,0.025), rgba(212,175,55,0.04)); }
+  .eb-cap.open .cd { width:8px; height:8px; margin-top:7px; }
+  .eb-cap.open h4 { font-size:15px; font-weight:700; color:#fbf4dc; letter-spacing:0.04em; text-transform:uppercase; margin:0 0 6px; }
+  .eb-cap.open .cap-n { display:inline; color:var(--gold); font-size:11px; letter-spacing:0.3em; margin-right:10px; }
+  .eb-cap.open p { display:block; animation:capReveal .38s ease; }
+  @keyframes capReveal { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
   .eb-qual { max-width:520px; margin:26px auto 0; display:none; }
   .eb-qual.show { display:block; animation:ebFade .4s ease; }
   @keyframes ebFade { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none} }
@@ -488,12 +498,8 @@
     <div class="node ent" data-node="api"        style="display:none;"><span class="label">API Hooking</span><span class="dot"></span></div>
     <div class="node ent" data-node="nurture"    style="display:none;"><span class="label">Auto-Nurture</span><span class="dot"></span></div>
     <div class="node ent" data-node="enrich"     style="display:none;"><span class="label">Enrichment</span><span class="dot"></span></div>
-    <div class="node ent" data-node="flows"      style="display:none;"><span class="label">Workflows</span><span class="dot"></span></div>
     <div class="node ent" data-node="intake"     style="display:none;"><span class="label">Doc Intake</span><span class="dot"></span></div>
-    <div class="node ent" data-node="churn"      style="display:none;"><span class="label">Churn AI</span><span class="dot"></span></div>
-    <div class="node ent" data-node="onboard"    style="display:none;"><span class="label">White-Glove</span><span class="dot"></span></div>
-    <div class="node ent" data-node="secure"     style="display:none;"><span class="label">Security</span><span class="dot"></span></div>
-    <div class="node ent" data-node="custom"     style="display:none;"><span class="label">Custom</span><span class="dot"></span></div>
+    <div class="node ent" data-node="custom"     style="display:none;"><span class="label">Custom Systems</span><span class="dot"></span></div>
   </div>
 
   <div class="page">
@@ -790,22 +796,17 @@
 
       <section class="ent-build reveal" id="enterprise-caps">
         <div class="eb-grid">
-          <div class="eb-cap"><span class="cd"></span><span>Dynamic Cost-Arbitrage Engine</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Executive Guardrail Gateways</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Interactive Operational Skill Tree</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Autonomous Lead Scoring</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>CRM Data Mapping</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Multi-Agent Collaboration</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Legacy API Hooking</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Instant Auto-Nurture</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Real-Time Pipeline Enrichment</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Custom Workflow Automation</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Voice &amp; SMS Answering</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Document Intake &amp; Extraction</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Predictive Churn Detection</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>White-Glove Onboarding</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Enterprise Security (TLS 1.3)</span></div>
-          <div class="eb-cap"><span class="cd"></span><span>Custom</span></div>
+          <div class="eb-cap" id="cap-cost"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">01</span>Dynamic Cost-Arbitrage Engine</h4><p>Our system acts like a smart traffic controller for your AI tasks. It routes simple, everyday jobs to lightning-fast, cheap models and only wakes up the heavy, expensive models for complex analysis. This slashes your monthly AI bills by up to 70% while keeping system speeds blazing fast.</p></div></div>
+          <div class="eb-cap" id="cap-guard"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">02</span>Executive Guardrail Gateways</h4><p>Safety first. Before the AI fires off a mass email campaign, alerts thousands of leads, or schedules a payment, the system builds the draft entirely but pauses for your 1-click 'Executive Approval.' You maintain absolute control over everything the system does.</p></div></div>
+          <div class="eb-cap" id="cap-tree"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">03</span>Interactive Operational Skill Tree</h4><p>A live visual dashboard that shows you exactly what your AI system knows how to do right now, what it is currently learning, and what advanced skills will unlock next as your business scales month-over-month.</p></div></div>
+          <div class="eb-cap" id="cap-score"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">04</span>Autonomous Lead Scoring</h4><p>The AI immediately reads every incoming lead's profile, intent, and background data, sorting the hot buyers from the window shoppers so your sales team only calls people who are ready to close.</p></div></div>
+          <div class="eb-cap" id="cap-map"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">05</span>CRM Data Mapping</h4><p>No more messy data or manual entries. The system automatically reads, organizes, and updates your entire customer database across all your apps in real-time, keeping your pipeline perfectly clean.</p></div></div>
+          <div class="eb-cap" id="cap-agents"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">06</span>Multi-Agent Collaboration</h4><p>Think of this as an army of specialized digital employees. A lead-capture AI talks seamlessly to a scheduling AI, which passes info to a data-enrichment AI&mdash;all working together behind the scenes to close deals.</p></div></div>
+          <div class="eb-cap" id="cap-api"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">07</span>Legacy API Hooking</h4><p>We don't force you to change how you work. Our system seamlessly hooks into your old, existing tools and legacy software, breathing new life into your current tech stack without a costly 'rip-and-replace.'</p></div></div>
+          <div class="eb-cap" id="cap-nurture"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">08</span>Instant Auto-Nurture</h4><p>The second a customer reaches out&mdash;day or night&mdash;the system instantly responds with hyper-personalized answers, keeping your prospects warm and moving them down the sales funnel on autopilot.</p></div></div>
+          <div class="eb-cap" id="cap-enrich"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">09</span>Real-Time Pipeline Enrichment</h4><p>As soon as a new contact drops into your pipeline, the AI scrapes public records, corporate data, and social metrics to instantly give your team a full dossier on who the buyer is before you even speak to them.</p></div></div>
+          <div class="eb-cap" id="cap-intake"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">10</span>Document Intake &amp; Extraction</h4><p>Erase manual data entry. Upload complex contracts, invoices, tax forms, or spreadsheets, and the system instantly pulls out the exact figures, key terms, and summaries you need in seconds.</p></div></div>
+          <div class="eb-cap" id="cap-custom"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">11</span>Custom Systems &amp; Integrations</h4><p>Your business is unique. This is our blank-canvas node where we build bespoke, highly intricate tools engineered entirely around your company's proprietary operational workflows.</p></div></div>
         </div>
         <div class="eb-qual" id="entQual">
           <label>Confirm fit to unlock your call &mdash; current annual recurring revenue</label>
@@ -1130,13 +1131,13 @@
 
     var V=function(x,y,z){return new THREE.Vector3(x,y,z);};
     var nodeAnchors={ "crm":V(S*0.30,S*0.34,S*0.50),"leads":V(-S*0.30,S*0.34,S*0.50),"calls":V(S*0.55,-S*0.06,S*0.22),"sms":V(-S*0.55,-S*0.06,S*0.22),"website":V(0,S*0.06,S*0.54),"social":V(0,S*0.50,S*0.02),"scheduling":V(0,-S*0.30,-S*0.58),"cost":V(S*0.42,-S*0.34,S*0.34),"guard":V(-S*0.42,-S*0.34,S*0.34),"tree":V(0,-S*0.55,S*0.24),"score":V(S*0.18,S*0.52,S*0.28),"map":V(-S*0.18,S*0.52,S*0.28),"agents":V(S*0.52,S*0.18,-S*0.30),"api":V(-S*0.52,S*0.18,-S*0.30),"nurture":V(S*0.22,S*0.42,-S*0.44),"enrich":V(-S*0.22,S*0.42,-S*0.44),"flows":V(S*0.48,-S*0.10,-S*0.44),"intake":V(-S*0.48,-S*0.10,-S*0.44),"churn":V(S*0.26,-S*0.44,-S*0.40),"onboard":V(-S*0.26,-S*0.44,-S*0.40),"secure":V(S*0.10,S*0.16,-S*0.62),"custom":V(-S*0.10,-S*0.05,-S*0.62) };
-    var nodeSection={ crm:"crm", leads:"leads", website:"website", calls:"conversations", sms:"conversations", scheduling:"conversations", social:"social", cost:"enterprise-caps", guard:"enterprise-caps", tree:"enterprise-caps", score:"enterprise-caps", map:"enterprise-caps", agents:"enterprise-caps", api:"enterprise-caps", nurture:"enterprise-caps", enrich:"enterprise-caps", flows:"enterprise-caps", intake:"enterprise-caps", churn:"enterprise-caps", onboard:"enterprise-caps", secure:"enterprise-caps", custom:"enterprise-caps" };
+    var nodeSection={ crm:"crm", leads:"leads", website:"website", calls:"conversations", sms:"conversations", scheduling:"conversations", social:"social", cost:"cap-cost", guard:"cap-guard", tree:"cap-tree", score:"cap-score", map:"cap-map", agents:"cap-agents", api:"cap-api", nurture:"cap-nurture", enrich:"cap-enrich", intake:"cap-intake", custom:"cap-custom" };
     var ui={ stateText:document.getElementById("stateText"), nodes:Array.prototype.slice.call(document.querySelectorAll(".node")) };
     ui.nodes.forEach(function(n){ n._anchor=nodeAnchors[n.getAttribute("data-node")]||null; n._normal=new THREE.Vector3(); n._world=new THREE.Vector3(); n._toCam=new THREE.Vector3(); });
 
     function flash(el){ el.classList.add("flash"); setTimeout(function(){ el.classList.remove("flash"); }, 1700); }
     function goFeature(id){
-      var sec=document.getElementById(id); if(!sec) return; flash(sec);
+      var sec=document.getElementById(id); if(!sec) return; if(sec.classList.contains("eb-cap") && window.__nsOpenCap) window.__nsOpenCap(id); flash(sec);
       var tl=gsap.timeline();
       tl.to(camera.position, { z:CAM_FADE, duration:0.7, ease:"power2.in" }, 0);
       tl.add(function(){ sec.scrollIntoView({ behavior:"smooth", block:"center" }); }, 0.45);
@@ -1184,7 +1185,7 @@
     }
 
     function startBeverlyHillsZoom(){
-      if(stage!=="globe") return; stage="zoom"; globeSpin=false;
+      if(stage!=="globe") return; stage="zoom"; globeSpin=false; hideGeoNotif();
       gsap.to(camera.position, { z:CAM_USA, duration:1.2, ease:"power2.inOut" }); /* gentle push as ENTER arrives */
       try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(err){}
     }
@@ -1723,7 +1724,7 @@
     var nsgShown = false;
     function revealGate(){
       if(nsgShown) return; nsgShown = true;
-      if(stageEl) stageEl.style.visibility = 'hidden';
+      /* canvas stays live: NA continent + particle field remain visible behind the gate */
       if(geo) geo.style.visibility = 'hidden';
       var sk = document.getElementById('nsgSkip');
       if(sk) sk.classList.add('hidden');
@@ -1772,7 +1773,7 @@
       gate.classList.add('fade');
       document.body.style.overflow = '';
       if(stageEl) stageEl.style.visibility = '';
-      if(geo) geo.style.visibility = '';
+      if(geo){ geo.innerHTML=''; geo.style.visibility=''; }
       setTimeout(function(){
         gate.classList.add('hidden');
         window.scrollTo({ top: 0, behavior: 'auto' }); /* land on the AI brain; the reading is one scroll below */
@@ -1788,6 +1789,15 @@
   (function(){
     var tiles = Array.prototype.slice.call(document.querySelectorAll('.eb-cap'));
     if(!tiles.length) return;
+    function closeCaps(except){ tiles.forEach(function(x){ if(x!==except) x.classList.remove('open'); }); }
+    function openCap(el){ closeCaps(el); el.classList.add('open'); }
+    window.__nsOpenCap = function(id){ var el=document.getElementById(id); if(el) openCap(el); };
+    tiles.forEach(function(t){ t.addEventListener('click', function(){
+      if(t.classList.contains('open')){ t.classList.remove('open'); return; }
+      openCap(t);
+      t.classList.add('flash'); setTimeout(function(){ t.classList.remove('flash'); }, 1700);
+      t.scrollIntoView({ behavior:'smooth', block:'nearest' });
+    }); });
     if(!('IntersectionObserver' in window)){ for(var i=0;i<tiles.length;i++){ tiles[i].classList.add('in'); } return; }
     var io = new IntersectionObserver(function(entries){
       entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); } });
