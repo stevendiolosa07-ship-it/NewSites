@@ -1173,7 +1173,7 @@
     function hideGeoNotif(cb){ if(geoEl){ geoEl.classList.remove("in"); var el=geoEl; geoEl=null; activeGeoAnchor=null; setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); cb&&cb(); }, 450); } else { cb&&cb(); } }
     function runGeo(idx){
       if(stage!=="globe") return;
-      if(idx>=GEO.length){ setTimeout(startBeverlyHillsZoom, 400); return; }
+      if(idx>=GEO.length-1){ setTimeout(startBeverlyHillsZoom, 400); return; } /* last (North America) entry is reserved for the finale */
       var g=GEO[idx]; globeSpin=false; ui.stateText.textContent=g.region; var fr=faceRot(g.lat,g.lon);
       gsap.to(coreGroup.rotation, { x:fr.x, y:fr.y, duration:1.4, ease:"power2.inOut", onComplete:function(){
         showGeoNotif(g); setTimeout(function(){ hideGeoNotif(function(){ runGeo(idx+1); }); }, 2500);
@@ -1184,10 +1184,10 @@
       if(stage!=="globe") return; stage="zoom"; globeSpin=false; ui.stateText.textContent="United States";
       var e=usaEuler();
       var tl=gsap.timeline();
-      tl.to(coreGroup.rotation, { x:e.x, y:e.y, z:e.z, duration:1.5, ease:"power2.inOut" }, 0); /* 1) settle on the America angle */
-      tl.call(function(){ showGeoNotif(GEO[GEO.length-1]); }, null, 1.6);                        /* 2) popup on the still continent */
-      tl.to(camera.position,    { z:CAM_USA, duration:1.1, ease:"power2.inOut" }, 2.4);          /* 3) then the zoom in */
-      tl.call(function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(err){} }, null, 3.6); /* 4) then ENTER */
+      tl.to(coreGroup.rotation, { x:e.x, y:e.y, z:e.z, duration:1.5, ease:"power2.inOut" }, 0); /* 0-1.5: settle into the America framing */
+      tl.to(camera.position,    { z:CAM_USA, duration:1.5, ease:"power2.inOut" }, 0);
+      tl.call(function(){ showGeoNotif(GEO[GEO.length-1]); }, null, 1.6);                        /* 1.6: Meeting Booked on the settled continent */
+      tl.call(function(){ try{ window.dispatchEvent(new Event("ns:introComplete")); }catch(err){} }, null, 2.4); /* 2.4: Your business, at new heights */
     }
     var CAM_USA = 42; /* pull-out distance framing the full USA — tune 30–40 */
     function usaEuler(){
