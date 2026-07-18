@@ -405,6 +405,15 @@
   .eb-cap.open .cap-n { display:inline; color:var(--gold); font-size:11px; letter-spacing:0.3em; margin-right:10px; }
   .eb-cap.open p { display:block; animation:capReveal .38s ease; }
   @keyframes capReveal { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+  .eb-mhead { text-align:center; max-width:640px; margin:56px auto 26px; }
+  .eb-mhead .eyebrow { display:block; margin-bottom:10px; }
+  .eb-mhead h3 { font-family:'Cinzel',serif; font-weight:500; font-size:clamp(21px,3vw,32px); letter-spacing:0.03em; color:#fbf4dc; }
+  .eb-mgrid { display:grid; grid-template-columns:1fr; gap:14px; }
+  @media (min-width:820px){ .eb-mgrid { grid-template-columns:repeat(3,1fr); } }
+  .eb-mstep { padding:22px 24px; border-radius:14px; border:1px solid rgba(212,175,55,0.16); background:rgba(255,255,255,0.02); }
+  .eb-mstep .mnum { display:block; color:var(--gold); font-size:11px; letter-spacing:0.3em; margin-bottom:8px; }
+  .eb-mstep h4 { font-size:15px; font-weight:700; color:#fbf4dc; letter-spacing:0.05em; text-transform:uppercase; margin:0 0 8px; }
+  .eb-mstep p { font-size:13.5px; line-height:1.6; color:rgba(244,236,210,0.75); margin:0; }
   .eb-qual { max-width:520px; margin:26px auto 0; display:none; }
   .eb-qual.show { display:block; animation:ebFade .4s ease; }
   @keyframes ebFade { from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none} }
@@ -822,6 +831,19 @@
           </div>
           <div class="eb-ok" id="entQualOk"></div>
           <div class="eb-lock">No documents required &mdash; revenue fit is confirmed on the call.</div>
+        </div>
+
+        <div class="eb-mhead"><span class="eyebrow">How a build lands</span><h3>Audit. Invert. Integrate.</h3></div>
+        <div class="eb-mgrid">
+          <div class="eb-mstep"><span class="mnum">PHASE 01</span><h4>Audit</h4><p>We map your current stack end to end &mdash; tools, data handoffs, manual bottlenecks, response lag, and software spend. Every weak point gets named and measured before anything is built.</p></div>
+          <div class="eb-mstep"><span class="mnum">PHASE 02</span><h4>Invert</h4><p>Each failure point gets its counter-system from the eleven modules above. Slow lead response becomes instant scoring and nurture. Messy records become automated data mapping. Runaway API bills become cost arbitrage.</p></div>
+          <div class="eb-mstep"><span class="mnum">PHASE 03</span><h4>Integrate</h4><p>No rip-and-replace. Custom AI layers hook directly into the tools you already run, so your team keeps working while the system comes online underneath them.</p></div>
+        </div>
+        <div class="eb-mhead"><span class="eyebrow">Vertical playbooks</span><h3>Built for how your industry sells</h3></div>
+        <div class="leadgen">
+          <div class="lg-card"><div class="lg-ic"><svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg></div><h4>Luxury Real Estate</h4><p>The moment a buyer submits a form, the system pulls a full prospect dossier, scores intent, updates your CRM, and opens a bespoke SMS nurture cycle &mdash; response lag becomes booking velocity.</p></div>
+          <div class="lg-card"><div class="lg-ic"><svg viewBox="0 0 24 24"><path d="M12 3l3 4-3 14-3-14z"/><path d="M6 7h12"/><path d="M9 7l3-4 3 4"/></svg></div><h4>Bespoke Jewelers &amp; Luxury Brands</h4><p>Custom order intake, tracking, and VIP communication run themselves &mdash; measurements, material invoices, and build-status updates coordinated day and night without losing the premium feel.</p></div>
+          <div class="lg-card"><div class="lg-ic"><svg viewBox="0 0 24 24"><path d="M4 17l6-6-6-6"/><path d="M12 19h8"/></svg></div><h4>B2B SaaS &amp; Tech Agencies</h4><p>The cost-arbitrage engine routes high-volume work through lightweight models and reserves heavy reasoning for the jobs that need it &mdash; compute bills drop while speed holds.</p></div>
         </div>
       </section>
 
