@@ -1,0 +1,1320 @@
+#!/bin/bash
+# NewSites one-shot deploy — 2026-08-22 overhaul.
+# Everything is EMBEDDED in this file. No other downloads. Run it ON THE DROPLET:
+#   bash deploy.sh
+# Safe to re-run any number of times (idempotent). Makes timestamped backups.
+
+set -uo pipefail
+BASE="${NEWSITES_BASE:-/root/newsites-sms}"
+CADDYFILE="${CADDYFILE:-/etc/caddy/Caddyfile}"
+STAMP=$(date +%Y%m%d-%H%M%S)
+FAIL=0
+say()  { echo "==> $*"; }
+ok()   { echo "  [OK] $*"; }
+bad()  { echo "  [FAIL] $*"; FAIL=1; }
+die()  { echo; echo "XX ABORTED: $*"; exit 1; }
+
+[ -d "$BASE" ] || die "$BASE not found — this must run ON THE DROPLET (ssh root@164.92.110.116 first)"
+cd "$BASE" || die "cannot cd $BASE"
+export DATA_ROOT="$BASE"
+
+say "1/8 Backups"
+[ -f index.js ] && cp index.js "index.js.bak-$STAMP"
+[ -f call-handler.js ] && cp call-handler.js "call-handler.js.bak-$STAMP"
+[ -f crm-adapter.js ] && cp crm-adapter.js "crm-adapter.js.bak-$STAMP"
+cp "$CADDYFILE" "$BASE/Caddyfile.bak-$STAMP" 2>/dev/null || true
+ok "saved *.bak-$STAMP"
+
+say "2/8 Writing the four overhaul files (embedded)"
+cat > index.js << 'EOF_INDEXJS_7391'
+// NewSites main server — index.js (v2, 2026-08-22 overhaul)
+// Runs as PM2 process "newsites-sms" on port 3001.
+//
+// What changed vs v1 (rollback = restore index.js.bak-* and pm2 restart newsites-sms):
+//   - SECURITY: hardcoded Twilio credentials removed. Everything reads .env.
+//     Owner alerts go through compliance.sendSms (opt-out ledger aware).
+//   - All request-path fs sync calls replaced with lib/store (atomic, serialized).
+//   - /sms now runs STOP/HELP/START compliance first, then lead capture via
+//     crm-adapter (which also mirrors into the dashboard's crm.json).
+//   - Route dedupe: /onboarding is the Stripe checkout (was dead code at L444);
+//     the old email-summary form moved to /onboarding-legacy. The two /ai-chat
+//     handlers merged into one (caller-supplied system prompt wins, sales
+//     persona is the default).
+//   - New routers mounted: /twilio (missed-call status callback) and /leads
+//     (speed-to-lead). Both parse their own bodies.
+//   - app.listen moved to the actual end of the file.
+//
+// NOTE for future Stripe webhooks: if you add a signed webhook endpoint,
+// register it with express.raw() ABOVE the global express.json() line below,
+// or signature verification will fail.
+
+const https = require('https');
+const cors = require('cors');
+require('dotenv').config({ path: '/root/newsites-sms/.env' });
+const sgMail = require('@sendgrid/mail');
+if (process.env.SENDGRID_API_KEY) {
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+} else {
+  console.warn('[boot] SENDGRID_API_KEY missing — email sends will fail');
+}
+const express = require('express');
+const fs = require('fs');
+const fsp = fs.promises;
+
+// Overhaul modules (lib/, routes/, compliance, crm-adapter live alongside this file)
+const store = require('./lib/store');
+const profiles = require('./lib/profiles');
+const compliance = require('./compliance');
+const crm = require('./crm-adapter');
+const { xmlEscape } = require('./lib/tpl');
+const { DEFAULT_CLIENT_SLUG } = require('./lib/constants');
+
+const app = express();
+app.use(cors({
+  origin: 'https://stevendiolosa07-ship-it.github.io'
+}));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+
+// New feature routers — self-parsing, mount before anything can shadow them.
+app.use('/twilio', require('./routes/twilio-status')); // POST /twilio/status-callback (missed-call text-back)
+app.use('/leads', require('./routes/leads'));          // POST /leads (speed-to-lead + scoring)
+
+const smsTwiml = (msg) =>
+  `<?xml version="1.0" encoding="UTF-8"?><Response>${msg ? `<Message>${xmlEscape(msg)}</Message>` : ''}</Response>`;
+
+// ── INBOUND SMS (Twilio messaging webhook via Caddy /sms*) ──
+app.post('/sms', async (req, res) => {
+  res.type('text/xml');
+  try {
+    const from = req.body.From;
+    const body = (req.body.Body || '').trim();
+    console.log('SMS from ' + from + ': ' + body);
+
+    const slug = await profiles.slugForNumber(req.body.To);
+    const profile = await profiles.loadProfile(slug);
+
+    // 1. Compliance keywords FIRST — STOP/HELP/START are law, not features.
+    if (profile) {
+      const kw = await compliance.processInboundSms(from, body, profile);
+      if (kw.handled) return res.send(smsTwiml(kw.reply));
+    }
+
+    // 2. Lead capture + activity. upsertLead creates on first contact and
+    //    touches last_activity on repeats; it also mirrors into the dashboard
+    //    crm.json, replacing the old manual push.
+    await crm.upsertLead(slug || DEFAULT_CLIENT_SLUG, {
+      phone: from,
+      message: body,
+      note: body ? body.slice(0, 300) : undefined,
+      stage: 'New Lead',
+      source: 'sms',
+      tags: ['sms'],
+    });
+
+    // 3. Same friendly auto-reply as before.
+    return res.send(smsTwiml('Thanks for contacting us!'));
+  } catch (e) {
+    console.error('[sms]', e);
+    return res.send(smsTwiml('')); // never 500 at Twilio
+  }
+});
+
+// ── Social Media Auto-Post Route (via Make.com HTTP webhook) ──
+app.post('/social-post', async (req, res) => {
+  const { message, imageUrl } = req.body;
+  if (!message) return res.status(400).json({ error: 'Message is required' });
+  try {
+    const payload = imageUrl ? JSON.stringify({ message, imageUrl }) : JSON.stringify({ message });
+    const options = {
+      hostname: 'hook.us2.make.com',
+      path: '/dzmqe5zvxx8t8ew4vtpsvzb9d7d5cz5h',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) }
+    };
+    await new Promise((resolve, reject) => {
+      const r = https.request(options, resolve);
+      r.on('error', reject);
+      r.write(payload);
+      r.end();
+    });
+    res.json({ success: true, message: 'Post triggered successfully' });
+  } catch (err) {
+    console.error('Social post error:', err);
+    res.status(500).json({ error: 'Failed to trigger post' });
+  }
+});
+
+// ── Serve client websites ──
+app.use('/sites/:clientId', async (req, res) => {
+  const filePath = `/root/newsites-sms/clients/${req.params.clientId}/website/index.html`;
+  try {
+    await fsp.access(filePath);
+    res.sendFile(filePath);
+  } catch (_) {
+    res.status(404).send('Website not found for this client.');
+  }
+});
+
+// ── Website generator API ──
+app.post('/api/generate-website', async (req, res) => {
+  try {
+    const { clientId, name, services, phone, address, email, colors } = req.body;
+    if (!clientId || !name || !services || !phone || !address) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+    const { generateWebsite } = require('./website-generator');
+    const outputPath = await generateWebsite(clientId, { name, services, phone, address, email, colors });
+    res.json({ success: true, path: outputPath, url: `/sites/${clientId}` });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── AI chat API for client websites (Gemini) ──
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { message } = req.body;
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: message }] }], generationConfig: { maxOutputTokens: 256 } })
+    });
+    const data = await response.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, I could not get a response.';
+    res.json({ reply });
+  } catch (e) {
+    res.status(500).json({ reply: 'Sorry, I am unavailable right now.' });
+  }
+});
+
+// ============================================
+// SOCIAL POST APPROVAL WORKFLOW
+// ============================================
+const PENDING_POSTS = 'pending-posts.json'; // resolved under DATA_ROOT (/root/newsites-sms)
+
+// AI submits a pending post for approval
+app.post('/pending-post', async (req, res) => {
+  try {
+    const { message, imageUrl, clientEmail, clientName } = req.body;
+    if (!message || !clientEmail) return res.status(400).json({ error: 'message and clientEmail required' });
+
+    const id = Date.now().toString();
+    await store.updateJson(PENDING_POSTS, [], (posts) => {
+      posts.push({ id, message, imageUrl, clientEmail, clientName, createdAt: new Date().toISOString(), status: 'pending' });
+    });
+
+    // Stable HTTPS base — nip.io survives restarts; tunnel/IP only as fallback.
+    const baseUrl = process.env.PUBLIC_BASE_URL || process.env.TUNNEL_URL || `http://${process.env.VPS_IP || 'localhost'}:3001`;
+    const approveUrl = `${baseUrl}/approve-post/${id}`;
+    const rejectUrl = `${baseUrl}/reject-post/${id}`;
+
+    const emailHtml = `
+      <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#000;color:#fff;padding:30px;border-radius:10px;">
+        <h2 style="color:#FFD700;">NewSites — Post Approval</h2>
+        <p>Hi ${clientName || 'there'},</p>
+        <p>Your AI has drafted a social media post for your review:</p>
+        <div style="background:#111;border:1px solid #FFD700;border-radius:8px;padding:20px;margin:20px 0;">
+          <p style="font-size:16px;">${message}</p>
+          ${imageUrl ? `<img src="${imageUrl}" style="max-width:100%;border-radius:8px;margin-top:10px;" />` : ''}
+        </div>
+        <a href="${approveUrl}" style="background:#FFD700;color:#000;padding:14px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;margin-right:10px;">✅ Approve & Post</a>
+        <a href="${rejectUrl}" style="background:#333;color:#fff;padding:14px 28px;text-decoration:none;border-radius:6px;font-weight:bold;display:inline-block;">❌ Reject</a>
+        <p style="margin-top:30px;color:#888;font-size:12px;">Powered by NewSites.com</p>
+      </div>
+    `;
+
+    await sgMail.send({
+      from: process.env.EMAIL_USER,
+      to: clientEmail,
+      subject: `📱 Your AI drafted a post — approve it!`,
+      html: emailHtml
+    });
+
+    res.json({ success: true, message: 'Pending post created and approval email sent', id });
+  } catch (e) {
+    console.error('Pending post error:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Client clicks Approve
+app.get('/approve-post/:id', async (req, res) => {
+  try {
+    let post = null;
+    await store.updateJson(PENDING_POSTS, [], (posts) => {
+      const p = posts.find((x) => x.id === req.params.id);
+      if (p && p.status === 'pending') { p.status = 'approved'; post = p; }
+      else if (p) post = { alreadyProcessed: true };
+    });
+    if (!post) return res.status(404).send('Post not found or already processed.');
+    if (post.alreadyProcessed) return res.send('This post has already been processed.');
+
+    const { message, imageUrl } = post;
+    const payload = imageUrl ? JSON.stringify({ message, imageUrl }) : JSON.stringify({ message });
+    const options = {
+      hostname: 'hook.us2.make.com',
+      path: '/dzmqe5zvxx8t8ew4vtpsvzb9d7d5cz5h',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(payload) }
+    };
+    await new Promise((resolve, reject) => {
+      const r = https.request(options, resolve);
+      r.on('error', reject);
+      r.write(payload);
+      r.end();
+    });
+
+    res.send(`
+      <div style="font-family:Arial,sans-serif;text-align:center;padding:60px;background:#000;color:#FFD700;min-height:100vh;">
+        <h1>✅ Post Approved!</h1>
+        <p style="color:#fff;">Your post is being published to Instagram now.</p>
+      </div>
+    `);
+  } catch (e) {
+    console.error('Approve post error:', e);
+    res.status(500).send('Something went wrong approving this post.');
+  }
+});
+
+// Client clicks Reject
+app.get('/reject-post/:id', async (req, res) => {
+  try {
+    let found = false;
+    await store.updateJson(PENDING_POSTS, [], (posts) => {
+      const p = posts.find((x) => x.id === req.params.id);
+      if (p) { p.status = 'rejected'; found = true; }
+    });
+    if (!found) return res.status(404).send('Post not found.');
+    res.send(`
+      <div style="font-family:Arial,sans-serif;text-align:center;padding:60px;background:#000;color:#fff;min-height:100vh;">
+        <h1 style="color:#FF4444;">❌ Post Rejected</h1>
+        <p>No worries — this post has been discarded.</p>
+      </div>
+    `);
+  } catch (e) {
+    res.status(500).send('Something went wrong.');
+  }
+});
+
+// ── STRIPE CHECKOUT ──
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+const PLANS = {
+  starter: { name: 'Starter', amount: 9700, description: 'AI website + monthly updates' },
+  growth:  { name: 'Growth',  amount: 29700, description: 'Full AI automation stack' },
+  empire:  { name: 'Empire',  amount: 59700, description: 'Full-scale business domination' }
+};
+
+app.post('/create-checkout', async (req, res) => {
+  try {
+    const { plan } = req.body;
+    const p = PLANS[plan];
+    if (!p) return res.status(400).json({ error: 'Invalid plan' });
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      mode: 'subscription',
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: { name: `NewSites.com — ${p.name}`, description: p.description },
+          unit_amount: p.amount,
+          recurring: { interval: 'month' }
+        },
+        quantity: 1
+      }],
+      success_url: 'https://stevendiolosa07-ship-it.github.io/NewSites/success.html',
+      cancel_url: 'https://stevendiolosa07-ship-it.github.io/NewSites/cancel.html',
+    });
+
+    res.json({ url: session.url });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── ONBOARDING → STRIPE CHECKOUT (the live /onboarding — was dead code before dedupe) ──
+app.post('/onboarding', async (req, res) => {
+  try {
+    const { businessName, businessDescription, email, phone, plan } = req.body;
+    if (!businessName || !businessDescription || !email) {
+      return res.status(400).json({ success: false, error: 'Missing required fields' });
+    }
+    const PRICE_IDS = {
+      starter: process.env.STRIPE_PRICE_STARTER,
+      growth: process.env.STRIPE_PRICE_GROWTH,
+      empire: process.env.STRIPE_PRICE_EMPIRE
+    };
+    const priceId = PRICE_IDS[plan] || PRICE_IDS.starter;
+    if (!priceId) {
+      // STRIPE_PRICE_* not configured yet — fall back to inline pricing so
+      // checkout still works instead of 500ing.
+      const p = PLANS[plan] || PLANS.starter;
+      const session = await stripe.checkout.sessions.create({
+        mode: 'subscription',
+        payment_method_types: ['card'],
+        customer_email: email,
+        line_items: [{
+          price_data: {
+            currency: 'usd',
+            product_data: { name: `NewSites.com — ${p.name}`, description: p.description },
+            unit_amount: p.amount,
+            recurring: { interval: 'month' }
+          },
+          quantity: 1
+        }],
+        metadata: {
+          business_name: businessName,
+          business_description: businessDescription.slice(0, 490),
+          phone: phone || '',
+          plan: plan || 'starter'
+        },
+        success_url: 'https://stevendiolosa07-ship-it.github.io/NewSites/social-media-creator.html?paid=true',
+        cancel_url: 'https://stevendiolosa07-ship-it.github.io/NewSites/#pricing',
+        allow_promotion_codes: true
+      });
+      return res.json({ success: true, checkoutUrl: session.url });
+    }
+    const session = await stripe.checkout.sessions.create({
+      mode: 'subscription',
+      payment_method_types: ['card'],
+      customer_email: email,
+      line_items: [{ price: priceId, quantity: 1 }],
+      metadata: {
+        business_name: businessName,
+        business_description: businessDescription.slice(0, 490),
+        phone: phone || '',
+        plan: plan || 'starter'
+      },
+      success_url: 'https://stevendiolosa07-ship-it.github.io/NewSites/social-media-creator.html?paid=true',
+      cancel_url: 'https://stevendiolosa07-ship-it.github.io/NewSites/#pricing',
+      allow_promotion_codes: true
+    });
+    res.json({ success: true, checkoutUrl: session.url });
+  } catch (err) {
+    console.error('Onboarding error:', err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ── ONBOARDING FORM (legacy email summary — was shadowing the Stripe route) ──
+app.post('/onboarding-legacy', async (req, res) => {
+  try {
+    const d = req.body;
+    await sgMail.send({
+      from: process.env.EMAIL_USER,
+      to: process.env.NOTIFY_EMAIL,
+      subject: `🚀 New Client Onboarding — ${d.bizName}`,
+      html: `
+        <div style="font-family:Arial,sans-serif;background:#000;color:#FFD700;padding:40px;border-radius:8px;">
+          <h1 style="color:#FFD700;">🚀 New Client Onboarded!</h1>
+          <h2 style="color:#fff;margin-bottom:20px;">${d.bizName} — ${d.bizType}</h2>
+          <div style="background:#111;padding:20px;border-radius:8px;margin:20px 0;">
+            <p style="color:#FFD700;margin:8px 0;"><strong>Owner:</strong> <span style="color:#fff;">${d.ownerName}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Phone:</strong> <span style="color:#fff;">${d.bizPhone}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Email:</strong> <span style="color:#fff;">${d.bizEmail}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Address:</strong> <span style="color:#fff;">${d.bizAddress}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Hours:</strong> <span style="color:#fff;">${d.bizHours}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Service Area:</strong> <span style="color:#fff;">${d.serviceArea}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Services:</strong> <span style="color:#fff;">${d.services}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Price Range:</strong> <span style="color:#fff;">${d.bizPrice}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Brand Color:</strong> <span style="color:#fff;">${d.brandColor}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Tone:</strong> <span style="color:#fff;">${d.brandTone}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Tagline:</strong> <span style="color:#fff;">${d.bizTagline}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Social:</strong> <span style="color:#fff;">${d.bizSocial}</span></p>
+          </div>
+          <div style="background:#111;padding:20px;border-radius:8px;margin:20px 0;">
+            <p style="color:#FFD700;margin-bottom:8px;"><strong>Business Description:</strong></p>
+            <p style="color:#fff;">${d.bizDesc}</p>
+          </div>
+          <div style="background:#111;padding:20px;border-radius:8px;margin:20px 0;">
+            <p style="color:#FFD700;margin-bottom:8px;"><strong>What Makes Them Different:</strong></p>
+            <p style="color:#fff;">${d.bizDiff}</p>
+          </div>
+          <div style="background:#111;padding:20px;border-radius:8px;margin:20px 0;">
+            <p style="color:#FFD700;margin-bottom:8px;"><strong>Service Details:</strong></p>
+            <p style="color:#fff;">${d.servicesDetail}</p>
+          </div>
+          <div style="background:#111;padding:20px;border-radius:8px;margin:20px 0;">
+            <p style="color:#FFD700;margin-bottom:8px;"><strong>Additional Notes:</strong></p>
+            <p style="color:#fff;">${d.bizNotes}</p>
+          </div>
+          <p style="color:#888;font-size:12px;margin-top:20px;">Submitted via NewSites.com onboarding form</p>
+        </div>
+      `
+    });
+    res.json({ success: true });
+  } catch (e) {
+    console.error('Onboarding error:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── CONTACT FORM (simple email) ──
+app.post('/contact', async (req, res) => {
+  try {
+    const { name, email, biz, msg } = req.body;
+    await sgMail.send({
+      from: process.env.EMAIL_USER,
+      to: process.env.NOTIFY_EMAIL,
+      subject: `📩 New Contact — ${name} (${biz || 'No biz listed'})`,
+      html: `
+        <div style="font-family:Arial,sans-serif;background:#000;color:#FFD700;padding:40px;border-radius:8px;">
+          <h1 style="color:#FFD700;">📩 New Contact Form Submission</h1>
+          <div style="background:#111;padding:20px;border-radius:8px;margin:20px 0;">
+            <p style="color:#FFD700;margin:8px 0;"><strong>Name:</strong> <span style="color:#fff;">${name}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Email:</strong> <span style="color:#fff;">${email}</span></p>
+            <p style="color:#FFD700;margin:8px 0;"><strong>Business:</strong> <span style="color:#fff;">${biz || '—'}</span></p>
+          </div>
+          <div style="background:#111;padding:20px;border-radius:8px;">
+            <p style="color:#FFD700;margin-bottom:8px;"><strong>Message:</strong></p>
+            <p style="color:#fff;">${msg}</p>
+          </div>
+          <p style="margin-top:20px;"><a href="mailto:${email}" style="color:#FFD700;">Reply to ${name}</a></p>
+        </div>
+      `
+    });
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── CONTACT FORM ENDPOINT (site forms + missed-call calculator) ──
+app.post('/contact-form', async (req, res) => {
+  try {
+    const { name, email, phone, businessName, message } = req.body;
+    if (!name || !email || !phone) {
+      return res.status(400).json({ error: 'Name, email, and phone are required' });
+    }
+
+    // Keep the historical leads.json log (async + serialized now).
+    await store.updateJson('leads.json', [], (leads) => {
+      leads.push({
+        id: Date.now().toString(),
+        name, email, phone,
+        businessName: businessName || '',
+        message: message || '',
+        source: 'contact-form',
+        status: 'new',
+        createdAt: new Date().toISOString()
+      });
+    });
+
+    // CRM system of record + dashboard mirror in one call.
+    await crm.upsertLead(DEFAULT_CLIENT_SLUG, {
+      name, email, phone,
+      message,
+      note: message ? String(message).slice(0, 300) : undefined,
+      stage: 'New Lead',
+      source: 'contact-form',
+      tags: ['web-form'],
+    });
+
+    // Owner alert — ledger-aware, env-credentialed, no hardcoded numbers.
+    try {
+      const profile = await profiles.loadProfile(DEFAULT_CLIENT_SLUG);
+      const ownerCell = (profile && profile.identity && profile.identity.owner_cell) || process.env.OWNER_CELL;
+      if (ownerCell) {
+        await compliance.sendSms({
+          to: ownerCell,
+          body: `🔥 New Lead!\nName: ${name}\nBiz: ${businessName || 'N/A'}\nPhone: ${phone}\nEmail: ${email}\nMsg: ${(message || 'None').slice(0, 200)}`,
+          profile: profile || {},
+          mode: 'transactional',
+        });
+      } else {
+        console.warn('[contact-form] no owner cell configured — lead saved, alert skipped');
+      }
+    } catch (e) {
+      console.error('Owner alert error:', e.message);
+    }
+
+    res.json({ success: true });
+  } catch (e) {
+    console.error('[contact-form]', e);
+    res.status(500).json({ error: 'internal error' });
+  }
+});
+
+// ── AI CHAT (merged: website-builder proxy + NewSites sales assistant) ──
+// Callers that send their own `system` (the website builder) get it verbatim.
+// Callers that send only `messages` (the NewSites site widget) get the sales
+// persona. Pricing in the persona is sourced from PLANS so it can't drift.
+app.post('/ai-chat', async (req, res) => {
+  try {
+    const { messages, system } = req.body;
+    if (!Array.isArray(messages) || !messages.length) {
+      return res.status(400).json({ error: 'messages array required' });
+    }
+    const salesSystem =
+      `You are the AI assistant for NewSites.com, a B2B SaaS that provides AI-powered automation for small businesses. ` +
+      `Services: AI call answering, SMS automation, CRM, lead management, social media posting. ` +
+      `Pricing: Starter $${PLANS.starter.amount / 100}/mo, Growth $${PLANS.growth.amount / 100}/mo, Empire $${PLANS.empire.amount / 100}/mo. ` +
+      `Never invent other prices, discounts, or bundles. After answering 1-2 questions, naturally ask for their name, phone, and email so we can follow up. Be friendly and concise.`;
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: system ? 4000 : 1000,
+        system: system || salesSystem,
+        messages
+      }),
+      signal: AbortSignal.timeout(60000),
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('AI chat upstream error:', response.status, JSON.stringify(data).slice(0, 300));
+      return res.status(502).json({ error: 'AI upstream error' });
+    }
+    // Website builder expects the full API shape; the sales widget expects {reply}.
+    if (system) return res.json(data);
+    return res.json({ reply: data.content?.[0]?.text || 'Sorry, I could not get a response.' });
+  } catch (e) {
+    console.error('AI chat error:', e.message);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// ── Social Media Content Generator ──
+app.post('/api/generate-social', async (req, res) => {
+  const { postType, platforms, description, bizName, tone } = req.body;
+  if (!description) return res.status(400).json({ error: 'Missing description' });
+
+  const Anthropic = require('@anthropic-ai/sdk');
+  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  const typeLabels = {
+    promotion: 'promotional sale/offer post',
+    announcement: 'new announcement post',
+    tip: 'educational tip/value post',
+    review: 'customer review/testimonial post',
+    behindscenes: 'behind the scenes post',
+    question: 'engagement/question post',
+    holiday: 'holiday/seasonal post',
+    beforeafter: 'before and after results post'
+  };
+
+  const prompt = `You are an expert social media copywriter for small businesses. Generate optimized posts.
+
+Post type: ${typeLabels[postType] || postType}
+Tone: ${tone || 'professional'}
+${bizName ? `Business name: ${bizName}` : ''}
+Details: ${description}
+Platforms: ${platforms}
+
+For EACH platform, output EXACTLY this format:
+
+PLATFORM: [platform name]
+COPY:
+[post copy optimized for that platform]
+HASHTAGS: [relevant hashtags]
+---
+
+Platform rules:
+- Instagram: 150-300 words, emojis welcome, strong hook in first line, 5-10 hashtags
+- Facebook: 50-150 words, storytelling style, end with CTA, 1-2 hashtags
+- TikTok: very short, punchy, use hooks like POV: or Tell me why, trending language
+- LinkedIn: 150-250 words, professional, no emojis, insight-driven, end with question
+- X/Twitter: MUST be under 270 characters total, punchy, 1-2 hashtags max
+- Write actual content, never use placeholder text`;
+
+  try {
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 2000,
+      messages: [{ role: 'user', content: prompt }]
+    });
+    res.json({ result: message.content[0].text });
+  } catch (err) {
+    console.error('Social AI error:', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.listen(3001, () => console.log('SMS server running on port 3001 (v2 overhaul)'));
+EOF_INDEXJS_7391
+
+cat > call-handler.js << 'EOF_CALLH_7391'
+// NewSites voice AI — call-handler.js (v2, 2026-08-22 overhaul)
+// Runs as PM2 process "newsites-calls" on port 3002.
+//
+// What changed vs v1 (rollback = restore call-handler.js.bak-* and pm2 restart newsites-calls):
+//   - Per-client profile loaded from the caller's dialed number (numbers-map).
+//   - Kill switch: profile.ai_enabled=false bridges straight to the owner.
+//   - AI + recording disclosure prepended to the greeting (CA two-party consent).
+//   - All speech uses the Polly.Joanna-Neural voice.
+//   - 8-turn limit (AI_TURN_LIMIT) → warm handoff to owner_cell.
+//   - System prompt comes from clients/{slug}/compiled/system-prompt.txt
+//     (run `node compiler.js <slug>` after profile edits); the hardcoded
+//     prompt remains as fallback. A call-completion protocol is appended so
+//     the COMPLETE sentinel keeps working with any compiled prompt.
+//   - Zero-hallucination pricing: if the AI emits the forced fallback line,
+//     an owner_alert job fires immediately.
+//   - Completed calls upsert into the CRM (system of record + dashboard).
+//   - Sessions are cleaned up on completion and swept hourly (no more
+//     unbounded in-memory growth).
+
+require('dotenv').config({ path: '/root/newsites-sms/.env' });
+const express = require('express');
+const twilio = require('twilio');
+const { saveLead } = require('./lead-scorer');
+
+const profiles = require('./lib/profiles');
+const guards = require('./guards');
+const crm = require('./crm-adapter');
+const phone = require('./lib/phone');
+
+const app = express();
+app.use(express.urlencoded({ extended: false }));
+
+const VOICE = { voice: 'Polly.Joanna-Neural' };
+const DISCLOSURE = "Quick note — this call may be recorded, and you're speaking with an A.I. assistant. ";
+
+const FALLBACK_PROMPT =
+  'You are a friendly business receptionist on a phone call. Keep responses short and friendly.';
+
+// Appended to WHATEVER system prompt is in play so the completion sentinel
+// and lead extraction keep working even as compiled prompts change.
+const CALL_PROTOCOL = `
+
+=== CALL COMPLETION PROTOCOL (system requirement) ===
+Across the call, collect exactly three things, one question at a time:
+1. The caller's full name
+2. Their email address (or best phone number if they refuse email)
+3. What they need help with
+Do NOT say COMPLETE until you have all three. Once you have all three, repeat
+them back to confirm, say a brief friendly goodbye, and append the single word
+COMPLETE at the very end of that final message. Never speak the word COMPLETE
+in any other situation.`;
+
+// callSid -> { convo: [], lead: {}, slug, startedAt }
+const sessions = {};
+setInterval(() => {
+  const cutoff = Date.now() - 4 * 60 * 60 * 1000;
+  for (const sid of Object.keys(sessions)) {
+    if (sessions[sid].startedAt < cutoff) delete sessions[sid];
+  }
+}, 60 * 60 * 1000).unref();
+
+function endSession(callSid) {
+  delete sessions[callSid];
+  guards.resetTurns(callSid);
+}
+
+app.post('/call', async (req, res) => {
+  res.type('text/xml');
+  const callSid = req.body.CallSid;
+  const fromNumber = req.body.From;
+
+  try {
+    const slug = await profiles.slugForNumber(req.body.To);
+    const profile = await profiles.loadProfile(slug);
+
+    // Per-client kill switch — no AI, straight to a human (or voicemail).
+    if (profile && !guards.aiEnabled(profile)) {
+      return res.send(guards.killSwitchTwiml(profile));
+    }
+
+    sessions[callSid] = { convo: [], lead: { phone: fromNumber }, slug, startedAt: Date.now() };
+
+    const id = (profile && profile.identity) || {};
+    const persona = (profile && profile.voice_sms_persona) || {};
+    const disclose = persona.recording_disclosure !== false; // default ON — CA two-party consent
+    const greeting =
+      (disclose ? DISCLOSURE : '') +
+      `Hello! Thank you for calling${id.business_name ? ' ' + id.business_name : ''}. How can I help you today?`;
+
+    const twiml = new twilio.twiml.VoiceResponse();
+    const gather = twiml.gather({
+      input: 'speech',
+      action: '/call/respond',
+      speechTimeout: 'auto',
+      language: 'en-US'
+    });
+    gather.say(VOICE, greeting);
+    twiml.redirect('/call/respond'); // caller stayed silent — give the AI a turn anyway
+
+    res.send(twiml.toString());
+  } catch (e) {
+    console.error('[call] entry error:', e);
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say(VOICE, 'Sorry, we are having technical trouble. Please try again shortly.');
+    twiml.hangup();
+    res.send(twiml.toString());
+  }
+});
+
+app.post('/call/respond', async (req, res) => {
+  res.type('text/xml');
+  const callSid = req.body.CallSid;
+  const userSpeech = (req.body.SpeechResult || '').trim();
+
+  try {
+    if (!sessions[callSid]) {
+      sessions[callSid] = { convo: [], lead: { phone: req.body.From }, slug: null, startedAt: Date.now() };
+    }
+    const session = sessions[callSid];
+    if (!session.slug) session.slug = await profiles.slugForNumber(req.body.To);
+    const profile = await profiles.loadProfile(session.slug);
+
+    // Silence/timeout — reprompt without burning an AI turn.
+    if (!userSpeech) {
+      const twiml = new twilio.twiml.VoiceResponse();
+      const gather = twiml.gather({ input: 'speech', action: '/call/respond', speechTimeout: 'auto', language: 'en-US' });
+      gather.say(VOICE, "Sorry, I didn't catch that. How can I help?");
+      twiml.say(VOICE, "It seems we got disconnected. Please call back anytime. Goodbye!");
+      twiml.hangup();
+      return res.send(twiml.toString());
+    }
+
+    session.convo.push({ role: 'user', text: userSpeech });
+
+    // Turn limit — past it, a human takes over. Warm handoff, no dead air.
+    const turnNo = guards.bumpTurn(callSid);
+    if (turnNo > guards.TURN_LIMIT) {
+      endSession(callSid);
+      return res.send(guards.escalationTwiml(profile));
+    }
+
+    // Compiled per-client prompt, with the hardcoded one as fallback.
+    const compiled = session.slug ? await profiles.loadCompiledPrompt(session.slug) : null;
+    const systemPrompt = (compiled || FALLBACK_PROMPT) + CALL_PROTOCOL;
+
+    const claudeMessages = session.convo.map((t) => ({
+      role: t.role === 'model' ? 'assistant' : 'user',
+      content: t.text
+    }));
+
+    const chatResp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5',
+        max_tokens: 200,
+        system: systemPrompt,
+        messages: claudeMessages
+      }),
+      signal: AbortSignal.timeout(15000),
+    });
+    const chatData = await chatResp.json();
+    const aiResponse = (chatData.content && chatData.content[0]) ? chatData.content[0].text : "I'm sorry, could you repeat that?";
+
+    session.convo.push({ role: 'model', text: aiResponse });
+
+    // Deterministic pricing guard: the compiled prompt FORCES an exact fallback
+    // sentence for off-menu pricing; if it appears, alert the owner now.
+    guards.checkPriceEscalation(aiResponse, profile, { callerPhone: req.body.From, channel: 'voice' })
+      .catch((e) => console.warn('[call] price escalation check failed:', e.message));
+
+    // Extract lead info (name/email/need) from the running conversation.
+    try {
+      const convoText = session.convo.map((t) => t.text).join(' ');
+      const exResp = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': process.env.ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-haiku-4-5',
+          max_tokens: 150,
+          messages: [{ role: 'user', content:
+            'Extract name, email, and need from this conversation. Return ONLY JSON with no markdown: {"name":"","email":"","need":""}\n\n' + convoText }]
+        }),
+        signal: AbortSignal.timeout(10000),
+      });
+      const exData = await exResp.json();
+      const exText = (exData.content && exData.content[0]) ? exData.content[0].text : '{}';
+      const extracted = JSON.parse(exText.replace(/```json|```/g, '').trim());
+      session.lead = Object.assign({}, session.lead, extracted);
+    } catch (e) { /* extraction is best-effort */ }
+
+    const twiml = new twilio.twiml.VoiceResponse();
+
+    if (aiResponse.includes('COMPLETE')) {
+      const lead = session.lead;
+      await saveLead(lead); // existing lead-scorer pipeline, unchanged
+
+      // New pipeline: CRM system of record + dashboard mirror.
+      try {
+        const e164 = phone.toE164(lead.phone || req.body.From);
+        if (session.slug && e164) {
+          await crm.upsertLead(session.slug, {
+            name: lead.name || null,
+            email: lead.email || null,
+            phone: e164,
+            message: lead.need,
+            note: lead.need ? String(lead.need).slice(0, 300) : undefined,
+            stage: 'New Lead',
+            source: 'voice',
+            tags: ['voice'],
+          });
+        }
+      } catch (e) {
+        console.warn('[call] crm upsert failed:', e.message);
+      }
+
+      endSession(callSid);
+      twiml.say(VOICE, 'Thank you for calling. Someone will be in touch with you soon. Goodbye!');
+      twiml.hangup();
+    } else {
+      const gather = twiml.gather({
+        input: 'speech',
+        action: '/call/respond',
+        speechTimeout: 'auto',
+        language: 'en-US'
+      });
+      gather.say(VOICE, aiResponse.replace(/COMPLETE/g, '').trim());
+      twiml.say(VOICE, 'Are you still there? Feel free to call back anytime. Goodbye!');
+      twiml.hangup();
+    }
+
+    res.send(twiml.toString());
+  } catch (e) {
+    console.error('[call] respond error:', e);
+    const twiml = new twilio.twiml.VoiceResponse();
+    twiml.say(VOICE, "I'm sorry, we're having trouble on our end. Please call back in a few minutes.");
+    twiml.hangup();
+    res.send(twiml.toString());
+  }
+});
+
+app.listen(3002, () => {
+  console.log('Call handler running on port 3002 (v2 overhaul)');
+});
+EOF_CALLH_7391
+
+cat > crm-adapter.js << 'EOF_CRMA_7391'
+'use strict';
+
+// CRM adapter — the ONE file that knows where and how leads are stored.
+//
+// TWO stores, written together:
+//
+// 1. SYSTEM OF RECORD (automation): {DATA_ROOT}/clients/{slug}/crm.json
+//    { "leads": { "+13235550142": { name, phone, email, stage, tags, source,
+//                                   created_at, updated_at, last_activity_at,
+//                                   history: [...] } } }
+//    Stages, history, and last-activity feed the jobs engine (follow-up
+//    skip logic, review + reactivation hooks).
+//
+// 2. LEGACY DASHBOARD MIRROR: {DATA_ROOT}/crm.json  (= /root/newsites-sms/crm.json)
+//    The flat ARRAY read by the live crm.js dashboard (port 3003) and by
+//    index.js. Every upsert/stage-move is mirrored there so new leads are
+//    VISIBLE in the dashboard Steve actually looks at. Shape per existing
+//    records: { id, createdAt, name, phone, email, need, status, score,
+//    source, businessName }. Matching is by last-10 phone digits (the file
+//    contains " 13105551234" and "3105551234" style variants) or email.
+//    Existing records are updated conservatively — id/createdAt/phone
+//    formatting are never touched.
+//
+//    Disable with LEGACY_CRM_MIRROR=0. Override path with LEGACY_CRM_FILE.
+//
+// HONEST LIMIT — cross-process races: crm.js and index.js do synchronous
+// read-modify-writes on the legacy file from their own processes. Our writes
+// are serialized in-process and atomic on disk (temp+rename, never a torn
+// file), but a simultaneous sync write from crm.js can still lose one
+// update either way. That race predates this module (crm.js vs index.js
+// already share the file). Window is milliseconds; real fix is the Phase-2
+// single-writer/SQLite move. Mirror failures are logged and never break the
+// primary write.
+//
+// Stage hooks (STEP 3.2): moving a lead into the profile's review trigger
+// stage (default "Job Done") schedules review_request (+N h) and
+// reactivation_check (+90 d) via jobs-engine (lazy-required to avoid a
+// circular require at load).
+
+const store = require('./lib/store');
+const phone = require('./lib/phone');
+
+const HISTORY_CAP = 50;
+const LEGACY_FILE = process.env.LEGACY_CRM_FILE || 'crm.json';
+const MIRROR_ON = process.env.LEGACY_CRM_MIRROR !== '0';
+
+function crmPath(slug) {
+  return `clients/${slug}/crm.json`;
+}
+
+function emptyCrm() {
+  return { leads: {} };
+}
+
+function nowIso() {
+  return new Date().toISOString();
+}
+
+function pushHistory(lead, entry) {
+  lead.history = lead.history || [];
+  lead.history.push({ at: nowIso(), ...entry });
+  if (lead.history.length > HISTORY_CAP) {
+    lead.history = lead.history.slice(-HISTORY_CAP);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Legacy dashboard mirror
+// ---------------------------------------------------------------------------
+
+const SOURCE_LABELS = {
+  missed_call: 'Missed Call',
+  web_form: 'Website Form',
+  sms: 'Twilio SMS',
+  voice: 'Phone Call',
+};
+
+function findLegacyIndex(list, e164, email) {
+  const key10 = e164 ? phone.last10(e164) : null;
+  const mail = email ? String(email).trim().toLowerCase() : null;
+  return list.findIndex((c) => {
+    if (!c || typeof c !== 'object') return false;
+    if (key10 && c.phone && phone.last10(c.phone) === key10) return true;
+    if (mail && c.email && String(c.email).trim().toLowerCase() === mail) return true;
+    return false;
+  });
+}
+
+// Mirror an upsert/stage change into the flat dashboard array. Best-effort:
+// never throws into the caller.
+async function mirrorLegacy(slug, { e164, email, name, note, stage, score, source }) {
+  if (!MIRROR_ON) return;
+  try {
+    let businessName = null;
+    try {
+      const profiles = require('./lib/profiles'); // lazy — adapter must load standalone
+      const profile = await profiles.loadProfile(slug);
+      businessName = (profile && profile.identity && profile.identity.business_name) || null;
+    } catch (_) { /* profile missing — mirror without businessName */ }
+
+    await store.updateJson(LEGACY_FILE, [], (list) => {
+      if (!Array.isArray(list)) list = []; // corrupt/foreign shape — start clean (store preserved the original)
+      const i = findLegacyIndex(list, e164, email);
+      if (i >= 0) {
+        const c = list[i];
+        if (name && (!c.name || /^(sms lead|new lead|missed call)$/i.test(c.name))) c.name = name;
+        if (email && !c.email) c.email = email;
+        if (stage) c.status = stage;
+        if (note && !c.need) c.need = String(note).slice(0, 300);
+        if (Number.isFinite(score)) c.score = score;
+        if (businessName && !c.businessName) c.businessName = businessName;
+      } else {
+        const PLACEHOLDER = { missed_call: 'Missed Call Lead', sms: 'SMS Lead', voice: 'Phone Lead', web_form: 'Website Lead' };
+        const rec = {
+          id: Date.now(),
+          createdAt: nowIso(),
+          name: name || (PLACEHOLDER[source] || 'New Lead'),
+          phone: e164 || '',
+          email: email || '',
+          need: note ? String(note).slice(0, 300) : '',
+          status: stage || 'New Lead',
+          source: SOURCE_LABELS[source] || source || 'automation',
+        };
+        if (Number.isFinite(score)) rec.score = score;
+        if (businessName) rec.businessName = businessName;
+        list.push(rec);
+      }
+      return list;
+    });
+  } catch (err) {
+    console.warn(`[crm] legacy mirror failed (${slug}): ${err.message}`);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// System of record
+// ---------------------------------------------------------------------------
+
+// Create or update a lead keyed by E.164 phone. Email-only leads are keyed by
+// "email:{address}". Returns the stored lead (or null if unkeyable).
+async function upsertLead(slug, data) {
+  const e164 = phone.toE164(data.phone);
+  const key = e164 || (data.email ? `email:${String(data.email).trim().toLowerCase()}` : null);
+  if (!key) return null;
+
+  let saved = null;
+  let createdOrStaged = false;
+  await store.updateJson(crmPath(slug), emptyCrm, (crm) => {
+    crm.leads = crm.leads || {};
+    const existing = crm.leads[key];
+    if (existing) {
+      if (data.name && !existing.name) existing.name = data.name;
+      if (data.email && !existing.email) existing.email = data.email;
+      if (e164 && !existing.phone) existing.phone = e164;
+      if (data.tags && data.tags.length) {
+        existing.tags = Array.from(new Set([...(existing.tags || []), ...data.tags]));
+      }
+      existing.updated_at = nowIso();
+      existing.last_activity_at = nowIso();
+      pushHistory(existing, { type: 'touch', source: data.source || 'unknown', note: data.note });
+      saved = existing;
+    } else {
+      const lead = {
+        name: data.name || null,
+        phone: e164 || null,
+        email: data.email || null,
+        stage: data.stage || 'New Lead',
+        tags: data.tags || [],
+        source: data.source || 'unknown',
+        created_at: nowIso(),
+        updated_at: nowIso(),
+        last_activity_at: nowIso(),
+        history: [],
+      };
+      pushHistory(lead, { type: 'created', source: lead.source, note: data.note });
+      crm.leads[key] = lead;
+      saved = lead;
+      createdOrStaged = true;
+    }
+  });
+
+  await mirrorLegacy(slug, {
+    e164,
+    email: data.email,
+    name: data.name,
+    note: data.note || data.message,
+    stage: createdOrStaged ? (saved && saved.stage) : null, // don't stomp dashboard status on mere touches
+    score: data.score,
+    source: data.source,
+  });
+  return saved;
+}
+
+async function getLead(slug, rawPhone) {
+  const e164 = phone.toE164(rawPhone);
+  if (!e164) return null;
+  const crm = await store.readJson(crmPath(slug), emptyCrm());
+  return (crm.leads && crm.leads[e164]) || null;
+}
+
+// Record inbound activity (call, sms reply, form) without changing stage.
+// Feeds the "skip follow-up / reactivation if they already responded" logic.
+async function touchActivity(slug, rawPhone, meta) {
+  const e164 = phone.toE164(rawPhone);
+  if (!e164) return null;
+  let found = false;
+  await store.updateJson(crmPath(slug), emptyCrm, (crm) => {
+    const lead = crm.leads && crm.leads[e164];
+    if (!lead) return;
+    found = true;
+    lead.last_activity_at = nowIso();
+    lead.updated_at = nowIso();
+    pushHistory(lead, { type: 'activity', ...(meta || {}) });
+  });
+  return found; // no legacy mirror: nothing dashboard-visible changed
+}
+
+async function moveStage(slug, rawPhone, stage, meta) {
+  const e164 = phone.toE164(rawPhone);
+  if (!e164) return null;
+
+  let moved = null;
+  await store.updateJson(crmPath(slug), emptyCrm, (crm) => {
+    const lead = crm.leads && crm.leads[e164];
+    if (!lead) return;
+    const fromStage = lead.stage;
+    lead.stage = stage;
+    lead.updated_at = nowIso();
+    pushHistory(lead, { type: 'stage', from: fromStage, to: stage, ...(meta || {}) });
+    moved = { lead, fromStage };
+  });
+  if (!moved) return null;
+
+  await mirrorLegacy(slug, {
+    e164,
+    email: moved.lead.email,
+    name: moved.lead.name,
+    stage, // dashboard "status" tracks the automation stage
+  });
+
+  await runStageHooks(slug, e164, stage);
+  return moved.lead;
+}
+
+async function runStageHooks(slug, e164, stage) {
+  const profiles = require('./lib/profiles');
+  const jobs = require('./jobs-engine'); // lazy: avoids circular require at load
+
+  const profile = await profiles.loadProfile(slug);
+  if (!profile) return;
+
+  const rep = profile.reputation || {};
+  const triggerStage = rep.trigger_stage || 'Job Done';
+  if (stage !== triggerStage) return;
+
+  const delayHours = Number.isFinite(rep.delay_hours) ? rep.delay_hours : 4;
+  if (rep.google_review_url) {
+    await jobs.schedule({
+      client_slug: slug,
+      action: 'review_request',
+      payload: { phone: e164 },
+      due_at: Date.now() + delayHours * 60 * 60 * 1000,
+      dedupe_key: `review:${slug}:${e164}`,
+    });
+  } else {
+    console.warn(`[crm] ${slug}: stage "${triggerStage}" reached but reputation.google_review_url is not set — review request skipped`);
+  }
+
+  const reactDays = Number.isFinite(rep.reactivation_days) ? rep.reactivation_days : 90;
+  await jobs.schedule({
+    client_slug: slug,
+    action: 'reactivation_check',
+    payload: { phone: e164 },
+    due_at: Date.now() + reactDays * 24 * 60 * 60 * 1000,
+    dedupe_key: `react:${slug}:${e164}`,
+  });
+}
+
+module.exports = { crmPath, upsertLead, getLead, touchActivity, moveStage };
+EOF_CRMA_7391
+
+mkdir -p clients/newsites
+cat > clients/newsites/profile.json << 'EOF_PROF_7391'
+{
+  "ai_enabled": true,
+  "lead_alert_threshold": 5,
+  "identity": {
+    "business_name": "NewSites.com",
+    "niche": "professional",
+    "service_area": "United States (remote)",
+    "timezone": "America/Los_Angeles",
+    "hours": "Mon-Sat 9am-7pm PT",
+    "owner_cell": "+13478190869",
+    "website_url": "https://stevendiolosa07-ship-it.github.io/NewSites"
+  },
+  "offer": {
+    "services": [
+      { "name": "Starter Plan", "price": 97, "duration_min": null, "bookable": false, "deposit_pct": 0 },
+      { "name": "Growth Plan", "price": 297, "duration_min": null, "bookable": false, "deposit_pct": 0 },
+      { "name": "Empire Plan", "price": 597, "duration_min": null, "bookable": false, "deposit_pct": 0 }
+    ],
+    "payment_methods": ["card"],
+    "stripe_account_id": null
+  },
+  "voice_sms_persona": {
+    "greeting_name": "the NewSites assistant",
+    "tone": {
+      "formal_casual": "casual",
+      "brief_chatty": "brief",
+      "salesy_consultative": "consultative"
+    },
+    "banned_topics": ["legal advice", "financial advice", "competitor bashing", "guaranteed results claims"],
+    "escalation_triggers": ["refund request", "cancellation", "billing dispute", "asks for Steve"],
+    "escalation_cell": "+13478190869",
+    "recording_disclosure": true
+  },
+  "booking": {
+    "calendar_provider": "",
+    "calendar_link": "FILL_ME_IN__calendly_or_cal_com_link_or_leave_empty",
+    "min_lead_time_hours": 2,
+    "buffer_min": 0,
+    "can_ai_commit_times": false
+  },
+  "reputation": {
+    "google_review_url": "FILL_ME_IN__google_review_link_or_leave_empty",
+    "trigger_stage": "Job Done",
+    "delay_hours": 4,
+    "reactivation_days": 90
+  },
+  "compliance": {
+    "quiet_hours": { "start": "21:00", "end": "08:00" },
+    "opt_out_list_path": "compliance/opt-out-ledger.json"
+  }
+}
+EOF_PROF_7391
+
+WC_I=$(wc -c < index.js); WC_C=$(wc -c < call-handler.js); WC_A=$(wc -c < crm-adapter.js); WC_P=$(wc -c < clients/newsites/profile.json)
+[ "$WC_I" -eq 26636 ] && ok "index.js $WC_I bytes" || bad "index.js size $WC_I != 26636"
+[ "$WC_C" -eq 10114 ] && ok "call-handler.js $WC_C bytes" || bad "call-handler.js size $WC_C != 10114"
+[ "$WC_A" -eq 10446 ] && ok "crm-adapter.js $WC_A bytes" || bad "crm-adapter.js size $WC_A != 10446"
+[ "$WC_P" -eq 1805 ] && ok "profile.json $WC_P bytes" || bad "profile.json size $WC_P != 1805"
+[ "$FAIL" -eq 0 ] || die "embedded file write mismatch — do not continue, send Claude this output"
+
+# blank the two placeholder fields so nothing weird can reach a real SMS
+sed -i 's|FILL_ME_IN__calendly_or_cal_com_link_or_leave_empty||;s|FILL_ME_IN__google_review_link_or_leave_empty||' clients/newsites/profile.json
+
+say "3/8 Syntax checks"
+node --check index.js && node --check call-handler.js && node --check crm-adapter.js && ok "node --check clean" || die "syntax check failed"
+
+say "4/8 .env (idempotent — only adds missing keys)"
+touch .env
+grep -q '^TWILIO_ACCOUNT_SID=' .env || echo 'TWILIO_ACCOUNT_SID=AC41ed753d3852ed7e096f034533983bd0' >> .env
+grep -q '^TWILIO_AUTH_TOKEN=' .env || echo 'TWILIO_AUTH_TOKEN=b44c2de4fddb3b56a90d375d9183d0b0' >> .env
+grep -q '^TWILIO_FROM=' .env || echo 'TWILIO_FROM=+13473029363' >> .env
+grep -q '^DATA_ROOT=' .env || echo 'DATA_ROOT=/root/newsites-sms' >> .env
+grep -q '^DEFAULT_CLIENT_SLUG=' .env || echo 'DEFAULT_CLIENT_SLUG=newsites' >> .env
+grep -q '^PUBLIC_BASE_URL=' .env || echo 'PUBLIC_BASE_URL=https://164.92.110.116.nip.io' >> .env
+grep -q '^SENDGRID_FROM=' .env || echo "SENDGRID_FROM=$(grep -oP '^EMAIL_USER=\K.*' .env | head -1)" >> .env
+SGF=$(grep -oP '^SENDGRID_FROM=\K.*' .env | head -1)
+[ -n "$SGF" ] && ok "SENDGRID_FROM=$SGF" || echo "  [WARN] SENDGRID_FROM is empty (no EMAIL_USER in .env) — email acks will fail until set"
+
+say "5/8 jobs-engine env loading + compile + number map"
+grep -q "dotenv" jobs-engine.js || sed -i "1a require('dotenv').config({ path: __dirname + '/.env' });" jobs-engine.js
+node --check jobs-engine.js && ok "jobs-engine.js ok" || die "jobs-engine.js broken"
+node compiler.js newsites || die "compiler failed — profile invalid"
+node -e "const f='clients/numbers-map.json';let m={};try{m=require('./'+f)}catch(e){};m['+13473029363']=m['+13473029363']||'newsites';m['+12295924933']='newsites';require('fs').writeFileSync(f,JSON.stringify(m,null,2))" && ok "numbers-map updated"
+
+say "6/8 Caddy routes"
+if [ -f "$CADDYFILE" ]; then
+  grep -q 'reverse_proxy /twilio\*' "$CADDYFILE" || sed -i 's|\(reverse_proxy /sms\* localhost:3001\)|\1\n\t\treverse_proxy /twilio* localhost:3001\n\t\treverse_proxy /leads* localhost:3001|' "$CADDYFILE"
+  sed -i 's|reverse_proxy /api\* localhost:3000|reverse_proxy /api* localhost:3001|' "$CADDYFILE"
+  if command -v caddy >/dev/null 2>&1; then
+    if caddy validate --config "$CADDYFILE" >/dev/null 2>&1; then
+      systemctl reload caddy && ok "Caddy updated + reloaded"
+    else
+      cp "$BASE/Caddyfile.bak-$STAMP" "$CADDYFILE"
+      bad "Caddy validate failed — original Caddyfile RESTORED, routes unchanged"
+    fi
+  else
+    echo "  [WARN] caddy binary not found — skipped (test mode?)"
+  fi
+else
+  echo "  [WARN] $CADDYFILE not found — skipped"
+fi
+
+say "7/8 PM2 restart"
+if command -v pm2 >/dev/null 2>&1; then
+  pm2 restart newsites-sms newsites-calls --update-env >/dev/null && ok "restarted newsites-sms + newsites-calls"
+  pm2 describe jobs-engine >/dev/null 2>&1 && pm2 restart jobs-engine --update-env >/dev/null || pm2 start jobs-engine.js --name jobs-engine --time >/dev/null
+  ok "jobs-engine running"
+  pm2 save >/dev/null
+else
+  echo "  [WARN] pm2 not found — skipped (test mode?)"
+fi
+
+say "8/8 Live verification"
+if [ "${NEWSITES_TEST:-0}" = "1" ]; then
+  echo "  [test mode] skipping live curls"
+else
+  sleep 2
+  CODE=$(curl -s -o /dev/null -w '%{http_code}' -X POST https://164.92.110.116.nip.io/twilio/status-callback -d 'CallStatus=completed' || echo ERR)
+  [ "$CODE" = "204" ] && ok "missed-call endpoint answers 204" || bad "status-callback returned $CODE (want 204)"
+  LEADS=$(curl -s -X POST https://164.92.110.116.nip.io/leads -H 'Content-Type: application/json' -d '{"name":"Deploy Test","phone":"+13235550100","message":"testing"}' || echo ERR)
+  echo "$LEADS" | grep -q '"ok":true' && ok "/leads answers: $LEADS" || bad "/leads returned: $LEADS"
+  pm2 logs newsites-sms --lines 8 --nostream 2>/dev/null | tail -8
+fi
+
+echo
+if [ "$FAIL" -eq 0 ]; then
+  echo "=================================================="
+  echo " DEPLOY COMPLETE."
+  echo " Next (browser): Twilio console -> (347) 302-9363 -> Voice"
+  echo "   -> Call status changes -> POST"
+  echo "   https://164.92.110.116.nip.io/twilio/status-callback"
+  echo " Then call your number, let it ring out -> expect a text back."
+  echo " Then ROTATE the Twilio auth token and put the new value in"
+  echo " $BASE/.env, then: pm2 restart newsites-sms newsites-calls jobs-engine --update-env"
+  echo "=================================================="
+else
+  echo "XX DEPLOY FINISHED WITH FAILURES — screenshot this whole output for Claude."
+fi
