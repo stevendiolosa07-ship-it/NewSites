@@ -1533,7 +1533,7 @@
         return txt;
       }
 
-      genBtn.addEventListener("click", function(){
+      genBtn.addEventListener("click", async function(){
         if(quota<=0) return;
         var plats=selectedPlatforms();
         if(plats.length===0){ document.getElementById("crPlats").style.outline="1px solid rgba(212,175,55,0.5)"; setTimeout(function(){ document.getElementById("crPlats").style.outline=""; },900); return; }
@@ -1541,16 +1541,36 @@
         var biz=document.getElementById("crBiz").value.trim();
         var tone=activeVal(".cr-tone.active")||"Professional";
         var cat=activeVal(".cr-cat.active")||"Promotion";
-        outEl.innerHTML="";
-        plats.forEach(function(plat){
-          var post=document.createElement("div"); post.className="cr-post";
-          post.innerHTML='<div class="ph">'+plat+' &middot; '+cat+' &middot; '+tone+'</div><div class="pt"></div>';
-          post.querySelector(".pt").textContent=buildPost(plat, about, tone, cat, biz);
-          outEl.appendChild(post);
-        });
-        quota--;
-        if(quota>0){ qEl.textContent=quota+" free generation"+(quota===1?"":"s")+" left"; }
-        else { qEl.textContent="0 free generations left"; genBtn.disabled=true; genBtn.innerHTML="Create a free account to keep going"; }
+        outEl.innerHTML='<div class="cr-post"><div class="pt">Writing your posts...</div></div>';
+        genBtn.disabled=true;
+        try{
+          var r=await fetch("https://164.92.110.116.nip.io/api/generate-social",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({postType:cat,platforms:plats.join(", "),description:about,bizName:biz,tone:tone})});
+          if(!r.ok) throw new Error("HTTP "+r.status);
+          var data=await r.json();
+          outEl.innerHTML="";
+          (data.result||"").split("---").forEach(function(block){
+            block=block.trim(); if(!block) return;
+            var m=block.match(/PLATFORM:\s*(.+)/i);
+            var post=document.createElement("div"); post.className="cr-post";
+            post.innerHTML='<div class="ph">'+(m?m[1].trim():"Post")+' &middot; '+cat+' &middot; '+tone+'</div><div class="pt"></div>';
+            post.querySelector(".pt").textContent=block.replace(/PLATFORM:.*\n?/i,"").replace(/^(COPY|HASHTAGS):\s*/gim,"").trim();
+            outEl.appendChild(post);
+          });
+          if(!outEl.children.length) throw new Error("Empty result");
+          quota--;
+          if(quota>0){ qEl.textContent=quota+" free generation"+(quota===1?"":"s")+" left"; }
+          else { qEl.textContent="0 free generations left"; genBtn.innerHTML="Create a free account to keep going"; }
+        }catch(err){
+          outEl.innerHTML="";
+          plats.forEach(function(plat){
+            var post=document.createElement("div"); post.className="cr-post";
+            post.innerHTML='<div class="ph">'+plat+' &middot; sample (AI temporarily unreachable)</div><div class="pt"></div>';
+            post.querySelector(".pt").textContent=buildPost(plat, about, tone, cat, biz);
+            outEl.appendChild(post);
+          });
+        }finally{
+          if(quota>0) genBtn.disabled=false;
+        }
       });
     }
 
