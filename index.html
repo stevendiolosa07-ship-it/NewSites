@@ -1625,12 +1625,12 @@
         try{ var qp=new URLSearchParams(location.search); if(qp.get("paid")==="true"||qp.get("session_id")) localStorage.setItem("ns_paid","true"); isPaid=localStorage.getItem("ns_paid")==="true"; }catch(e){}
         var vb=document.createElement("button");
         if(!isPaid){
-          vb.textContent="Video \u00b7 Paid plans";
-          vb.title="AI video promos are included in paid plans";
+          vb.textContent="Short Video \u00b7 Paid plans";
+          vb.title="AI short video promos are included in paid plans";
           vb.style.cssText="flex:1 1 30%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.25);background:transparent;color:rgba(212,175,55,0.7);font-weight:600;font-size:12px;cursor:pointer";
           vb.onclick=function(){ var p=document.getElementById("pricing"); if(p){ p.scrollIntoView({behavior:"smooth"}); } else { location.hash="#pricing"; } };
         } else {
-          vb.textContent="Generate Video";
+          vb.textContent="Generate Short Video";
           vb.style.cssText="flex:1 1 30%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.55);background:rgba(212,175,55,0.2);color:#E8C97A;font-weight:700;font-size:12px;cursor:pointer";
           vb.onclick=async function(){
             vb.disabled=true; var vo=vb.textContent; vb.textContent="Starting...";
