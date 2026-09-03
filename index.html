@@ -1787,16 +1787,34 @@
     if(hLaunch && hPanel){
       function addHelpMsg(text, who){ var d=document.createElement("div"); d.className="help-msg "+who; d.textContent=text; hBody.appendChild(d); hBody.scrollTop=hBody.scrollHeight; }
       var greeted=false;
-      function openHelp(){ hPanel.classList.add("open"); if(!greeted){ greeted=true; addHelpMsg("Hi! I'm the New Sites assistant. Ask me about AI calls, messaging, CRM, websites, social, or pricing.","bot"); } hInput.focus(); }
+      var hHist=[];
+      var ADMIN_KEY=null;
+      try{
+        var hq=new URLSearchParams(location.search);
+        if(hq.get("admin")){ localStorage.setItem("ns_admin", hq.get("admin")); hq.delete("admin"); history.replaceState(null,"",location.pathname+(hq.toString()?"?"+hq.toString():"")+location.hash); }
+        ADMIN_KEY=localStorage.getItem("ns_admin");
+      }catch(e){}
+      function openHelp(){ hPanel.classList.add("open"); if(!greeted){ greeted=true; addHelpMsg(ADMIN_KEY?"Owner copilot ready. Ask about your leads, clients, calls, or pending posts.":"Hi! I'm the New Sites assistant. Ask me about AI calls, messaging, CRM, websites, social, or pricing.","bot"); } hInput.focus(); }
       hLaunch.addEventListener("click", function(){ if(hPanel.classList.contains("open")) hPanel.classList.remove("open"); else openHelp(); });
       hClose.addEventListener("click", function(){ hPanel.classList.remove("open"); });
-      function sendHelp(){
-        var q=hInput.value.trim(); if(!q) return;
+      var hBusy=false;
+      async function sendHelp(){
+        var q=hInput.value.trim(); if(!q||hBusy) return;
         addHelpMsg(q,"user"); hInput.value="";
-        // Local helper for now. To use the real AI backend, replace the timeout below
-        // with a fetch() to a VPS proxy endpoint that calls the Anthropic API server-side
-        // (keeping the key off the client), then addHelpMsg(reply,"bot").
-        setTimeout(function(){ addHelpMsg(helpReply(q),"bot"); }, 350);
+        hHist.push({role:"user",content:q}); if(hHist.length>16) hHist=hHist.slice(-16);
+        var typing=document.createElement("div"); typing.className="help-msg bot"; typing.textContent="\u2026"; hBody.appendChild(typing); hBody.scrollTop=hBody.scrollHeight;
+        hBusy=true;
+        try{
+          var url="https://164.92.110.116.nip.io/api/"+(ADMIN_KEY?"assistant":"concierge");
+          var hdrs={"Content-Type":"application/json"}; if(ADMIN_KEY) hdrs["x-admin-key"]=ADMIN_KEY;
+          var r=await fetch(url,{method:"POST",headers:hdrs,body:JSON.stringify({messages:hHist})});
+          var j={}; try{ j=await r.json(); }catch(e2){}
+          typing.remove();
+          var reply=(j&&j.reply)?j.reply:helpReply(q);
+          addHelpMsg(reply,"bot");
+          hHist.push({role:"assistant",content:reply});
+        }catch(err){ typing.remove(); addHelpMsg(helpReply(q),"bot"); }
+        finally{ hBusy=false; }
       }
       hSend.addEventListener("click", sendHelp);
       hInput.addEventListener("keydown", function(e){ if(e.key==="Enter"){ sendHelp(); } });
