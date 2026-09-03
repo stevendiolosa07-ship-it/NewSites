@@ -1608,10 +1608,19 @@
         dl.style.cssText="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.4);background:rgba(212,175,55,0.12);color:#D4AF37;font-weight:600;font-size:12px;cursor:pointer";
         dl.onclick=function(){ cv.toBlob(function(b){ var a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=(card.biz+"-"+plat).replace(/\W+/g,"-").toLowerCase()+".png"; a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); },4000); }); };
         var pb=document.createElement("button");
-        pb.textContent="Post to Page";
-        pb.disabled=true;
-        pb.title="Connect your Facebook Page to enable one-click posting";
-        pb.style.cssText="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.25);background:transparent;color:#9A948A;font-weight:600;font-size:12px;cursor:not-allowed";
+        pb.textContent="Post to Facebook Page";
+        pb.style.cssText="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.4);background:#D4AF37;color:#0B0B0B;font-weight:700;font-size:12px;cursor:pointer";
+        pb.onclick=async function(){
+          pb.disabled=true; var orig=pb.textContent; pb.textContent="Posting...";
+          try{
+            var capEl=postEl.querySelector(".pt");
+            var r=await fetch("https://164.92.110.116.nip.io/api/social/publish",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({imageDataUrl:cv.toDataURL("image/png"),caption:capEl?capEl.textContent:""})});
+            var j={}; try{ j=await r.json(); }catch(e2){}
+            if(r.status===503){ pb.textContent="Connect Facebook first"; setTimeout(function(){ pb.textContent=orig; pb.disabled=false; },2600); return; }
+            if(!r.ok||!j.ok) throw new Error(j.error||("HTTP "+r.status));
+            pb.textContent="Posted \u2713"; pb.style.background="rgba(74,222,128,0.9)";
+          }catch(e){ pb.textContent="Failed: "+String(e.message).slice(0,40); setTimeout(function(){ pb.textContent=orig; pb.disabled=false; },3200); }
+        };
         row.appendChild(dl); row.appendChild(pb);
         postEl.appendChild(row);
       }
