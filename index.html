@@ -1602,14 +1602,14 @@
         drawPostCard(cv, card);
         postEl.appendChild(cv);
         var row=document.createElement("div");
-        row.style.cssText="display:flex;gap:8px;margin-top:4px";
+        row.style.cssText="display:flex;gap:8px;margin-top:4px;flex-wrap:wrap";
         var dl=document.createElement("button");
         dl.textContent="Download PNG";
-        dl.style.cssText="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.4);background:rgba(212,175,55,0.12);color:#D4AF37;font-weight:600;font-size:12px;cursor:pointer";
+        dl.style.cssText="flex:1 1 30%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.4);background:rgba(212,175,55,0.12);color:#D4AF37;font-weight:600;font-size:12px;cursor:pointer";
         dl.onclick=function(){ cv.toBlob(function(b){ var a=document.createElement("a"); a.href=URL.createObjectURL(b); a.download=(card.biz+"-"+plat).replace(/\W+/g,"-").toLowerCase()+".png"; a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); },4000); }); };
         var pb=document.createElement("button");
         pb.textContent="Post to Facebook Page";
-        pb.style.cssText="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.4);background:#D4AF37;color:#0B0B0B;font-weight:700;font-size:12px;cursor:pointer";
+        pb.style.cssText="flex:1 1 30%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.4);background:#D4AF37;color:#0B0B0B;font-weight:700;font-size:12px;cursor:pointer";
         pb.onclick=async function(){
           pb.disabled=true; var orig=pb.textContent; pb.textContent="Posting...";
           try{
@@ -1621,7 +1621,50 @@
             pb.textContent="Posted \u2713"; pb.style.background="rgba(74,222,128,0.9)";
           }catch(e){ pb.textContent="Failed: "+String(e.message).slice(0,40); setTimeout(function(){ pb.textContent=orig; pb.disabled=false; },3200); }
         };
-        row.appendChild(dl); row.appendChild(pb);
+        var isPaid=false;
+        try{ var qp=new URLSearchParams(location.search); if(qp.get("paid")==="true"||qp.get("session_id")) localStorage.setItem("ns_paid","true"); isPaid=localStorage.getItem("ns_paid")==="true"; }catch(e){}
+        var vb=document.createElement("button");
+        if(!isPaid){
+          vb.textContent="Video \u00b7 Paid plans";
+          vb.title="AI video promos are included in paid plans";
+          vb.style.cssText="flex:1 1 30%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.25);background:transparent;color:rgba(212,175,55,0.7);font-weight:600;font-size:12px;cursor:pointer";
+          vb.onclick=function(){ var p=document.getElementById("pricing"); if(p){ p.scrollIntoView({behavior:"smooth"}); } else { location.hash="#pricing"; } };
+        } else {
+          vb.textContent="Generate Video";
+          vb.style.cssText="flex:1 1 30%;padding:10px;border-radius:8px;border:1px solid rgba(212,175,55,0.55);background:rgba(212,175,55,0.2);color:#E8C97A;font-weight:700;font-size:12px;cursor:pointer";
+          vb.onclick=async function(){
+            vb.disabled=true; var vo=vb.textContent; vb.textContent="Starting...";
+            try{
+              var about=document.getElementById("crAbout").value;
+              var r=await fetch("https://164.92.110.116.nip.io/api/generate-video",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({description:about,bizName:card.biz})});
+              var j={}; try{ j=await r.json(); }catch(e2){}
+              if(r.status===503||(j&&j.error==="engine_adapter_pending")){ vb.textContent="Video engine \u2014 coming online"; setTimeout(function(){ vb.textContent=vo; vb.disabled=false; },3000); return; }
+              if(!r.ok||!j.ok||!j.job) throw new Error(j.error||("HTTP "+r.status));
+              vb.textContent="Rendering\u2026 1\u20133 min";
+              var tries=0;
+              var iv=setInterval(async function(){
+                tries++;
+                if(tries>60){ clearInterval(iv); vb.textContent="Timed out \u2014 try again"; vb.disabled=false; return; }
+                try{
+                  var s=await fetch("https://164.92.110.116.nip.io/api/video-status?job="+encodeURIComponent(j.job));
+                  var sj=await s.json();
+                  if(sj.status==="done"&&sj.url){
+                    clearInterval(iv);
+                    var v=document.createElement("video"); v.controls=true; v.playsInline=true; v.src=sj.url;
+                    v.style.cssText="width:100%;display:block;border-radius:12px;margin:12px 0;border:1px solid rgba(212,175,55,0.25)";
+                    var anchor=postEl.querySelector(".pt");
+                    postEl.insertBefore(v, anchor||null);
+                    var a=document.createElement("a"); a.href=sj.url; a.textContent="Download video"; a.target="_blank"; a.rel="noopener";
+                    a.style.cssText="display:block;text-align:center;font-size:12px;color:#D4AF37;margin:-4px 0 10px";
+                    postEl.insertBefore(a, anchor||null);
+                    vb.textContent="Video ready \u2713";
+                  } else if(sj.status==="failed"){ clearInterval(iv); vb.textContent="Failed \u2014 try again"; vb.disabled=false; }
+                }catch(e3){}
+              },5000);
+            }catch(e){ vb.textContent="Failed: "+String(e.message).slice(0,36); setTimeout(function(){ vb.textContent=vo; vb.disabled=false; },3200); }
+          };
+        }
+        row.appendChild(dl); row.appendChild(pb); row.appendChild(vb);
         postEl.appendChild(row);
       }
 
