@@ -879,6 +879,7 @@
       </section>
 
       <section class="section glass reveal" id="plan-matrix" style="display:block; padding:clamp(28px,4vw,52px); border-radius:24px; border:1px solid rgba(212,175,55,0.25);">
+        <div id="pricing" style="position:relative; scroll-margin-top:96px;"></div>
         <style>
           #plan-matrix .mtx-wrap{overflow-x:auto; -webkit-overflow-scrolling:touch;}
           #plan-matrix table.mtx{width:100%; min-width:720px; border-collapse:collapse; font-size:13.5px;}
@@ -893,6 +894,13 @@
           #plan-matrix .mtx th.ent, #plan-matrix .mtx td.ent{background:rgba(201,168,76,0.07);}
           #plan-matrix .mtx th.ent{color:#E8C97A;}
           #plan-matrix .mtx-cta{text-align:center; margin-top:26px;}
+          #plan-matrix .mtx thead th{position:sticky; top:0; background:rgba(12,12,12,0.97); z-index:2;}
+          #plan-matrix .pop{display:block; margin:0 auto 6px; width:max-content; font-size:9px; letter-spacing:0.14em; padding:3px 9px; border-radius:999px; background:linear-gradient(135deg,#F0DCA0,#C9A84C); color:#0a0a0a; font-weight:800; text-transform:uppercase;}
+          #plan-matrix .mtx-buy td{padding:12px 8px 16px; border-bottom:1px solid rgba(212,175,55,0.25);}
+          #plan-matrix .buy{display:inline-block; padding:8px 14px; border-radius:999px; background:linear-gradient(135deg,#F0DCA0,#C9A84C); color:#0a0a0a; font-weight:800; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; text-decoration:none; white-space:nowrap; transition:transform .15s;}
+          #plan-matrix .buy:hover{transform:translateY(-1px);}
+          #plan-matrix .buy.ghost{background:transparent; border:1px solid rgba(212,175,55,0.5); color:#E8C97A;}
+          #plan-matrix .mtx tbody tr:hover td{background:rgba(212,175,55,0.05);}
         </style>
         <div class="sec-copy" style="text-align:center; max-width:820px; margin:0 auto 26px;">
           <div class="eyebrow">Plans &amp; Power</div>
@@ -904,15 +912,19 @@
           <thead><tr>
             <th>Feature</th>
             <th>Starter<span class="pp">$97/mo</span></th>
-            <th>Growth<span class="pp">$297/mo</span></th>
+            <th><span class="pop">Most Popular</span>Growth<span class="pp">$297/mo</span></th>
             <th>Empire<span class="pp">$597/mo</span></th>
             <th class="ent">Enterprise<span class="pp">Custom</span></th>
           </tr></thead>
           <tbody>
+            <tr class="mtx-buy"><td></td><td><a class="buy" href="https://buy.stripe.com/3cI3cw73R0bp9OderPcQU01" target="_blank" rel="noopener">Choose Starter</a></td><td><a class="buy" href="https://buy.stripe.com/28E3cw73R5vJ9Od6ZncQU02" target="_blank" rel="noopener">Choose Growth</a></td><td><a class="buy" href="https://buy.stripe.com/8x2cN69bZ8HV1hH2J7cQU03" target="_blank" rel="noopener">Choose Empire</a></td><td class="ent"><a class="buy ghost" href="#contact">Talk to us</a></td></tr>
             <tr><td>Luxury one-page website</td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
             <tr><td>AI SMS auto-replies &amp; lead capture</td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
             <tr><td>Missed-call text-back</td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
             <tr><td>CRM, pipeline &amp; full contact history</td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
+            <tr><td>AI social posts &mdash; copy + branded visual cards</td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
+            <tr><td>1-click publish to your Facebook Page</td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
+            <tr><td>AI short video promos</td><td><span class="dot"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
             <tr><td>Dedicated business phone number</td><td><span class="dot"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
             <tr><td>24/7 AI voice receptionist &mdash; recorded &amp; transcribed</td><td><span class="dot"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
             <tr><td>Lead scoring + instant hot-lead alerts to your cell</td><td><span class="dot"></span></td><td><span class="dot on"></span></td><td><span class="dot on"></span></td><td class="ent"><span class="dot on"></span></td></tr>
