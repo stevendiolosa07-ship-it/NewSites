@@ -536,6 +536,13 @@
   .cr-label { text-align:center; }
   .cr-plats, .cr-tones { justify-content:center; }
   .cr-quota { justify-content:center; }
+
+  /* Enterprise AI Brain — new engine nodes (Finance AI, Project Management AI, Custom Reporting & Forecasting, Automated Asset & Revenue Engine). Scoped to [data-fn] so existing nodes are untouched. */
+  .node[data-fn] .label{ display:block; }
+  .node[data-fn] .node-beta{ display:inline-block; margin-left:6px; padding:1px 6px; font-size:9px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; border:1px solid rgba(212,175,55,0.5); border-radius:999px; color:var(--gold-bright); vertical-align:middle; }
+  .node[data-fn] .node-desc{ position:absolute; top:100%; left:50%; transform:translateX(-50%) translateY(4px); margin-top:10px; width:220px; padding:10px 14px; border-radius:14px; background:rgba(8,9,16,0.94); border:1px solid rgba(212,175,55,0.4); box-shadow:0 10px 30px rgba(0,0,0,0.5); font-family:'Manrope',sans-serif; font-size:11px; font-weight:400; line-height:1.5; letter-spacing:0.01em; text-transform:none; color:rgba(244,236,210,0.85); text-shadow:none; opacity:0; pointer-events:none; transition:opacity 0.2s ease, transform 0.2s ease; z-index:20; }
+  .node[data-fn]:hover .node-desc{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .cap-beta{ display:inline-block; margin-left:8px; padding:2px 8px; font-size:9.5px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; border:1px solid rgba(212,175,55,0.5); border-radius:999px; color:var(--gold-bright); vertical-align:middle; }
 </style>
 </head>
 <body>
@@ -581,6 +588,10 @@
     <div class="node ent" data-node="enrich"     style="display:none;"><span class="label">Enrichment</span><span class="dot"></span></div>
     <div class="node ent" data-node="intake"     style="display:none;"><span class="label">Doc Intake</span><span class="dot"></span></div>
     <div class="node ent" data-node="custom"     style="display:none;"><span class="label">Custom Systems</span><span class="dot"></span></div>
+    <div class="node ent" data-node="finance"   data-fn="Predictive cash flow modeling, automated revenue recognition, and ledger forecasting." style="display:none;"><span class="label">Finance AI</span><span class="dot"></span></div>
+    <div class="node ent" data-node="pm"        data-fn="Real-time project profitability tracking, task automation, and team resource allocation." style="display:none;"><span class="label">Project Mgmt<span class="node-beta">BETA</span></span><span class="dot"></span></div>
+    <div class="node ent" data-node="reporting" data-fn="Deep-data custom report builder, executive KPI dashboards, and automated scenario analysis." style="display:none;"><span class="label">Reporting</span><span class="dot"></span></div>
+    <div class="node ent" data-node="assets"    data-fn="Auto-tracking fixed assets and automated compliance reporting." style="display:none;"><span class="label">Asset Engine</span><span class="dot"></span></div>
   </div>
 
   <div class="page">
@@ -862,12 +873,16 @@
           <div class="eb-cap" id="cap-enrich"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">09</span>Real-Time Pipeline Enrichment</h4><p>As soon as a new contact drops into your pipeline, the AI scrapes public records, corporate data, and social metrics to instantly give your team a full dossier on who the buyer is before you even speak to them.</p></div></div>
           <div class="eb-cap" id="cap-intake"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">10</span>Document Intake &amp; Extraction</h4><p>Erase manual data entry. Upload complex contracts, invoices, tax forms, or spreadsheets, and the system instantly pulls out the exact figures, key terms, and summaries you need in seconds.</p></div></div>
           <div class="eb-cap" id="cap-custom"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">11</span>Custom Systems &amp; Integrations</h4><p>Your business is unique. This is our blank-canvas node where we build bespoke, highly intricate tools engineered entirely around your company's proprietary operational workflows.</p></div></div>
+          <div class="eb-cap" id="cap-finance"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">12</span>Finance AI Engine</h4><p>Your books get a tireless analyst on staff. The system reads live revenue and expense data to forecast cash flow weeks ahead, recognizes revenue automatically as it's earned, and keeps the ledger reconciled in real time &mdash; so you see a cash crunch coming before it hits, not after.</p></div></div>
+          <div class="eb-cap" id="cap-pm"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">13</span>Project Management AI <span class="cap-beta">BETA</span></h4><p>Every project gets a running scoreboard. The system tracks true profitability per project as costs and hours roll in, automates routine task handoffs, and flags when a team member is overloaded &mdash; catching a project that's bleeding margin while there's still time to fix it.</p></div></div>
+          <div class="eb-cap" id="cap-reporting"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">14</span>Custom Reporting &amp; Forecasting</h4><p>Skip the spreadsheet marathon. Build any custom report straight from live data in minutes, hand execs a KPI dashboard that updates itself, and run automated scenario models before you commit budget &mdash; no analyst required to pull the numbers first.</p></div></div>
+          <div class="eb-cap" id="cap-assets"><span class="cd"></span><div class="cap-body"><h4><span class="cap-n">15</span>Automated Asset &amp; Revenue Engine</h4><p>Fixed assets stop falling through the cracks. The system auto-tracks every asset from purchase through depreciation and keeps compliance reporting audit-ready year-round, so year-end doesn't turn into a scramble to reconstruct twelve months of paperwork.</p></div></div>
         </div>
 
         <div class="eb-mhead"><span class="eyebrow">How a build lands</span><h3>Audit. Invert. Integrate.</h3></div>
         <div class="eb-mgrid">
           <div class="eb-mstep"><span class="mnum">PHASE 01</span><h4>Audit</h4><p>We map your current stack end to end &mdash; tools, data handoffs, manual bottlenecks, response lag, and software spend. Every weak point gets named and measured before anything is built.</p></div>
-          <div class="eb-mstep"><span class="mnum">PHASE 02</span><h4>Invert</h4><p>Each failure point gets its counter-system from the eleven modules above. Slow lead response becomes instant scoring and nurture. Messy records become automated data mapping. Runaway API bills become cost arbitrage.</p></div>
+          <div class="eb-mstep"><span class="mnum">PHASE 02</span><h4>Invert</h4><p>Each failure point gets its counter-system from the fifteen modules above. Slow lead response becomes instant scoring and nurture. Messy records become automated data mapping. Runaway API bills become cost arbitrage.</p></div>
           <div class="eb-mstep"><span class="mnum">PHASE 03</span><h4>Integrate</h4><p>No rip-and-replace. Custom AI layers hook directly into the tools you already run, so your team keeps working while the system comes online underneath them.</p></div>
         </div>
         <div class="eb-mhead"><span class="eyebrow">Vertical playbooks</span><h3>Built for how your industry sells</h3></div>
@@ -1271,9 +1286,10 @@
     })();
 
     var V=function(x,y,z){return new THREE.Vector3(x,y,z);};
-    var nodeAnchors={ "crm":V(S*0.30,S*0.34,S*0.50),"leads":V(-S*0.30,S*0.34,S*0.50),"calls":V(S*0.55,-S*0.06,S*0.22),"sms":V(-S*0.55,-S*0.06,S*0.22),"website":V(0,S*0.06,S*0.54),"social":V(0,S*0.50,S*0.02),"scheduling":V(0,-S*0.30,-S*0.58),"cost":V(S*0.42,-S*0.34,S*0.34),"guard":V(-S*0.42,-S*0.34,S*0.34),"tree":V(0,-S*0.55,S*0.24),"score":V(S*0.18,S*0.52,S*0.28),"map":V(-S*0.18,S*0.52,S*0.28),"agents":V(S*0.52,S*0.18,-S*0.30),"api":V(-S*0.52,S*0.18,-S*0.30),"nurture":V(S*0.22,S*0.42,-S*0.44),"enrich":V(-S*0.22,S*0.42,-S*0.44),"flows":V(S*0.48,-S*0.10,-S*0.44),"intake":V(-S*0.48,-S*0.10,-S*0.44),"churn":V(S*0.26,-S*0.44,-S*0.40),"onboard":V(-S*0.26,-S*0.44,-S*0.40),"secure":V(S*0.10,S*0.16,-S*0.62),"custom":V(-S*0.10,-S*0.05,-S*0.62) };
-    var nodeSection={ crm:"crm", leads:"leads", website:"website", calls:"conversations", sms:"conversations", scheduling:"conversations", social:"social", cost:"cap-cost", guard:"cap-guard", tree:"cap-tree", score:"cap-score", map:"cap-map", agents:"cap-agents", api:"cap-api", nurture:"cap-nurture", enrich:"cap-enrich", intake:"cap-intake", custom:"cap-custom" };
+    var nodeAnchors={ "crm":V(S*0.30,S*0.34,S*0.50),"leads":V(-S*0.30,S*0.34,S*0.50),"calls":V(S*0.55,-S*0.06,S*0.22),"sms":V(-S*0.55,-S*0.06,S*0.22),"website":V(0,S*0.06,S*0.54),"social":V(0,S*0.50,S*0.02),"scheduling":V(0,-S*0.30,-S*0.58),"cost":V(S*0.42,-S*0.34,S*0.34),"guard":V(-S*0.42,-S*0.34,S*0.34),"tree":V(0,-S*0.55,S*0.24),"score":V(S*0.18,S*0.52,S*0.28),"map":V(-S*0.18,S*0.52,S*0.28),"agents":V(S*0.52,S*0.18,-S*0.30),"api":V(-S*0.52,S*0.18,-S*0.30),"nurture":V(S*0.22,S*0.42,-S*0.44),"enrich":V(-S*0.22,S*0.42,-S*0.44),"flows":V(S*0.48,-S*0.10,-S*0.44),"intake":V(-S*0.48,-S*0.10,-S*0.44),"churn":V(S*0.26,-S*0.44,-S*0.40),"onboard":V(-S*0.26,-S*0.44,-S*0.40),"secure":V(S*0.10,S*0.16,-S*0.62),"custom":V(-S*0.10,-S*0.05,-S*0.62),"finance":V(S*0.48,-S*0.10,-S*0.44),"pm":V(S*0.26,-S*0.44,-S*0.40),"reporting":V(-S*0.26,-S*0.44,-S*0.40),"assets":V(S*0.10,S*0.16,-S*0.62) };
+    var nodeSection={ crm:"crm", leads:"leads", website:"website", calls:"conversations", sms:"conversations", scheduling:"conversations", social:"social", cost:"cap-cost", guard:"cap-guard", tree:"cap-tree", score:"cap-score", map:"cap-map", agents:"cap-agents", api:"cap-api", nurture:"cap-nurture", enrich:"cap-enrich", intake:"cap-intake", custom:"cap-custom", finance:"cap-finance", pm:"cap-pm", reporting:"cap-reporting", assets:"cap-assets" };
     var ui={ stateText:document.getElementById("stateText"), nodes:Array.prototype.slice.call(document.querySelectorAll(".node")) };
+    ui.nodes.forEach(function(n){ var fn=n.getAttribute("data-fn"); if(fn){ var d=document.createElement("span"); d.className="node-desc"; d.textContent=fn; n.appendChild(d); } });
     ui.nodes.forEach(function(n){ n._anchor=nodeAnchors[n.getAttribute("data-node")]||null; n._normal=new THREE.Vector3(); n._world=new THREE.Vector3(); n._toCam=new THREE.Vector3(); });
 
     function flash(el){ el.classList.add("flash"); setTimeout(function(){ el.classList.remove("flash"); }, 1700); }
