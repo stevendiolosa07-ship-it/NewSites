@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+/* Magic link: .../portal.html?token=XXXX or .../portal.html#/portal?token=XXXX
+   Runs before anything else on the page: keeps the token for this tab only (sessionStorage "portal_token"), removes it from the address bar
+   with history.replaceState (no reload) and lands on the portal. Other query parameters are left alone. */
+(function(){
+  try{
+    var u=new URL(location.href),t='',viaQuery=false;
+    if(u.searchParams.has('token')){ viaQuery=true; t=(u.searchParams.get('token')||'').trim(); u.searchParams.delete('token'); }
+    var m=/^#\/portal\?(?:[^#]*&)?token=([^&#]*)/.exec(u.hash);
+    if(!viaQuery&&!m) return;
+    if(!t&&m){ try{ t=decodeURIComponent(m[1]).trim(); }catch(e){} }
+    if(t){ try{ sessionStorage.setItem('portal_token',t); }catch(e){ window.__portalBootToken=t; } }
+    history.replaceState(null,'',u.pathname+u.search+'#/portal');
+  }catch(e){}
+})();
+</script>
+<title>NewSites.com — Client Portal</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#08080A; --surface:rgba(24,21,15,.55); --border:rgba(212,175,55,.3);
+  --border-strong:rgba(212,175,55,.55); --gold:#D4AF37; --gold-soft:rgba(212,175,55,.12);
+  --emerald:#10B981; --emerald-soft:rgba(16,185,129,.12); --cyan:#00F0FF; --cyan-soft:rgba(0,240,255,.12);
+  --ink:#F3EFE4; --ink-dim:#9A9488; --ink-faint:#5C574C; --radius:14px;
+  --sans:'Manrope',system-ui,sans-serif; --mono:'JetBrains Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}
+body{height:100%;margin:0;background:var(--void);color:var(--ink);font-family:var(--sans);
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+.app{max-width:1180px;margin:0 auto;padding:28px 20px 90px}
+a{color:inherit} h1,h2,h3{margin:0} p{margin:0} button{font-family:var(--sans);cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* ---- Header: brand + section nav + spend chip on ONE row (sticky on desktop), then the bot function directory directly beneath ---- */
+.stick{position:relative;z-index:30;margin-bottom:14px}
+.topbar{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px;padding-bottom:12px}
+.brand{font-weight:800;font-size:20px;letter-spacing:.02em;white-space:nowrap}
+.brand span{color:var(--gold)}
+.live{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--border);
+  border-radius:999px;padding:9px 16px;backdrop-filter:blur(16px)}
+.topbar .live{margin-left:auto;padding:7px 14px}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px 2px var(--cyan-soft);
+  animation:pulse 1.8s ease-in-out infinite}
+.live-num{font-family:var(--mono);color:var(--cyan);font-size:15px}
+.live-label{font-size:12px;color:var(--ink-dim)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+
+nav.jump{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1 1 auto;min-width:0}
+nav.jump a{font-size:13px;color:var(--ink-dim);text-decoration:none;padding:7px 14px;border:1px solid var(--border);
+  border-radius:999px;transition:border-color .15s,color .15s,background .15s}
+nav.jump a:hover{border-color:var(--border-strong);color:var(--ink)}
+nav.jump a.client-login{display:inline-flex;align-items:center;gap:7px;font-weight:700;line-height:inherit;color:var(--gold);background:var(--gold-soft);border-color:var(--border-strong)}
+nav.jump a.client-login:hover{color:var(--gold);background:rgba(212,175,55,.2);border-color:var(--gold)}
+@media(max-width:999px){.topbar .live{order:2}nav.jump{order:3;flex:1 0 100%}}
+/* desktop: header + directory stay on screen while the page scrolls (phones and short windows keep them in the flow, to leave room for content) */
+@media(min-width:1000px) and (min-height:600px){
+  .stick{position:sticky;top:0;margin:-28px -20px 16px;padding:14px 20px 12px;background:rgba(8,8,10,.9);
+    -webkit-backdrop-filter:blur(16px) saturate(160%);backdrop-filter:blur(16px) saturate(160%);border-bottom:1px solid var(--border)}
+  html{scroll-padding-top:calc(var(--stick-h,0px) + 12px)}
+}
+
+section{margin-bottom:56px}
+.sec-head{margin-bottom:20px;max-width:560px}
+.sec-head h2{font-size:22px;font-weight:700}
+.sec-head p{color:var(--ink-dim);font-size:14px;margin-top:6px;line-height:1.5}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+  padding:18px;backdrop-filter:blur(16px);transition:border-color .2s,transform .2s}
+.card:hover{border-color:var(--border-strong);transform:translateY(-2px)}
+
+.grid-tracker{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.t-title{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;font-weight:700;font-size:15px;margin-bottom:10px}
+.t-title-text{min-width:0}
+.t-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.chip{font-size:11px;color:var(--ink-dim);border:1px solid var(--border);border-radius:6px;padding:3px 8px}
+.t-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--ink-dim);margin-bottom:8px}
+.t-row b{color:var(--ink);font-weight:600}
+.badge-model{display:inline-flex;align-items:center;font-size:11px;font-family:var(--mono);color:var(--gold);
+  background:var(--gold-soft);border:1px solid var(--border-strong);border-radius:6px;padding:2px 8px}
+.mlogo{display:inline-flex;flex:none;width:16px;height:16px;margin-right:6px;vertical-align:middle;color:#fff}
+.mlogo svg{width:16px;height:16px;display:block}
+.bar-track{height:5px;border-radius:3px;background:rgba(212,175,55,.1);overflow:hidden;margin:4px 0 12px}
+.bar-fill{height:100%;background:var(--gold);border-radius:3px}
+.expand-btn{background:none;border:none;color:var(--cyan);font-size:11px;padding:0;margin-bottom:10px;text-align:left;font-family:var(--sans)}
+.subagent-list{display:none;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.subagent-list.open{display:flex}
+.sub-chip{font-size:10.5px;color:var(--ink-dim);border:1px dashed var(--border);border-radius:6px;padding:2px 7px}
+.status{flex:none;font-size:10px;font-weight:700;letter-spacing:.04em;padding:3px 9px;border-radius:5px;vertical-align:middle;white-space:nowrap}
+.status.live{background:var(--gold-soft);color:var(--gold);border:1px solid var(--border-strong)}
+.status.roadmap{background:none;color:var(--ink-faint);border:1px dashed var(--border)}
+.card.roadmap{border-style:dashed}
+.card.roadmap:hover{border-color:var(--ink-faint);transform:none}
+.roadmap-note{font-size:12px;color:var(--ink-faint);border-top:1px solid var(--border);padding-top:12px;font-style:italic}
+.t-foot{display:flex;justify-content:space-between;align-items:baseline;border-top:1px solid var(--border);padding-top:12px}
+.cost{font-family:var(--mono);font-size:20px;color:var(--gold)}
+.cost small{font-size:11px;color:var(--ink-faint);font-family:var(--sans)}
+.save{font-size:12px;font-family:var(--mono);color:var(--emerald);background:var(--emerald-soft);border-radius:6px;padding:3px 8px}
+
+/* ---- 3D flip cards: front = agent details, back = performance graph ---- */
+.flip{position:relative;display:flex;min-width:0;perspective:1000px;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .2s}
+.flip:not(.is-roadmap):hover{transform:translateY(-2px)}
+.flip-inner{position:relative;flex:1;display:grid;grid-template-columns:minmax(0,1fr);min-width:0; /* both faces share one grid cell, so the card is as tall as the taller face */
+  -webkit-transform-style:preserve-3d;transform-style:preserve-3d;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.flip.flipped .flip-inner{transform:rotateY(180deg)}
+.flip-face{grid-area:1/1;-webkit-backface-visibility:hidden;backface-visibility:hidden;-webkit-backdrop-filter:none;backdrop-filter:none}
+.flip-back{transform:rotateY(180deg);display:flex;flex-direction:column;gap:10px}
+.flip-face.card:hover{transform:none}
+.flip-back.card:hover{transform:rotateY(180deg)}
+.flip-hint{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:0;background:none;border:none;color:var(--cyan);font-size:11px;font-weight:600}
+.flip-hint svg,.flip-back-btn svg{width:12px;height:12px;flex:none}
+.flip-back-btn{display:inline-flex;align-items:center;gap:6px;flex:none;background:none;border:1px solid var(--border);color:var(--cyan);
+  font-size:11px;font-weight:600;padding:4px 10px;border-radius:8px;transition:border-color .2s,background .2s}
+.flip-back-btn:hover{border-color:var(--cyan);background:var(--cyan-soft)}
+.pb-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.pb-pod{font-weight:700;font-size:15px;line-height:1.2}
+.pb-cap{font-size:11px;color:var(--ink-dim);margin-top:3px}
+.pb-read{display:flex;align-items:baseline;gap:8px;font-family:var(--mono);font-size:11px;color:var(--ink-dim)}
+.pb-read b{font-size:18px;font-weight:600;color:var(--gold)}
+.pb-svg{width:100%;height:auto;max-height:112px;display:block;overflow:visible;touch-action:pan-y;cursor:crosshair}
+.pb-grid{stroke:rgba(212,175,55,.14);stroke-width:1}
+.pb-axis{fill:var(--ink-faint);font:500 8.5px var(--mono)}
+.pb-line{fill:none;stroke:var(--gold);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;filter:drop-shadow(0 0 4px rgba(212,175,55,.55))}
+.pb-dot{fill:#0b0a08;stroke:var(--gold);stroke-width:1.5}
+.pb-dot.last,.pb-dot.on{fill:var(--cyan);stroke:var(--cyan);filter:drop-shadow(0 0 5px var(--cyan))}
+.pb-guide{stroke:rgba(0,240,255,.45);stroke-width:1;stroke-dasharray:3 3;opacity:0}
+.pb-stats{display:flex;gap:6px;margin-top:auto}
+.pb-stats div{flex:1 1 auto;border:1px solid var(--border);border-radius:8px;padding:6px 7px;background:rgba(212,175,55,.05);min-width:0}
+.pb-stats span{display:block;font-size:10px;color:var(--ink-faint);margin-bottom:2px;white-space:nowrap}
+.pb-stats b{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--ink);white-space:nowrap}
+.pb-stats b.up{color:var(--emerald)} .pb-stats b.down{color:#F87171}
+.pb-sample{margin-left:auto;font-size:10px;color:var(--ink-faint);font-style:italic;white-space:nowrap}
+.pb-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;
+  color:var(--ink-faint);font-size:12px;line-height:1.4;border:1px dashed var(--border);border-radius:10px;padding:14px}
+.pb-empty b{color:var(--ink-dim);font-size:13px}
+@keyframes pbdraw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes pbfade{from{opacity:0}to{opacity:1}}
+.flip.flipped .pb-line{animation:pbdraw 1.1s cubic-bezier(.4,0,.2,1) .3s both}
+.flip.flipped .pb-area,.flip.flipped .pb-dot{animation:pbfade .6s ease .9s both}
+@media(prefers-reduced-motion:reduce){.flip-inner{transition-duration:.01ms}.flip.flipped .pb-line,.flip.flipped .pb-area,.flip.flipped .pb-dot{animation:none}}
+
+.reflect-grid{display:grid;grid-template-columns:240px 1fr;gap:32px;align-items:start}
+.loop-wrap{position:relative;width:220px;height:220px;margin:0 auto}
+.ring-bg{position:absolute;inset:14px;border:1px solid var(--border);border-radius:50%}
+.core{position:absolute;top:50%;left:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#1c1a14,var(--void));box-shadow:0 0 22px 6px var(--cyan);transition:box-shadow .9s ease}
+.pulse-ring{position:absolute;top:50%;left:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;
+  border:2px solid var(--gold);opacity:0;pointer-events:none}
+.pulse-ring.go{animation:pulseOut 1.6s ease-out}
+@keyframes pulseOut{from{transform:scale(1);opacity:.85}to{transform:scale(2.7);opacity:0}}
+.particle{position:absolute;top:50%;left:50%;width:7px;height:7px;margin:-3.5px 0 0 -3.5px;border-radius:50%;
+  background:var(--cyan);transition:transform 2.2s ease,opacity 2.2s ease,background .9s ease;transform:translate(var(--dx),var(--dy))}
+.phase-learn .particle{transform:translate(calc(var(--dx)*.22),calc(var(--dy)*.22));opacity:.55}
+.phase-execute .particle{transform:translate(calc(var(--dx)*1.55),calc(var(--dy)*1.55));opacity:.85}
+.phase-reflect .particle{transform:translate(var(--dx),var(--dy));opacity:1}
+.stage-label{position:absolute;font-size:11px;font-weight:700;letter-spacing:.03em;color:var(--ink-faint);transition:color .4s}
+.stage-label.active{color:var(--ink)}
+.stage-label.execute{top:-4px;left:50%;transform:translateX(-50%)}
+.stage-label.reflect{bottom:2px;right:-10px}
+.stage-label.learn{bottom:2px;left:-10px}
+.log-list{display:flex;flex-direction:column;gap:10px;margin:18px 0 22px}
+.log-item{border-left:2px solid var(--border-strong);background:var(--surface);padding:10px 14px;border-radius:0 8px 8px 0;
+  font-family:var(--mono);font-size:12.5px;color:var(--ink-dim);transition:border-color .3s,color .3s}
+.log-item.active{border-color:var(--gold);color:var(--ink)}
+.trend-stats{display:flex;gap:26px;margin-bottom:10px;flex-wrap:wrap}
+.tstat b{display:block;font-family:var(--mono);font-size:19px;color:var(--cyan)}
+.tstat span{font-size:11px;color:var(--ink-dim)}
+.chart-wrap{position:relative}
+.chart-wrap svg{width:100%;height:auto;display:block}
+.chart-tip{position:absolute;pointer-events:none;
+  padding:7px 10px;font-size:11px;font-family:var(--mono);color:var(--ink);opacity:0;transform:translate(-50%,-115%);transition:opacity .15s;white-space:nowrap;z-index:2}
+.chart-tip.show{opacity:1}
+.chart-legend{display:flex;gap:16px;margin-top:6px;font-size:11px;color:var(--ink-dim);flex-wrap:wrap}
+.chart-legend span{display:inline-flex;align-items:center;gap:5px}
+.chart-legend i{width:8px;height:8px;border-radius:50%;display:inline-block}
+
+.integ-bar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px 22px;backdrop-filter:blur(16px);margin-bottom:18px}
+.integ-stat b{font-family:var(--mono);color:var(--gold);font-size:18px}
+.integ-stat span{display:block;font-size:12px;color:var(--ink-dim)}
+.connect-btn{background:var(--gold-soft);border:1px solid var(--border-strong);color:var(--gold);border-radius:8px;padding:9px 16px;font-size:13px;font-weight:600}
+.connect-btn:hover{background:rgba(212,175,55,.2)}
+.triggers{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap;margin-bottom:22px}
+.trig-col{display:flex;flex-direction:column;gap:10px}
+.trig{font-size:12px;color:var(--ink-dim);border:1px solid var(--border);border-radius:8px;padding:8px 12px;background:var(--surface)}
+.arrow-wire{width:60px;height:2px;background:linear-gradient(90deg,transparent,var(--cyan));position:relative;margin:0 4px}
+.arrow-wire::after{content:'';position:absolute;top:-3px;width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px 2px var(--cyan-soft);animation:travel 2.4s linear infinite}
+@keyframes travel{from{left:-4px;opacity:0}10%{opacity:1}to{left:calc(100% - 8px);opacity:1}}
+.hub{background:var(--gold-soft);border:1px solid var(--border-strong);border-radius:10px;padding:12px 18px;font-weight:700;font-size:13px;color:var(--gold);text-align:center}
+
+/* small supporting text on the new hero / portal views: lighter than --ink-faint so it stays readable (about 5:1 on the page background) */
+:root{--ink-mute:#8A857A}
+/* ---- Bot function directory (pills). Counts and the scope line come from the roster in the script ---- */
+.fn-dir{display:flex;align-items:center;flex-wrap:wrap;gap:8px}
+.fn-dir-label{display:none;margin-right:4px;font:700 10.5px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-mute);white-space:nowrap}
+.fn-pill{display:inline-flex;align-items:center;gap:8px;white-space:nowrap;background:rgba(24,21,15,.55);color:var(--ink-dim);
+  border:1px solid var(--border);border-radius:999px;padding:8px 14px;font:700 13px/1.1 var(--sans);
+  transition:border-color .15s,background .15s,color .15s,box-shadow .15s}
+.fn-pill:hover{border-color:var(--border-strong);color:var(--ink)}
+.fn-pill[aria-pressed="true"]{background:var(--gold-soft);border-color:var(--gold);color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.1)}
+.fn-count{font:600 10.5px/1 var(--mono);padding:3px 6px;border-radius:999px;background:rgba(212,175,55,.14);color:var(--gold)}
+@media(min-width:1000px){.fn-dir-label{display:inline}}
+@media(max-width:480px){.fn-count{display:none}.fn-pill{padding:8px 12px}}
+
+/* ---- The office: first thing on the page under the header. Its height is capped so the agent list starts on the first screen; the width follows the 1000x740 ratio ---- */
+#network.hero{--cap:max(380px,calc(100vh - var(--stick-h,0px) - 190px));margin-bottom:44px}
+.office-hero{display:flex;justify-content:center;padding:10px;border:1px solid var(--border);border-radius:var(--radius);background:#0d0b11}
+.office-stage{position:relative;width:min(100%,calc(var(--cap)*1.3514))}
+#officeCanvas{width:100%;height:auto;display:block;border-radius:8px;background:#141019}
+
+/* ---- Vertical agent list: header (title, live queue status, route button) + a scroll box showing ~4.6 rows ---- */
+.agents{margin-top:14px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);overflow:hidden}
+.agents-head{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--border)}
+.agents-head .connect-btn{margin-left:auto;padding:7px 14px;font-size:12.5px}
+.agents-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-size:14px;font-weight:700}
+.agents-count{font:500 11px/1.3 var(--mono);color:var(--ink-dim)}
+.agents-live{display:inline-flex;align-items:center;gap:7px;font:700 10px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--cyan)}
+.agents-live i{flex:none;width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px 2px var(--cyan-soft);animation:pulse 1.8s ease-in-out infinite}
+.agents-live[data-held="1"]{color:var(--ink-mute)}
+.agents-live[data-held="1"] i{background:var(--ink-mute);box-shadow:none;animation:none}
+
+/* the scroll container: 4.6 rows tall, so 4 full rows plus a peek of the 5th show that the list scrolls */
+.agent-scroll{--row-h:64px;--hdr-h:34px;max-height:calc(var(--row-h)*4.6 + var(--hdr-h));overflow-y:auto;overflow-x:hidden;
+  scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:rgba(212,175,55,.5) transparent}
+.agent-scroll::-webkit-scrollbar{width:8px}
+.agent-scroll::-webkit-scrollbar-track{background:transparent}
+.agent-scroll::-webkit-scrollbar-thumb{background:rgba(212,175,55,.4);border-radius:8px}
+.agent-scroll::-webkit-scrollbar-thumb:hover{background:rgba(212,175,55,.65)}
+.ag-cols,.ag-row{display:grid;grid-template-columns:36px minmax(0,1.5fr) minmax(0,1fr) 112px 92px;align-items:center;column-gap:14px;padding-left:16px;padding-right:16px}
+.ag-cols{position:sticky;top:0;z-index:2;height:var(--hdr-h);background:#100f0d;border-bottom:1px solid var(--border);
+  font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-mute)}
+.ag-cols span:nth-child(n+4){text-align:right}
+.ag-row{position:relative;height:var(--row-h);border-bottom:1px solid rgba(212,175,55,.12);transition:background .35s,box-shadow .35s}
+.ag-row[hidden]{display:none}
+.ag-row:last-child{border-bottom:none}
+.ag-av{display:block;width:36px;height:36px;border-radius:8px;background:#1b1712;image-rendering:pixelated}
+.ag-id{min-width:0}
+.ag-name{display:flex;align-items:center;gap:8px;min-width:0}
+.ag-name b{min-width:0;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ag-sub{margin-top:2px;font-size:11px;color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ag-note{color:var(--gold)}
+.ag-note:not(:empty)::before{content:" \00b7 ";color:var(--ink-faint)}
+.ag-model{display:flex;align-items:center;min-width:0;font-size:12px;color:var(--ink)}
+.ag-model .mlogo{flex:none}
+.ag-model span.t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ag-eval,.ag-cost{text-align:right;font-family:var(--mono);font-size:12.5px;font-weight:600;white-space:nowrap}
+.ag-cost{color:var(--gold)}
+.ag-cost small{font:500 10.5px var(--sans);color:var(--ink-mute)}
+.ag-k{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0} /* screen-reader labels; sighted users read the column headers */
+.ag-flag{flex:none;display:inline-flex;align-items:center;gap:5px;font:800 9px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 7px;border-radius:999px;color:var(--gold);background:var(--gold-soft);border:1px solid var(--border-strong)}
+.ag-flag[hidden]{display:none}
+.ag-flag i{width:6px;height:6px;border-radius:50%;background:currentColor;animation:agPulse 1.1s ease-in-out infinite}
+@keyframes agPulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+.ag-row.hot{background:linear-gradient(90deg,rgba(212,175,55,.17),rgba(212,175,55,.03) 72%);box-shadow:inset 3px 0 0 var(--gold)}
+.ag-row.hot.is-working{background:linear-gradient(90deg,rgba(0,240,255,.13),rgba(0,240,255,.02) 72%);box-shadow:inset 3px 0 0 var(--cyan)}
+.ag-row.hot.is-working .ag-flag{color:var(--cyan);background:var(--cyan-soft);border-color:rgba(0,240,255,.4)}
+.ag-row.hot.is-working .ag-note{color:var(--cyan)}
+.agent-scroll:focus-visible{outline-offset:-2px}
+
+@media(max-width:760px){
+  .agent-scroll{--row-h:84px;--hdr-h:0px}
+  .ag-cols{display:none}
+  .ag-row{grid-template-columns:36px minmax(0,1fr) auto;grid-template-areas:"av name eval" "av pod cost" "av model model";
+    row-gap:3px;column-gap:10px;align-content:center;padding-left:12px;padding-right:12px}
+  .ag-id{display:contents}
+  .ag-av{grid-area:av;align-self:center}
+  .ag-name{grid-area:name}
+  .ag-sub{grid-area:pod;margin-top:0}
+  .ag-model{grid-area:model;margin-top:2px;font-size:11.5px}
+  .ag-eval{grid-area:eval;font-size:11.5px}
+  .ag-cost{grid-area:cost;font-size:11.5px}
+  .ag-eval::after{content:" pass";font:500 10.5px var(--sans);color:var(--ink-mute)}
+  .agents-head{padding:10px 12px}
+}
+/* ---- Liquid glass: shared by the office popup and the chart tooltip ---- */
+.glass{background:rgba(18,18,28,.6);
+  -webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);
+  border:1px solid rgba(255,255,255,.15);border-radius:12px;
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.2),0 10px 30px rgba(0,0,0,.5)}
+@supports not ((-webkit-backdrop-filter:blur(1px)) or (backdrop-filter:blur(1px))){.glass{background:rgba(18,18,28,.92)}}
+.office-stage{position:relative}
+.office-banner{position:absolute;left:0;top:0;z-index:3;display:flex;align-items:center;gap:10px;padding:9px 16px 9px 12px;
+  white-space:nowrap;pointer-events:none;opacity:0;transform-origin:50% 100%;-webkit-font-smoothing:antialiased;
+  transform:translate(-50%,-100%) translateY(6px) scale(.96);
+  transition:opacity .22s ease,transform .22s cubic-bezier(.2,.8,.2,1)}
+.office-banner.show{opacity:1;transform:translate(-50%,-100%) translateY(0) scale(1)}
+.ob-logo{width:20px;height:20px;flex:none;display:flex;color:#fff}
+.ob-logo svg{width:20px;height:20px;display:block}
+.ob-text{display:flex;flex-direction:column;gap:2px;line-height:1.15}
+.ob-name{font-size:12px;font-weight:600;letter-spacing:.005em;color:var(--ink);text-shadow:0 1px 2px rgba(0,0,0,.45)}
+.ob-model{font-size:10.5px;font-weight:500;color:rgba(243,239,228,.8);text-shadow:0 1px 2px rgba(0,0,0,.45)}
+#network{margin-bottom:26px}
+.node-label{font-size:14px;fill:var(--ink);font-family:'Manrope',sans-serif;font-weight:600}
+.hub-label{font-size:16px;fill:var(--gold);font-weight:700;font-family:'Manrope',sans-serif}
+.sub-label{font-size:8.5px;fill:var(--ink);font-family:'Manrope',sans-serif}
+.sub-label.side{fill:var(--ink-dim);font-size:9px}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(4,4,5,.7);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:20px;z-index:50}
+.modal-overlay.hidden{display:none}
+.modal{background:#0E0D10;border:1px solid var(--border-strong);border-radius:16px;max-width:420px;width:100%;padding:24px;backdrop-filter:blur(20px)}
+.modal h3{font-size:16px;margin-bottom:4px}
+.modal p{color:var(--ink-dim);font-size:13px;margin-bottom:18px}
+.method{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:13px}
+.method b{font-weight:600}
+.method span{color:var(--ink-dim);font-size:12px}
+.modal-close{margin-top:12px;width:100%;background:none;border:1px solid var(--border);color:var(--ink-dim);border-radius:8px;padding:9px;font-size:13px}
+
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media(max-width:720px){
+  .reflect-grid{grid-template-columns:1fr}
+  .integ-bar{flex-direction:column;align-items:flex-start}
+  .triggers{flex-direction:column}
+  .arrow-wire{width:2px;height:30px;background:linear-gradient(180deg,transparent,var(--cyan))}
+  .arrow-wire::after{top:auto;left:-3px;animation:travelv 2.4s linear infinite}
+  @keyframes travelv{from{top:-4px;opacity:0}10%{opacity:1}to{top:calc(100% - 8px);opacity:1}}
+}
+
+/* ===== Client Portal (route #/portal) ===== */
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.client-login{display:inline-flex;align-items:center;gap:8px;font:700 13px/1 var(--sans);color:var(--gold);text-decoration:none;
+  background:var(--gold-soft);border:1px solid var(--border-strong);border-radius:999px;padding:12px 18px;transition:background .15s,border-color .15s,box-shadow .15s}
+.client-login:hover{background:rgba(212,175,55,.2);border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.1)}
+.client-login svg{width:14px;height:14px;flex:none}
+.portal{min-height:100%;background:var(--void);color:var(--ink);font-family:var(--sans)}
+.portal:not([hidden]){animation:portalIn .35s cubic-bezier(.4,0,.2,1)}
+@keyframes portalIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.p-top{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:16px;padding:12px 24px;padding-top:calc(12px + env(safe-area-inset-top,0px));
+  background:rgba(8,8,10,.85);-webkit-backdrop-filter:blur(16px) saturate(180%);backdrop-filter:blur(16px) saturate(180%);border-bottom:1px solid rgba(212,175,55,.25)}
+.p-brand{display:flex;align-items:center;gap:12px;flex:none}
+.p-logo{display:inline-flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:.01em;padding:6px 12px 6px 7px;
+  border:1px solid rgba(212,175,55,.25);border-radius:10px;background:rgba(24,21,15,.55)}
+.p-logo-mark{display:grid;place-items:center;width:22px;height:22px;border-radius:6px;background:var(--gold);color:#08080A;font-weight:800;font-size:13px}
+.p-logo-text{white-space:nowrap}
+.p-logo b{color:var(--gold);font-weight:800}
+.p-ai{display:inline-flex;align-items:center;gap:6px;font:700 10.5px/1 var(--sans);letter-spacing:.08em;color:#34D399;
+  background:var(--emerald-soft);border:1px solid rgba(16,185,129,.4);border-radius:999px;padding:6px 10px}
+.p-ai i{width:6px;height:6px;border-radius:50%;background:var(--emerald);box-shadow:0 0 6px 1px rgba(16,185,129,.7);animation:pulse 1.8s ease-in-out infinite}
+.p-ai[hidden]{display:none}
+.p-ai.off{color:#F87171;background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.4)}
+.p-ai.off i{background:#EF4444;box-shadow:0 0 6px 1px rgba(239,68,68,.6);animation:none}
+.p-nav{display:flex;align-items:center;gap:4px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.p-nav::-webkit-scrollbar{display:none}
+.p-link{flex:none;display:inline-flex;align-items:center;gap:6px;background:none;border:0;border-bottom:2px solid transparent;border-radius:8px 8px 0 0;
+  color:var(--ink-dim);font:600 13px/1 var(--sans);padding:12px 11px;white-space:nowrap;transition:color .15s,background .15s}
+.p-link:hover{color:var(--ink);background:rgba(212,175,55,.06)}
+.p-link.active{color:var(--gold);border-bottom-color:var(--gold);background:var(--gold-soft)}
+.p-link.locked{color:var(--ink-faint);cursor:not-allowed}
+.p-link.locked:hover{color:var(--ink-dim);background:none}
+.p-lock{width:12px;height:12px;flex:none}
+.p-demo{font:700 9px/1 var(--sans);font-style:normal;letter-spacing:.08em;color:var(--gold);border:1px solid var(--border-strong);border-radius:4px;padding:2px 4px}
+.p-actions{flex:none;display:flex;align-items:center;gap:4px}
+.p-signout{flex:none;display:inline-flex;align-items:center;gap:6px;background:none;border:1px solid transparent;border-radius:8px;color:var(--ink-dim);
+  font:600 12px/1 var(--sans);padding:8px 10px;transition:color .15s,border-color .15s}
+.p-signout:hover{color:var(--ink);border-color:rgba(212,175,55,.25)}
+.p-signout[hidden]{display:none}
+.p-signout svg{width:14px;height:14px;flex:none}
+.p-exit{flex:none;font-size:12px;font-weight:600;color:var(--ink-dim);text-decoration:none;padding:8px 10px;border-radius:8px}
+.p-exit:hover{color:var(--ink)}
+.p-main{max-width:1180px;margin:0 auto;padding:28px 24px 80px;outline:none}
+.p-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.p-card{background:rgba(24,21,15,.55);border:1px solid rgba(212,175,55,.25);border-radius:12px;padding:20px 22px;
+  -webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px)}
+.p-metric{display:flex;flex-direction:column;gap:6px}
+.p-num{font-size:34px;font-weight:800;line-height:1.05;color:var(--gold);font-variant-numeric:tabular-nums}
+.p-metric span{font-size:13px;color:var(--ink-dim);font-weight:500;text-wrap:balance}
+.p-pipeline h2{font-size:16px;font-weight:700;margin-bottom:16px}
+.p-stage-row{display:flex;justify-content:space-between;align-items:baseline;font-size:14px;margin-bottom:10px}
+.p-stage-row b{color:var(--gold);font-size:16px;font-weight:800;font-variant-numeric:tabular-nums}
+.p-bar{height:6px;border-radius:999px;background:rgba(212,175,55,.14);overflow:hidden}
+.p-bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,#B8932C,var(--gold));
+  box-shadow:0 0 10px rgba(212,175,55,.45);transition:width .5s cubic-bezier(.4,0,.2,1)}
+.p-empty h2{font-size:18px;margin-bottom:6px}
+.p-empty p{color:var(--ink-dim);font-size:14px}
+.p-updated{min-height:16px;margin:0 0 12px;text-align:right;font-size:12px;font-weight:600;color:var(--ink-faint)}
+.p-updated[data-state$="-stale"]{color:#F59E0B}
+.p-updated[data-state="sample"]{color:var(--gold)}
+.p-empty-note{color:var(--ink-dim);font-size:14px}
+.p-stage+.p-stage{margin-top:18px}
+.p-login{max-width:420px;margin:7vh auto 0}
+.p-login h2{font-size:20px;font-weight:800;margin-bottom:6px}
+.p-login .p-login-lede{color:var(--ink-dim);font-size:14px;line-height:1.5;margin-bottom:20px}
+.p-login label{display:block;font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--ink-dim);margin-bottom:8px}
+.p-login input{width:100%;font:500 15px/1.2 var(--sans);color:var(--ink);background:rgba(8,8,10,.7);border:1px solid rgba(212,175,55,.25);border-radius:10px;
+  padding:13px 14px;outline:none;transition:border-color .15s,box-shadow .15s}
+.p-login input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+.p-login-err{min-height:20px;margin:10px 0 4px;font-size:13px;font-weight:600;color:#F87171}
+.p-btn{width:100%;font:800 14px/1 var(--sans);color:#08080A;background:var(--gold);border:1px solid var(--gold);border-radius:10px;padding:14px 16px;transition:filter .15s,opacity .15s}
+.p-btn:hover:not(:disabled){filter:brightness(1.08)}
+.p-btn:disabled{opacity:.6;cursor:progress}
+.p-btn-ghost{margin-top:10px;color:var(--ink-dim);background:none;border-color:rgba(212,175,55,.25);font-weight:700}
+.p-btn-ghost:hover:not(:disabled){color:var(--ink);filter:none;border-color:rgba(212,175,55,.5)}
+.p-btn:focus-visible,.p-signout:focus-visible,.p-exit:focus-visible,.p-link:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.p-toast{position:fixed;left:50%;bottom:calc(28px + env(safe-area-inset-bottom,0px));transform:translate(-50%,12px);opacity:0;pointer-events:none;z-index:60;
+  padding:11px 16px;font-size:13px;font-weight:600;transition:opacity .2s,transform .2s}
+.p-toast.show{opacity:1;transform:translate(-50%,0)}
+/* ---- Lead Generation / AI Voice & SMS tabs: threads, bubbles and activity, each with a Bot + Model attribution badge ---- */
+.p-attr{display:inline-flex;flex-wrap:wrap;align-items:center;gap:3px 7px;max-width:100%;font:500 10.5px/1.35 var(--mono);color:var(--ink-dim);
+  background:rgba(8,8,10,.6);border:1px solid rgba(212,175,55,.22);border-radius:7px;padding:3px 8px;overflow-wrap:anywhere}
+.p-attr .k{color:var(--ink-dim)}
+.p-attr b{color:var(--ink);font-weight:600}
+.p-attr .sep{font-style:normal;color:var(--ink-dim)}
+.p-attr-m{display:inline-flex;align-items:center;gap:0}
+.p-attr .mlogo{width:13px;height:13px;margin-right:5px}
+.p-attr .mlogo svg{width:13px;height:13px}
+.fn-head{margin-bottom:16px}
+.fn-head-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}
+.fn-head h2{font-size:20px;font-weight:800}
+.fn-lede{margin-top:5px;max-width:64ch;color:var(--ink-dim);font-size:13.5px;line-height:1.5}
+.fn-sample{flex:none;font:700 10px/1 var(--sans);letter-spacing:.08em;color:var(--gold);border:1px solid var(--border-strong);border-radius:999px;padding:6px 10px}
+.fn-sample[hidden]{display:none}
+.fn-bots-label{margin-bottom:10px;font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-dim)}
+.fn-bots{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}
+.fn-bot{display:flex;flex-direction:column;gap:8px;text-align:left;color:var(--ink);background:rgba(8,8,10,.5);border:1px solid rgba(212,175,55,.2);border-radius:10px;padding:12px 14px;transition:border-color .15s,background .15s,box-shadow .15s}
+.fn-bot:hover{border-color:rgba(212,175,55,.5)}
+.fn-bot[aria-pressed="true"]{border-color:var(--gold);background:var(--gold-soft);box-shadow:0 0 0 3px rgba(212,175,55,.1)}
+.fn-bot-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.fn-bot-top b{font-size:14px;font-weight:800}
+.fn-bot-n{font:600 10.5px/1.2 var(--mono);color:var(--gold);white-space:nowrap}
+.fn-bot-model{display:inline-flex;align-items:center;font-size:12px;color:var(--ink)}
+.fn-bot-subs{display:flex;flex-wrap:wrap;gap:5px}
+.fn-bot-subs span{font-size:10.5px;color:var(--ink-dim);border:1px dashed rgba(212,175,55,.3);border-radius:6px;padding:2px 7px}
+.fn-empty{margin-bottom:16px}
+.fn-empty[hidden],.fn-grid[hidden],.fn-log[hidden]{display:none}
+.fn-sample-btn{width:auto;margin-top:14px;padding:11px 16px;font-size:13px}
+.fn-sample-btn[hidden]{display:none}
+.fn-empty h3{font-size:17px;margin-bottom:6px}
+.fn-empty p{color:var(--ink-dim);font-size:14px;line-height:1.5}
+.fn-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;margin-bottom:16px;align-items:start}
+.fn-grid>*{min-width:0}
+.fn-grid h3,.fn-log h3{font-size:15px;font-weight:700;margin-bottom:12px}
+.th-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;max-height:560px;overflow-y:auto}
+.th-item{display:flex;flex-direction:column;align-items:flex-start;gap:7px;width:100%;text-align:left;color:var(--ink);background:rgba(8,8,10,.5);border:1px solid rgba(212,175,55,.18);border-radius:10px;padding:11px 12px;transition:border-color .15s,background .15s}
+.th-item:hover{border-color:rgba(212,175,55,.45)}
+.th-item[aria-current="true"]{border-color:var(--gold);background:var(--gold-soft)}
+.th-item.hl{box-shadow:inset 3px 0 0 var(--gold)}
+.th-top{display:flex;align-items:center;gap:8px;width:100%;min-width:0}
+.th-top b{flex:1 1 auto;min-width:0;font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.th-chan{flex:none;font:700 9px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--cyan);border:1px solid rgba(0,240,255,.35);border-radius:5px;padding:3px 5px}
+.th-time{flex:none;font-size:11px;color:var(--ink-dim)}
+.th-prev{font-size:12.5px;line-height:1.4;color:var(--ink-dim);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+.fn-thread{scroll-margin-top:130px}
+.fn-thread-head{margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid rgba(212,175,55,.18)}
+.fn-thread-head h3{margin-bottom:3px}
+.fn-thread-head p{font-size:12px;color:var(--ink-dim)}
+.msgs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px;max-height:560px;overflow-y:auto;padding-right:4px}
+.msg{display:flex;flex-direction:column;gap:6px;max-width:88%}
+.msg.in{align-items:flex-start;align-self:flex-start}
+.msg.out{align-items:flex-end;align-self:flex-end}
+.msg.event{align-items:center;align-self:center;max-width:100%;text-align:center}
+.bubble{padding:9px 13px;border-radius:14px;font-size:13.5px;line-height:1.45;overflow-wrap:anywhere;text-align:left}
+.msg.in .bubble{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-bottom-left-radius:4px}
+.msg.out .bubble{background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.38);border-bottom-right-radius:4px}
+.evt-text{font-size:12.5px;line-height:1.4;color:var(--ink-dim);border:1px dashed rgba(212,175,55,.32);border-radius:8px;padding:6px 11px;overflow-wrap:anywhere}
+.msg.hl .bubble{box-shadow:0 0 0 2px rgba(212,175,55,.55)}
+.msg.hl .evt-text{border-style:solid;border-color:var(--gold);color:var(--ink)}
+.msg-meta{display:flex;flex-wrap:wrap;align-items:center;gap:5px 8px;max-width:100%}
+.msg.out .msg-meta{justify-content:flex-end}
+.msg.event .msg-meta{justify-content:center}
+.msg-time{font-size:11px;color:var(--ink-dim);white-space:nowrap}
+.log{list-style:none;margin:0;padding:0}
+.log li{display:grid;grid-template-columns:96px minmax(0,1fr);gap:5px 14px;padding:11px 10px 11px 12px;margin-left:-4px;border-bottom:1px solid rgba(212,175,55,.12)}
+.log li:last-child{border-bottom:none}
+.log li.hl{background:linear-gradient(90deg,rgba(212,175,55,.13),transparent 75%);box-shadow:inset 3px 0 0 var(--gold)}
+.log-time{font-size:11.5px;line-height:1.35;color:var(--ink-dim);padding-top:2px;white-space:nowrap}
+.log-body{display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0}
+.log-text{font-size:13.5px;line-height:1.45;overflow-wrap:anywhere}
+@media(max-width:900px){.fn-grid{grid-template-columns:minmax(0,1fr)}.th-list{max-height:none}.msgs{max-height:none}}
+@media(max-width:480px){.log li{grid-template-columns:1fr}.msg{max-width:100%}.fn-head h2{font-size:18px}.fn-bots{grid-template-columns:1fr}}
+@media(max-width:900px){.p-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1439px){.p-top{flex-wrap:wrap;gap:10px 14px;padding-bottom:0}.p-nav{order:3;flex:1 0 100%}.p-actions{margin-left:auto}}
+@media(max-width:1100px){.p-link{padding:12px 9px}}
+@media(max-width:720px){.p-top{padding:10px 16px 0;padding-top:calc(10px + env(safe-area-inset-top,0px))}
+  .p-nav{margin:0 -16px;padding:0 16px}.p-main{padding:20px 16px 64px}}
+@media(max-width:480px){.p-exit-text,.p-so-text{display:none}.p-exit{font-size:16px;line-height:1;padding:8px 10px}.p-signout{padding:8px 10px}.p-login{margin-top:3vh}}
+@media(max-width:380px){.p-metrics{grid-template-columns:1fr}
+  .p-top{column-gap:6px}.p-brand{gap:8px}.p-logo{padding:5px 9px 5px 5px;font-size:14px}.p-ai{padding:6px 8px}.p-actions{gap:0}.p-signout,.p-exit{padding:8px 7px}}
+@media(prefers-reduced-motion:reduce){.portal:not([hidden]){animation:none}.p-bar i{transition:none}}
+</style>
+</head>
+<body>
+<div class="portal" id="portal">
+  <header class="p-top">
+    <div class="p-brand">
+      <span class="p-logo"><span class="p-logo-mark" aria-hidden="true">N</span><span class="p-logo-text">NewSites<b>.com</b></span></span>
+      <span class="p-ai" id="portalAi" hidden><i aria-hidden="true"></i><span id="portalAiText">AI ON</span></span>
+    </div>
+    <nav class="p-nav" id="portalNav" aria-label="Client portal">
+      <button type="button" class="p-link active" data-tab="overview" aria-current="page">Overview</button>
+      <button type="button" class="p-link" data-tab="leads">Lead Generation</button>
+      <button type="button" class="p-link" data-tab="voice">AI Voice &amp; SMS</button>
+      <button type="button" class="p-link" data-tab="social">Social Engine</button>
+      <button type="button" class="p-link locked" data-tab="ops" data-gated data-locked aria-disabled="true" title="Locked">Operations<svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="p-link locked" data-tab="war" data-gated data-locked aria-disabled="true" title="Locked">War Room <em class="p-demo">DEMO</em><svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="p-link locked" data-tab="finance" data-gated data-locked aria-disabled="true" title="Locked">Finance<svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="p-link" data-tab="settings">Settings</button>
+    </nav>
+    <div class="p-actions">
+      <button type="button" class="p-signout" id="portalSignOut" aria-label="Sign out" hidden><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 2.5H3.5a1 1 0 0 0-1 1v9a1 1 0 0 0 1 1H6M10.5 5 13.5 8l-3 3M13 8H6.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="p-so-text" id="portalSoText">Sign out</span></button>
+      <a class="p-exit" href="index.html" id="portalExit" aria-label="Back to NewSites.com">&larr;<span class="p-exit-text"> NewSites.com</span></a>
+    </div>
+  </header>
+
+  <main class="p-main" id="portalMain" tabindex="-1">
+    <h1 class="sr-only" id="portalTitle">Overview</h1>
+
+    <section data-panel="login" aria-label="Client login" hidden>
+      <form class="p-card p-login" id="portalLogin" novalidate autocomplete="off">
+        <h2>Client Login</h2>
+        <p class="p-login-lede">Enter the portal token we gave you to see your live lead numbers.</p>
+        <label for="portalToken">PORTAL TOKEN</label>
+        <input id="portalToken" name="portal-token" type="password" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" aria-describedby="portalLoginErr">
+        <p class="p-login-err" id="portalLoginErr" role="alert"></p>
+        <button type="submit" class="p-btn" id="portalLoginBtn">Sign in</button>
+        <button type="button" class="p-btn p-btn-ghost" id="portalPreview">Preview with sample data</button>
+      </form>
+    </section>
+
+    <section data-panel="overview" aria-label="Overview">
+      <!-- Every number below is bound to the reactive state (clientPortalState) in the script: data-bind="<key>" is the text. Pipeline rows are built from the server's stages. -->
+      <p class="p-updated" id="portalUpdated" aria-live="polite"></p>
+      <div class="p-metrics">
+        <article class="p-card p-metric" data-metric="totalLeads" data-value="3"><b class="p-num" data-bind="totalLeads">3</b><span>Total Leads</span></article>
+        <article class="p-card p-metric" data-metric="newThisWeek" data-value="0"><b class="p-num" data-bind="newThisWeek">0</b><span>New This Week</span></article>
+        <article class="p-card p-metric" data-metric="hotLeads" data-value="1"><b class="p-num" data-bind="hotLeads">1</b><span>Hot Leads</span></article>
+        <article class="p-card p-metric" data-metric="scheduledFollowups" data-value="0"><b class="p-num" data-bind="scheduledFollowups">0</b><span>Scheduled Follow-ups</span></article>
+      </div>
+      <article class="p-card p-pipeline" aria-labelledby="pipeHead">
+        <h2 id="pipeHead">Pipeline</h2>
+        <div id="pipelineRows">
+          <div class="p-stage" data-stage="New Lead" data-value="3">
+            <div class="p-stage-row"><span>New Lead</span><b>3</b></div>
+            <div class="p-bar" role="progressbar" aria-label="New Lead share of total leads" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100"><i style="width:100%"></i></div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section data-panel="fn" aria-label="Function detail" hidden>
+      <article class="p-card fn-head">
+        <div class="fn-head-top">
+          <div><h2 id="fnTitle"></h2><p class="fn-lede" id="fnLede"></p></div>
+          <span class="fn-sample" id="fnSample" hidden>SAMPLE DATA</span>
+        </div>
+        <div class="fn-bots-label" id="fnBotsLabel">Bots responsible for this function · select one to highlight its work</div>
+        <div class="fn-bots" id="fnBots" role="group" aria-labelledby="fnBotsLabel"></div>
+      </article>
+      <article class="p-card p-empty fn-empty" id="fnEmpty" hidden><h3 id="fnEmptyT"></h3><p id="fnEmptyP"></p><button type="button" class="p-btn p-btn-ghost fn-sample-btn" id="fnSampleBtn" hidden>Preview with sample conversations</button></article>
+      <div class="fn-grid" id="fnGrid">
+        <article class="p-card fn-threads"><h3>Conversations</h3><ul class="th-list" id="fnThreadList"></ul></article>
+        <article class="p-card fn-thread" id="fnThreadCard">
+          <div class="fn-thread-head"><h3 id="fnThreadTitle"></h3><p id="fnThreadMeta"></p></div>
+          <ol class="msgs" id="fnMsgs" aria-label="Messages in this conversation"></ol>
+        </article>
+      </div>
+      <article class="p-card fn-log" id="fnLogCard"><h3>Automated activity</h3><ol class="log" id="fnLog"></ol></article>
+    </section>
+
+    <section data-panel="other" aria-label="Section" hidden>
+      <article class="p-card p-empty"><h2 id="portalEmptyTitle"></h2><p>This section isn't connected yet.</p></article>
+    </section>
+  </main>
+
+  <div class="p-toast glass" id="portalToast" role="status" aria-live="polite"></div>
+</div>
+
+
+
+<script>
+/* Public roster: the five live pods and their sub-agents, with the model each one runs on. No costs, scores or roadmap items. */
+const tasks=[
+ {pod:"Speed-to-Lead",model:"Gemini 3 Flash",dot:"google",sub:["Inbound Call Listener","SMS Converter","Instant Response Bot","Lead Classifier"]},
+ {pod:"Lead Scorer",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Data Enrichment Bot","Intent Analyzer Bot","B2B Matcher Bot","CRM Sync Bot"]},
+ {pod:"Content Bot",model:"GPT-5.4 Mini",dot:"openai",sub:["Copywriting Bot","Visual Asset Renderer","Multi-Platform Publisher","Asset Generator","Revenue Attribution","Upsell Trigger"]},
+ {pod:"Reputation Bot",model:"Kimi K2.6",dot:"moonshot",sub:["Sentiment Analyzer","Review Prompt Dispatcher","Escalation Handler"]},
+ {pod:"Concierge Bot",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Speech-to-Text Transcriber","NLP Intent Engine","Calendar Booking Agent","Follow-up Notifier"]}
+];
+/* ===== Bot functions: ONE roster feeds the function pills, the office highlights, the agent list and the portal bot/model attribution ===== */
+const FUNCTIONS=[
+  {id:'all',label:'All Functions',hint:''},
+  {id:'leads',label:'Lead Generation',hint:'Speed-to-Lead / Lead Scorer'},
+  {id:'voice',label:'AI Voice & SMS',hint:'Concierge / Missed-Call Text Back'},
+  {id:'social',label:'Social Engine',hint:'Content Generator'},
+  {id:'reputation',label:'Reputation',hint:'Review Request Follow-up'}
+];
+const FN_BY_ID=Object.fromEntries(FUNCTIONS.map(f=>[f.id,f]));
+const POD_FN={'Speed-to-Lead':'leads','Lead Scorer':'leads','Concierge Bot':'voice','Content Bot':'social','Reputation Bot':'reputation'};
+// The Speed-to-Lead pod is split across two functions: its call listener + SMS converter ARE the missed-call text-back (AI Voice & SMS),
+// while its instant responder + classifier work new leads (Lead Generation).
+const SUB_FN={'Inbound Call Listener':'voice','SMS Converter':'voice'};
+const fnOfAgent=(pod,name)=>SUB_FN[name]||POD_FN[pod]||'';
+const AGENTS=[]; // flat roster: one entry per sub-agent of the live pods
+tasks.forEach(t=>t.sub.forEach(s=>AGENTS.push({name:s,pod:t.pod,model:t.model,dot:t.dot,fn:fnOfAgent(t.pod,s)})));
+const AGENT_BY_NAME=new Map(AGENTS.map(a=>[a.name.toLowerCase(),a]));
+const POD_BY_NAME=new Map(tasks.map(t=>[t.pod.toLowerCase(),t]));
+function botInfo(name){ // a sub-agent ("SMS Converter") or a pod ("Lead Scorer") -> {name,pod,model,dot,fn}; null when it isn't on the roster
+  const k=String(name||'').trim().toLowerCase(); if(!k) return null;
+  const a=AGENT_BY_NAME.get(k); if(a) return {name:a.name,pod:a.pod,model:a.model,dot:a.dot,fn:a.fn};
+  const t=POD_BY_NAME.get(k); if(t) return {name:t.pod,pod:t.pod,model:t.model,dot:t.dot,fn:POD_FN[t.pod]||''};
+  return null;
+}
+function modelKeyOf(m){ const s=String(m||'').toLowerCase(); return /gemini|google/.test(s)?'google':/claude|anthropic|sonnet|opus|haiku/.test(s)?'anthropic':/gpt|openai/.test(s)?'openai':/kimi|moonshot/.test(s)?'moonshot':''; }
+const MODEL_COLORS={google:'#4A90E2',anthropic:'#F97316',openai:'#9CA3AF',moonshot:'#22C55E'};
+const MODEL_NAMES={google:'Gemini',anthropic:'Claude',openai:'ChatGPT',moonshot:'Kimi'};
+const MODEL_LOGOS={"google":"\u003csvg aria-hidden=\"true\" focusable=\"false\" height=\"20\" viewBox=\"0 0 24 24\" width=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\u003cpath d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"#3186FF\">\u003c/path>\u003cpath d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"url(#lobe-icons-gemini-0-_R_0_)\">\u003c/path>\u003cpath d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"url(#lobe-icons-gemini-1-_R_0_)\">\u003c/path>\u003cpath d=\"M20.616 10.835a14.147 14.147 0 01-4.45-3.001 14.111 14.111 0 01-3.678-6.452.503.503 0 00-.975 0 14.134 14.134 0 01-3.679 6.452 14.155 14.155 0 01-4.45 3.001c-.65.28-1.318.505-2.002.678a.502.502 0 000 .975c.684.172 1.35.397 2.002.677a14.147 14.147 0 014.45 3.001 14.112 14.112 0 013.679 6.453.502.502 0 00.975 0c.172-.685.397-1.351.677-2.003a14.145 14.145 0 013.001-4.45 14.113 14.113 0 016.453-3.678.503.503 0 000-.975 13.245 13.245 0 01-2.003-.678z\" fill=\"url(#lobe-icons-gemini-2-_R_0_)\">\u003c/path>\u003cdefs>\u003clinearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-gemini-0-_R_0_\" x1=\"7\" x2=\"11\" y1=\"15.5\" y2=\"12\">\u003cstop stop-color=\"#08B962\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#08B962\" stop-opacity=\"0\">\u003c/stop>\u003c/linearGradient>\u003clinearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-gemini-1-_R_0_\" x1=\"8\" x2=\"11.5\" y1=\"5.5\" y2=\"11\">\u003cstop stop-color=\"#F94543\">\u003c/stop>\u003cstop offset=\"1\" stop-color=\"#F94543\" stop-opacity=\"0\">\u003c/stop>\u003c/linearGradient>\u003clinearGradient gradientUnits=\"userSpaceOnUse\" id=\"lobe-icons-gemini-2-_R_0_\" x1=\"3.5\" x2=\"17.5\" y1=\"13.5\" y2=\"12\">\u003cstop stop-color=\"#FABC12\">\u003c/stop>\u003cstop offset=\".46\" stop-color=\"#FABC12\" stop-opacity=\"0\">\u003c/stop>\u003c/linearGradient>\u003c/defs>\u003c/svg>","anthropic":"\u003csvg aria-hidden=\"true\" focusable=\"false\" height=\"20\" viewBox=\"0 0 24 24\" width=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\u003cpath d=\"M4.709 15.955l4.72-2.647.08-.23-.08-.128H9.2l-.79-.048-2.698-.073-2.339-.097-2.266-.122-.571-.121L0 11.784l.055-.352.48-.321.686.06 1.52.103 2.278.158 1.652.097 2.449.255h.389l.055-.157-.134-.098-.103-.097-2.358-1.596-2.552-1.688-1.336-.972-.724-.491-.364-.462-.158-1.008.656-.722.881.06.225.061.893.686 1.908 1.476 2.491 1.833.365.304.145-.103.019-.073-.164-.274-1.355-2.446-1.446-2.49-.644-1.032-.17-.619a2.97 2.97 0 01-.104-.729L6.283.134 6.696 0l.996.134.42.364.62 1.414 1.002 2.229 1.555 3.03.456.898.243.832.091.255h.158V9.01l.128-1.706.237-2.095.23-2.695.08-.76.376-.91.747-.492.584.28.48.685-.067.444-.286 1.851-.559 2.903-.364 1.942h.212l.243-.242.985-1.306 1.652-2.064.73-.82.85-.904.547-.431h1.033l.76 1.129-.34 1.166-1.064 1.347-.881 1.142-1.264 1.7-.79 1.36.073.11.188-.02 2.856-.606 1.543-.28 1.841-.315.833.388.091.395-.328.807-1.969.486-2.309.462-3.439.813-.042.03.049.061 1.549.146.662.036h1.622l3.02.225.79.522.474.638-.079.485-1.215.62-1.64-.389-3.829-.91-1.312-.329h-.182v.11l1.093 1.068 2.006 1.81 2.509 2.33.127.578-.322.455-.34-.049-2.205-1.657-.851-.747-1.926-1.62h-.128v.17l.444.649 2.345 3.521.122 1.08-.17.353-.608.213-.668-.122-1.374-1.925-1.415-2.167-1.143-1.943-.14.08-.674 7.254-.316.37-.729.28-.607-.461-.322-.747.322-1.476.389-1.924.315-1.53.286-1.9.17-.632-.012-.042-.14.018-1.434 1.967-2.18 2.945-1.726 1.845-.414.164-.717-.37.067-.662.401-.589 2.388-3.036 1.44-1.882.93-1.086-.006-.158h-.055L4.132 18.56l-1.13.146-.487-.456.061-.746.231-.243 1.908-1.312-.006.006z\" fill=\"#D97757\" fill-rule=\"nonzero\">\u003c/path>\u003c/svg>","openai":"\u003csvg aria-hidden=\"true\" focusable=\"false\" fill=\"currentColor\" fill-rule=\"evenodd\" height=\"20\" viewBox=\"0 0 24 24\" width=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\u003cpath d=\"M9.205 8.658v-2.26c0-.19.072-.333.238-.428l4.543-2.616c.619-.357 1.356-.523 2.117-.523 2.854 0 4.662 2.212 4.662 4.566 0 .167 0 .357-.024.547l-4.71-2.759a.797.797 0 00-.856 0l-5.97 3.473zm10.609 8.8V12.06c0-.333-.143-.57-.429-.737l-5.97-3.473 1.95-1.118a.433.433 0 01.476 0l4.543 2.617c1.309.76 2.189 2.378 2.189 3.948 0 1.808-1.07 3.473-2.76 4.163zM7.802 12.703l-1.95-1.142c-.167-.095-.239-.238-.239-.428V5.899c0-2.545 1.95-4.472 4.591-4.472 1 0 1.927.333 2.712.928L8.23 5.067c-.285.166-.428.404-.428.737v6.898zM12 15.128l-2.795-1.57v-3.33L12 8.658l2.795 1.57v3.33L12 15.128zm1.796 7.23c-1 0-1.927-.332-2.712-.927l4.686-2.712c.285-.166.428-.404.428-.737v-6.898l1.974 1.142c.167.095.238.238.238.428v5.233c0 2.545-1.974 4.472-4.614 4.472zm-5.637-5.303l-4.544-2.617c-1.308-.761-2.188-2.378-2.188-3.948A4.482 4.482 0 014.21 6.327v5.423c0 .333.143.571.428.738l5.947 3.449-1.95 1.118a.432.432 0 01-.476 0zm-.262 3.9c-2.688 0-4.662-2.021-4.662-4.519 0-.19.024-.38.047-.57l4.686 2.71c.286.167.571.167.856 0l5.97-3.448v2.26c0 .19-.07.333-.237.428l-4.543 2.616c-.619.357-1.356.523-2.117.523zm5.899 2.83a5.947 5.947 0 005.827-4.756C22.287 18.339 24 15.84 24 13.296c0-1.665-.713-3.282-1.998-4.448.119-.5.19-.999.19-1.498 0-3.401-2.759-5.947-5.946-5.947-.642 0-1.26.095-1.88.31A5.962 5.962 0 0010.205 0a5.947 5.947 0 00-5.827 4.757C1.713 5.447 0 7.945 0 10.49c0 1.666.713 3.283 1.998 4.448-.119.5-.19 1-.19 1.499 0 3.401 2.759 5.946 5.946 5.946.642 0 1.26-.095 1.88-.309a5.96 5.96 0 004.162 1.713z\">\u003c/path>\u003c/svg>","moonshot":"\u003csvg aria-hidden=\"true\" focusable=\"false\" height=\"20\" viewBox=\"0 0 24 24\" width=\"20\" xmlns=\"http://www.w3.org/2000/svg\">\u003cpath d=\"M21.846 0a1.923 1.923 0 110 3.846H20.15a.226.226 0 01-.227-.226V1.923C19.923.861 20.784 0 21.846 0z\" fill=\"#1783FF\">\u003c/path>\u003cpath d=\"M11.065 11.199l7.257-7.2c.137-.136.06-.41-.116-.41H14.3a.164.164 0 00-.117.051l-7.82 7.756c-.122.12-.302.013-.302-.179V3.82c0-.127-.083-.23-.185-.23H3.186c-.103 0-.186.103-.186.23V19.77c0 .128.083.23.186.23h2.69c.103 0 .186-.102.186-.23v-3.25c0-.069.025-.135.069-.178l2.424-2.406a.158.158 0 01.205-.023l6.484 4.772a7.677 7.677 0 003.453 1.283c.108.012.2-.095.2-.23v-3.06c0-.117-.07-.212-.164-.227a5.028 5.028 0 01-2.027-.807l-5.613-4.064c-.117-.078-.132-.279-.028-.381z\" fill=\"#fff\">\u003c/path>\u003c/svg>"}; // Gemini / Claude / ChatGPT / Kimi marks, transparent SVG, 20x20
+let logoSeq=0;
+function logoSVG(model){ // gradient ids made unique per instance: a copy inside a hidden view must never break a visible one
+  const n=++logoSeq;
+  return (MODEL_LOGOS[model]||'').replace(/\bid="([^"]+)"/g,(m,id)=>'id="'+id+'-'+n+'"').replace(/url\(#([^)]+)\)/g,(m,id)=>'url(#'+id+'-'+n+')');
+}
+function modelIcon(model){return '<span class="mlogo">'+logoSVG(model)+'</span>';}
+const reducedMotion=window.matchMedia?matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
+/* ===== Client Portal: hash route (#/portal), header-token login, reactive state (clientPortalState), live data + plan from the VPS ===== */
+const PORTAL_HASH='#/portal';
+const PORTAL_API='https://164.92.110.116.nip.io/portal-api';
+const PORTAL_CONFIG={
+  apiUrl:PORTAL_API+'/summary',       // lead metrics. '' = no live API: the portal shows built-in sample numbers, labelled as sample data
+  settingsUrl:PORTAL_API+'/settings', // account settings incl. the plan tier, fetched together with the metrics. '' = skip (plan unknown -> gated tabs stay locked)
+  conversationsUrl:PORTAL_API+'/conversations', // Lead Generation / AI Voice & SMS threads + activity, fetched when one of those tabs opens. '' = off. Needs a server route (see the format below)
+  requireToken:true,                  // the client's portal token is required; false is only for a public, non-sensitive feed
+  tokenHeader:'X-Portal-Token',       // the token travels ONLY in this request header - never in a URL
+  unlockPlans:['pro','enterprise'],   // plan tiers (case-insensitive) that unlock Operations, War Room and Finance
+  pollMs:60000,                       // refresh every N ms while the portal is open and the tab is visible; 0 = load once per open
+  streamUrl:'',                       // optional streaming URL (text/event-stream, read with fetch so the header can be sent); replaces polling after the first load
+  adapter:null                        // optional (payload) => ({totalLeads:..,hotLeads:..,pipeline:{..}}) for any other response shape
+};
+// CORS: a custom request header makes the browser send a preflight OPTIONS first. Your Caddy must answer it with
+//   Access-Control-Allow-Headers "Content-Type, X-Portal-Token"
+// or every request is blocked and the portal shows "Couldn't reach the portal server" (the console says why).
+// Response read from /portal-api/summary:
+//   {"ai_enabled":true,"totals":{"leads":3,"new_this_week":0,"hot_leads":1,"scheduled_followups":0},"pipeline":{"New Lead":3}}
+// Response read from /portal-api/settings: {"editable":{..},"readonly":{"plan":"pro" | "enterprise" | ..., ..}}  (a top-level "plan" or {"settings":{"plan":..}} also works;
+// "editable.plan" is deliberately ignored because clients can write that block)
+// camelCase keys (totalLeads, newThisWeek, hotLeads, scheduledFollowups, pipeline, aiEnabled) at the top level or under "metrics" work too.
+// Unknown keys and bad numbers are ignored.
+// Security: the client's token lives in sessionStorage ("portal_token", per tab) - never in this file. Do not put Composio keys, API keys or
+// webhook secrets in this file either; GitHub Pages serves it to everyone. Tab locking is a display rule only: the server must enforce
+// access to Operations / War Room / Finance data on its own endpoints.
+const PORTAL_TOKEN_KEY='portal_token';
+const PORTAL_TOKEN_RE=/^[\x21-\x7E]{1,512}$/; // printable ASCII, no spaces: anything else cannot be a valid header value
+const PORTAL_COUNT_KEYS=['totalLeads','newThisWeek','hotLeads','scheduledFollowups'];
+const PORTAL_KNOWN=PORTAL_COUNT_KEYS.concat(['pipeline','pipelineNewLead','aiEnabled']);
+const PORTAL_ALIASES={leads:'totalLeads',total_leads:'totalLeads',new_this_week:'newThisWeek',hot_leads:'hotLeads',
+  scheduled_followups:'scheduledFollowups',scheduled_follow_ups:'scheduledFollowups',ai_enabled:'aiEnabled',
+  pipeline_new_lead:'pipelineNewLead',pipelineLeadCount:'pipelineNewLead',pipeline_lead_count:'pipelineNewLead'};
+const portalEl=document.getElementById('portal'),portalDocTitle=document.title;
+const pEl=id=>document.getElementById(id);
+const portalStore={
+  get(){ try{ return sessionStorage.getItem(PORTAL_TOKEN_KEY)||''; }catch(_){ return ''; } },
+  set(v){ try{ if(v) sessionStorage.setItem(PORTAL_TOKEN_KEY,v); else sessionStorage.removeItem(PORTAL_TOKEN_KEY); }catch(_){ /* storage blocked: token stays in memory only */ } }
+};
+let portalMode='login';   // 'login' | 'loading' | 'live' | 'sample'
+let portalTab='overview',portalToken='',portalPlan='',portalSeq=0,portalUpdatedAt=0,portalStale=false;
+let portalRenderQueued=false,portalTimer=0,portalToastTimer=0,portalStreamAbort=null;
+if(window.__portalBootToken){ portalToken=String(window.__portalBootToken); try{ delete window.__portalBootToken; }catch(_){ window.__portalBootToken=undefined; } } // magic-link token captured by the early <head> script when storage was blocked
+class PortalAuthError extends Error{}
+const portalNeedsLogin=()=>!!PORTAL_CONFIG.apiUrl&&PORTAL_CONFIG.requireToken;
+
+/* ---- validation: everything from the network or from your own code goes through these ---- */
+const stageKey=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,'');
+const prettyStage=s=>/^[a-z0-9]+(?:_[a-z0-9]+)*$/.test(s)?s.replace(/_/g,' ').replace(/\b[a-z]/g,c=>c.toUpperCase()):s;
+function toCount(v){
+  if(Array.isArray(v)) return v.length;
+  if(typeof v==='string'&&v.trim()!=='') v=Number(v);
+  return (typeof v==='number'&&Number.isFinite(v)&&v>=0)?Math.round(v):null;
+}
+function toPipeline(v){ // {stage:n,...} or [[stage,n],...] -> validated [[label,n],...]; null = not a pipeline at all
+  const pairs=Array.isArray(v)?v.filter(e=>Array.isArray(e)&&e.length>=2).map(e=>[e[0],e[1]]):(v&&typeof v==='object'?Object.entries(v):null);
+  if(!pairs) return null;
+  const out=[];
+  for(const [k,raw] of pairs){
+    const n=toCount(raw),s=String(k).trim().slice(0,80);
+    if(n===null||!s) continue;
+    out.push([prettyStage(s),n]);
+    if(out.length>=50) break;
+  }
+  return out;
+}
+function portalTierOf(v){ // plan tier from a settings (or summary) payload: lower-cased string, or '' when absent / not a string
+  // Looks at: top-level plan, readonly.plan (your /settings shape), settings.plan. Never editable.plan - the client can write that block.
+  const o=x=>x&&typeof x==='object'?x:null;
+  const s=o(v)?[v.plan,o(v.readonly)&&v.readonly.plan,o(v.settings)&&v.settings.plan].find(x=>x!==undefined&&x!==null):undefined;
+  return typeof s==='string'?s.trim().toLowerCase().slice(0,40):'';
+}
+
+/* ---- reactive state ---- */
+const portalSample=()=>({totalLeads:3,newThisWeek:0,hotLeads:1,scheduledFollowups:0,pipeline:[['New Lead',3]],aiEnabled:true});
+const portalBlank=()=>({totalLeads:0,newThisWeek:0,hotLeads:0,scheduledFollowups:0,pipeline:[],aiEnabled:true});
+const portalData=portalSample();
+const resetPortalData=src=>Object.assign(portalData,src);
+function queuePortalRender(){ if(!portalRenderQueued){ portalRenderQueued=true; queueMicrotask(renderPortal); } }
+// clientPortalState: assigning a known key (clientPortalState.hotLeads=4, clientPortalState.pipeline={'New Lead':5}) validates it and re-renders.
+// pipelineNewLead is a shortcut for the "New Lead" stage. Invalid values and unknown keys are ignored.
+const clientPortalState=new Proxy(portalData,{
+  get(t,k,r){
+    if(k==='pipeline') return Object.fromEntries(t.pipeline);
+    if(k==='pipelineNewLead'){ const e=t.pipeline.find(([s])=>stageKey(s)==='newlead'); return e?e[1]:0; }
+    return Reflect.get(t,k,r);
+  },
+  set(t,k,v){
+    let ok=false;
+    if(PORTAL_COUNT_KEYS.includes(k)){ const n=toCount(v); if(n!==null){ t[k]=n; ok=true; } }
+    else if(k==='pipeline'){ const p=toPipeline(v); if(p){ t.pipeline=p; ok=true; } }
+    else if(k==='pipelineNewLead'){
+      const n=toCount(v);
+      if(n!==null){ const i=t.pipeline.findIndex(([s])=>stageKey(s)==='newlead'); if(i>=0) t.pipeline[i]=[t.pipeline[i][0],n]; else t.pipeline.unshift(['New Lead',n]); ok=true; }
+    }
+    else if(k==='aiEnabled'){ t.aiEnabled=v!==false&&v!==0&&v!=='false'; ok=true; }
+    if(ok) queuePortalRender();
+    return true;
+  }
+});
+window.clientPortalState=clientPortalState;
+function normalizePortalPayload(p){
+  if(typeof PORTAL_CONFIG.adapter==='function'){ try{ p=PORTAL_CONFIG.adapter(p); }catch(e){ console.warn('[portal] adapter threw',e); return {}; } }
+  if(!p||typeof p!=='object') return {};
+  const src=Object.assign({},p,p.totals&&typeof p.totals==='object'?p.totals:null,p.metrics&&typeof p.metrics==='object'?p.metrics:null),out={};
+  Object.entries(src).forEach(([k,v])=>{ k=PORTAL_ALIASES[k]||k; if(PORTAL_KNOWN.includes(k)) out[k]=v; });
+  return out;
+}
+function updatePortal(patch){ Object.entries(patch||{}).forEach(([k,v])=>{ clientPortalState[PORTAL_ALIASES[k]||k]=v; }); } // direct set (your own code)
+function ingestPortalPayload(raw){ // external data: adapter + aliases + validation, then mark the view as live
+  if(portalMode==='login') return; // nothing is shown (or accepted) until the client is signed in or has chosen the sample preview
+  const patch=normalizePortalPayload(raw); if(!Object.keys(patch).length) return;
+  updatePortal(patch);
+  if(portalMode==='live'||(portalMode==='sample'&&!portalNeedsLogin())){ portalMode='live'; portalUpdatedAt=Date.now(); portalStale=false; syncPortalChrome(); }
+}
+window.addEventListener('newsites:portal-data',e=>ingestPortalPayload(e.detail)); // any script / bridge:  dispatchEvent(new CustomEvent('newsites:portal-data',{detail:{hotLeads:2}}))
+
+/* ---- plan tier -> which gated tabs are open (display rule only; the server enforces real access) ---- */
+const PORTAL_LOCK_SVG='<svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const portalGatesOpen=()=>portalMode==='live'&&PORTAL_CONFIG.unlockPlans.map(s=>String(s).toLowerCase()).includes(portalPlan);
+function portalTabLabel(btn){ const c=btn.cloneNode(true); c.querySelectorAll('.p-demo,.p-lock').forEach(n=>n.remove()); return c.textContent.trim().replace(/\s+/g,' '); } // tab name without the DEMO badge / lock icon
+function markPortalTab(id){
+  portalEl.querySelectorAll('.p-link').forEach(b=>{const on=b.dataset.tab===id; b.classList.toggle('active',on); if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');});
+  portalTab=id;
+}
+function renderPortalLocks(){
+  const open=portalGatesOpen();
+  portalEl.querySelectorAll('.p-link[data-gated]').forEach(b=>{
+    b.classList.toggle('locked',!open);
+    if(open){ b.removeAttribute('data-locked'); b.removeAttribute('aria-disabled'); b.removeAttribute('title'); const i=b.querySelector('.p-lock'); if(i) i.remove(); }
+    else{ b.setAttribute('data-locked',''); b.setAttribute('aria-disabled','true'); b.title='Locked'; if(!b.querySelector('.p-lock')) b.insertAdjacentHTML('beforeend',PORTAL_LOCK_SVG); }
+  });
+  const cur=portalEl.querySelector('.p-link.active'); if(cur&&cur.hasAttribute('data-locked')) markPortalTab('overview'); // a tab that just re-locked can't stay open
+}
+function setPortalPlan(p){ p=p||''; if(p!==portalPlan){ portalPlan=p; syncPortalChrome(); } }
+
+/* ---- Lead Generation / AI Voice & SMS tabs: conversation threads + automated activity. EVERY message, event and log entry names the bot AND the model that handled it. ---- */
+// The portal reads PORTAL_CONFIG.conversationsUrl (GET, X-Portal-Token header). Until the server has that route the live tabs say so and show nothing
+// (404 -> "Conversation feed not connected yet"); the login screen's "Preview with sample data" and the "Preview with sample conversations" button on that empty state fill them with clearly labelled sample threads.
+// Expected response:
+//   {"threads":[{"id":"t1","fn":"leads"|"voice","channel":"sms"|"voice","contact":"Dana R.",
+//                "messages":[{"dir":"in"|"out"|"event","text":"...","at":"2026-10-16T14:14:00Z"|1760624040000,"bot":"SMS Converter","model":"Gemini 3 Flash"}]}],
+//    "activity":[{"fn":"leads","text":"Re-scored 4 open leads","at":...,"bot":"Lead Scorer","model":"Claude Sonnet 4.6"}]}
+// "bot" is a sub-agent or pod name from the roster (FUNCTIONS / AGENTS above). "model" is optional: it is filled in from the roster, so a model change
+// in the roster shows up everywhere at once. A bot that isn't on the roster is shown as sent, with the model the server gave (or "not recorded").
+const PORTAL_FN_TABS={
+  leads:{fn:'leads',title:'Lead Generation',primary:'Lead Scorer',
+    lede:'New inquiries are answered and sorted by Speed-to-Lead, then scored and synced to your CRM by the Lead Scorer. Every message and action below names the bot and the model behind it.'},
+  voice:{fn:'voice',title:'AI Voice & SMS',primary:'Concierge Bot',
+    lede:'Calls are answered by the Concierge Bot and missed calls get an instant text-back. Every message and action below names the bot and the model behind it.'}
+};
+const portalEmptyConv=status=>({status:status||'idle',threads:[],activity:[]});
+let portalConv=portalEmptyConv(),portalConvRendered='',portalConvMissing=false; // portalConvMissing: the server answered 404/501 once, so stop asking until the next sign-in
+const portalSel={};
+function resetPortalConv(){ portalConv=portalEmptyConv(); portalConvRendered=''; portalConvMissing=false; Object.keys(PORTAL_FN_TABS).forEach(k=>{ portalSel[k]={thread:'',bot:PORTAL_FN_TABS[k].primary.toLowerCase()}; }); }
+resetPortalConv();
+
+/* sample threads: relative times, bot names from the roster, models resolved from the roster */
+function portalSampleConv(){
+  const now=Date.now(),m=n=>now-n*60000;
+  const threads=[
+    {id:'s-l1',fn:'leads',channel:'sms',contact:'Dana R. · kitchen remodel',messages:[
+      {dir:'event',at:m(42),bot:'Lead Classifier',text:'New lead from the website form: kitchen remodel quote.'},
+      {dir:'out',at:m(42),bot:'Instant Response Bot',text:'Hi Dana, thanks for reaching out about a kitchen remodel! What is the project address and when would you like to start?'},
+      {dir:'in',at:m(38),bot:'Lead Classifier',text:'412 Alder St. Hoping to start in about 3 weeks.'},
+      {dir:'event',at:m(37),bot:'Data Enrichment Bot',text:'Enriched the contact: homeowner, address verified.'},
+      {dir:'event',at:m(37),bot:'Lead Scorer',text:'Scored 92/100 and marked HOT.'},
+      {dir:'event',at:m(36),bot:'CRM Sync Bot',text:'Synced to the CRM and alerted the owner.'},
+      {dir:'out',at:m(36),bot:'Instant Response Bot',text:'Great, I can have someone call you today. Does 4:30 PM work?'}]},
+    {id:'s-l2',fn:'leads',channel:'sms',contact:'Marcus T. · commercial inquiry',messages:[
+      {dir:'in',at:m(125),bot:'Lead Classifier',text:'Do you also take on commercial jobs?'},
+      {dir:'out',at:m(124),bot:'Instant Response Bot',text:'Yes, commercial work is part of what we do. Roughly how big is the space?'},
+      {dir:'event',at:m(123),bot:'Intent Analyzer Bot',text:'Intent: price comparison, medium urgency.'},
+      {dir:'event',at:m(123),bot:'Lead Scorer',text:'Scored 61/100 and marked WARM.'}]},
+    {id:'s-l3',fn:'leads',channel:'sms',contact:'Priya K. · referral',messages:[
+      {dir:'in',at:m(210),bot:'Lead Classifier',text:'A friend sent me. Are you taking new clients?'},
+      {dir:'out',at:m(209),bot:'Instant Response Bot',text:'Welcome, Priya! Yes, we are. What are you looking to get done?'},
+      {dir:'event',at:m(208),bot:'B2B Matcher Bot',text:'No business match found: consumer lead.'},
+      {dir:'event',at:m(208),bot:'Lead Scorer',text:'Scored 78/100 and marked HOT.'}]},
+    {id:'s-v1',fn:'voice',channel:'sms',contact:'Missed call · (•••) •••-0142',messages:[
+      {dir:'event',at:m(26),bot:'Inbound Call Listener',text:'Missed call, caller not in your contacts.'},
+      {dir:'out',at:m(26),bot:'SMS Converter',text:'Sorry we missed your call! How can we help? Reply here and we will get right back to you.'},
+      {dir:'in',at:m(24),bot:'SMS Converter',text:'Hi, do you have anything open tomorrow morning?'},
+      {dir:'out',at:m(24),bot:'SMS Converter',text:'Yes, 9:00 or 10:30 tomorrow. Which works better?'},
+      {dir:'in',at:m(22),bot:'SMS Converter',text:'10:30 please'},
+      {dir:'event',at:m(22),bot:'Calendar Booking Agent',text:'Booked tomorrow at 10:30 AM.'},
+      {dir:'out',at:m(22),bot:'SMS Converter',text:'You are booked for 10:30 AM tomorrow. Reply C to cancel.'}]},
+    {id:'s-v2',fn:'voice',channel:'voice',contact:'Inbound call · 3m 12s',messages:[
+      {dir:'in',at:m(55),bot:'Speech-to-Text Transcriber',text:'Hi, I need to move my appointment from Thursday to Friday.'},
+      {dir:'event',at:m(55),bot:'NLP Intent Engine',text:'Intent: reschedule an appointment (confidence 0.96).'},
+      {dir:'out',at:m(54),bot:'Concierge Bot',text:'Of course. I have Friday at 11:00 or 2:30. Which would you like?'},
+      {dir:'in',at:m(53),bot:'Speech-to-Text Transcriber',text:'2:30 works.'},
+      {dir:'event',at:m(53),bot:'Calendar Booking Agent',text:'Moved the appointment from Thursday to Friday 2:30 PM.'},
+      {dir:'out',at:m(52),bot:'Follow-up Notifier',text:'Confirmed: your appointment is now Friday at 2:30 PM.'}]},
+    {id:'s-v3',fn:'voice',channel:'voice',contact:'After-hours voicemail · Sam',messages:[
+      {dir:'in',at:m(305),bot:'Speech-to-Text Transcriber',text:'Hey, it is Sam. I am calling about a quote for next week. Call me back when you can.'},
+      {dir:'event',at:m(304),bot:'NLP Intent Engine',text:'Intent: quote request (confidence 0.91). After hours, so a text-back was queued.'},
+      {dir:'out',at:m(304),bot:'SMS Converter',text:'Hi Sam, thanks for calling! We are closed right now, but I can book a quote call. Would tomorrow at 10 AM work?'},
+      {dir:'in',at:m(290),bot:'SMS Converter',text:'Tomorrow at 10 is good.'},
+      {dir:'event',at:m(290),bot:'Calendar Booking Agent',text:'Booked a quote call for tomorrow at 10:00 AM.'},
+      {dir:'out',at:m(289),bot:'Follow-up Notifier',text:'Booked! You will get a reminder an hour before.'}]}
+  ];
+  const activity=[
+    {fn:'leads',at:m(5),bot:'Lead Scorer',text:'Re-scored 4 open leads after new enrichment data.'},
+    {fn:'leads',at:m(18),bot:'CRM Sync Bot',text:'Pushed 2 contacts and their lead scores to the CRM.'},
+    {fn:'leads',at:m(37),bot:'Lead Scorer',text:'Marked Dana R. HOT (92/100) and alerted the owner.'},
+    {fn:'leads',at:m(60),bot:'Intent Analyzer Bot',text:'Read the intent of 3 new inquiries.'},
+    {fn:'leads',at:m(95),bot:'Instant Response Bot',text:'Sent first replies to 3 new leads.'},
+    {fn:'leads',at:m(180),bot:'Data Enrichment Bot',text:'Enriched 5 contacts with address and company data.'},
+    {fn:'voice',at:m(8),bot:'SMS Converter',text:'Sent 2 missed-call text-backs.'},
+    {fn:'voice',at:m(22),bot:'Calendar Booking Agent',text:'Booked tomorrow at 10:30 AM for the missed-call caller.'},
+    {fn:'voice',at:m(55),bot:'Speech-to-Text Transcriber',text:'Transcribed an inbound call (3m 12s).'},
+    {fn:'voice',at:m(70),bot:'Follow-up Notifier',text:'Sent a confirmation text for the rescheduled appointment.'},
+    {fn:'voice',at:m(280),bot:'Inbound Call Listener',text:'Logged an after-hours voicemail.'},
+    {fn:'voice',at:m(300),bot:'NLP Intent Engine',text:'Classified 2 calls: 1 reschedule, 1 quote request.'}
+  ];
+  return {status:'ok',threads,activity};
+}
+
+/* live data: validated and clipped, because customer messages are untrusted text (they are only ever written with textContent) */
+const PORTAL_CONV_LIMITS={threads:50,messages:200,activity:100,text:1200,name:80};
+const convClip=(v,n)=>typeof v==='string'?v.trim().slice(0,n):'';
+const convTime=v=>{ const t=typeof v==='number'?v:Date.parse(v); return Number.isFinite(t)?t:0; };
+const convFn=f=>(typeof f==='string'&&FN_BY_ID[f]&&f!=='all')?f:'';
+function normPortalConv(raw){
+  if(!raw||typeof raw!=='object') return null;
+  const L=PORTAL_CONV_LIMITS;
+  const entry=m=>{ if(!m||typeof m!=='object') return null; const text=convClip(m.text,L.text); if(!text) return null;
+    return {dir:(m.dir==='in'||m.dir==='out')?m.dir:'event',text,at:convTime(m.at),bot:convClip(m.bot,L.name),model:convClip(m.model,L.name)}; };
+  const threads=(Array.isArray(raw.threads)?raw.threads:[]).slice(0,L.threads).map((t,i)=>{
+    if(!t||typeof t!=='object') return null;
+    const messages=(Array.isArray(t.messages)?t.messages:[]).slice(-L.messages).map(entry).filter(Boolean); if(!messages.length) return null;
+    const named=messages.find(x=>botInfo(x.bot)),fn=convFn(t.fn)||(named?botInfo(named.bot).fn:'');
+    return {id:convClip(String(t.id===undefined||t.id===null?i:t.id),60)||String(i),fn,channel:t.channel==='voice'?'voice':'sms',contact:convClip(t.contact,L.name)||'Unknown contact',messages};
+  }).filter(Boolean);
+  const activity=(Array.isArray(raw.activity)?raw.activity:[]).slice(0,L.activity).map(a=>{ const e=entry(a); if(!e) return null; const info=botInfo(e.bot); e.fn=convFn(a.fn)||(info?info.fn:''); return e; }).filter(Boolean);
+  return {status:'ok',threads,activity};
+}
+async function loadPortalConv(){
+  if(portalMode!=='live') return;
+  if(!PORTAL_CONFIG.conversationsUrl||portalConvMissing){ if(!portalConv.sample&&portalConv.status!=='ok') portalConv=portalEmptyConv('unavailable'); renderPortalFn(); return; }
+  const seq=portalSeq;
+  if(portalConv.status!=='ok'){ portalConv.status='loading'; renderPortalFn(); }
+  try{
+    const n=normPortalConv(await portalGet(PORTAL_CONFIG.conversationsUrl,portalToken));
+    if(seq!==portalSeq||portalMode!=='live') return;
+    portalConv=n||portalEmptyConv('unavailable');
+  }catch(e){
+    if(seq!==portalSeq||portalMode!=='live') return;
+    if(e instanceof PortalAuthError){ portalSignOut('Your session expired. Sign in again.'); return; }
+    if(/^HTTP (404|501)$/.test(String(e&&e.message))) portalConvMissing=true; // no such route on the server yet
+    if(portalConv.status!=='ok') portalConv=portalEmptyConv('unavailable'); // a transient failure keeps the threads already on screen
+  }
+  renderPortalFn();
+}
+
+/* rendering */
+function fmtConvTime(ms){
+  if(!ms) return '';
+  const d=new Date(ms),t=d.toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+  return d.toDateString()===new Date().toDateString()?t:d.toLocaleDateString([],{month:'short',day:'numeric'})+', '+t;
+}
+const convVerb=dir=>dir==='out'?'Sent by':'Processed by';
+function attrEl(verb,bot,model){ // [ Sent by: SMS Converter | Model: Gemini 3 Flash ]
+  const info=botInfo(bot),mName=model||(info?info.model:''),key=modelKeyOf(mName)||(info?info.dot:'');
+  const s=pipelineNode('span','p-attr'),m=pipelineNode('span','p-attr-m');
+  if(key&&MODEL_LOGOS[key]) m.insertAdjacentHTML('beforeend',modelIcon(key)); // static, trusted SVG from this file
+  m.append(pipelineNode('b','',mName||'not recorded'));
+  s.append(pipelineNode('span','k',verb+': '),pipelineNode('b','',bot||'bot not recorded'),pipelineNode('i','sep',' | '),pipelineNode('span','k','Model: '),m); // the spaces keep the copied / read-aloud text exactly "Sent by: SMS Converter | Model: Gemini 3 Flash"
+  return s;
+}
+const convPod=bot=>{ const i=botInfo(bot); return i?i.pod.toLowerCase():''; };
+function fnPods(fn,primary){ // the pods behind a function, with only the sub-agents assigned to it; the primary pod first
+  const map=new Map();
+  AGENTS.filter(a=>a.fn===fn).forEach(a=>{ if(!map.has(a.pod)) map.set(a.pod,{pod:a.pod,model:a.model,dot:a.dot,subs:[]}); map.get(a.pod).subs.push(a.name); });
+  return [...map.values()].sort((x,y)=>(y.pod===primary)-(x.pod===primary));
+}
+function renderPortalFn(){
+  const cfg=PORTAL_FN_TABS[portalTab]; if(!cfg||portalMode==='login') return;
+  const sel=portalSel[portalTab],conv=portalConv;
+  const threads=conv.threads.filter(t=>t.fn===cfg.fn).sort((a,b)=>b.messages[b.messages.length-1].at-a.messages[a.messages.length-1].at);
+  const log=conv.activity.filter(a=>a.fn===cfg.fn).sort((a,b)=>b.at-a.at);
+  const hl=bot=>!!sel.bot&&convPod(bot)===sel.bot;
+  const focusKey=(document.activeElement&&portalEl.contains(document.activeElement))?(document.activeElement.dataset.id?'t:'+document.activeElement.dataset.id:(document.activeElement.dataset.pod?'b:'+document.activeElement.dataset.pod:'')):'';
+  pEl('fnTitle').textContent=cfg.title; pEl('fnLede').textContent=cfg.lede; pEl('fnSample').hidden=!(portalMode==='sample'||conv.sample);
+
+  // bots responsible for this function (selecting one highlights everything it did)
+  const bots=pEl('fnBots'); bots.replaceChildren();
+  fnPods(cfg.fn,cfg.primary).forEach(p=>{
+    const key=p.pod.toLowerCase(),n=threads.reduce((c,t)=>c+t.messages.filter(x=>convPod(x.bot)===key&&x.dir!=='in').length,0)+log.filter(a=>convPod(a.bot)===key).length;
+    const b=pipelineNode('button','fn-bot'); b.type='button'; b.dataset.pod=key; b.setAttribute('aria-pressed',String(sel.bot===key));
+    const top=pipelineNode('span','fn-bot-top'); top.append(pipelineNode('b','',p.pod),pipelineNode('span','fn-bot-n',n+(n===1?' action':' actions')));
+    const mod=pipelineNode('span','fn-bot-model'); mod.insertAdjacentHTML('beforeend',modelIcon(p.dot)); mod.append(document.createTextNode(p.model));
+    const subs=pipelineNode('span','fn-bot-subs'); p.subs.forEach(s=>subs.append(pipelineNode('span','',s)));
+    b.append(top,mod,subs);
+    bots.append(b);
+  });
+
+  // empty / loading / not-connected states
+  const msg=conv.status==='unavailable'?['Conversation feed not connected yet','Once it is, every message and action here shows the bot and the model that handled it.']
+    :(conv.status!=='ok'?['Loading conversations…','']:(!threads.length&&!log.length?['No '+cfg.title+' conversations yet','New conversations and bot actions will show up here.']:null));
+  pEl('fnEmpty').hidden=!msg; if(msg){ pEl('fnEmptyT').textContent=msg[0]; pEl('fnEmptyP').textContent=msg[1]; }
+  pEl('fnSampleBtn').hidden=!(msg&&conv.status==='unavailable');
+  pEl('fnGrid').hidden=!threads.length; pEl('fnLogCard').hidden=!log.length;
+
+  // thread list
+  const cur=threads.find(t=>t.id===sel.thread)||threads[0]; sel.thread=cur?cur.id:'';
+  const tl=pEl('fnThreadList'); tl.replaceChildren();
+  threads.forEach(t=>{
+    const last=t.messages[t.messages.length-1],li=document.createElement('li'),b=pipelineNode('button','th-item'); b.type='button'; b.dataset.id=t.id;
+    b.setAttribute('aria-current',String(t===cur)); if(t.messages.some(x=>hl(x.bot))) b.classList.add('hl');
+    const top=pipelineNode('span','th-top'); top.append(pipelineNode('b','',t.contact),pipelineNode('span','th-chan',t.channel==='voice'?'Call':'SMS'),pipelineNode('span','th-time',fmtConvTime(last.at)));
+    b.append(top,pipelineNode('span','th-prev',last.text),attrEl(convVerb(last.dir),last.bot,last.model));
+    li.append(b); tl.append(li);
+  });
+
+  // open thread: bubbles + automated events, each with its attribution badge
+  if(cur){
+    pEl('fnThreadTitle').textContent=cur.contact;
+    pEl('fnThreadMeta').textContent=(cur.channel==='voice'?'Phone call':'Text messages')+' · '+cur.messages.length+(cur.messages.length===1?' item':' items');
+    const ol=pEl('fnMsgs'),keep=ol.scrollTop,same=portalConvRendered===portalTab+'|'+cur.id; ol.replaceChildren();
+    cur.messages.forEach(x=>{
+      const li=document.createElement('li'); li.className='msg '+x.dir+(hl(x.bot)?' hl':'');
+      if(x.dir==='event') li.append(pipelineNode('div','evt-text',x.text));
+      else{ const bub=pipelineNode('div','bubble'); if(x.dir==='in') bub.append(pipelineNode('span','sr-only','Customer message: ')); bub.append(document.createTextNode(x.text)); li.append(bub); }
+      const meta=pipelineNode('div','msg-meta'); if(x.at) meta.append(pipelineNode('span','msg-time',fmtConvTime(x.at)));
+      meta.append(attrEl(convVerb(x.dir),x.bot,x.model)); li.append(meta); ol.append(li);
+    });
+    ol.scrollTop=same?keep:ol.scrollHeight; portalConvRendered=portalTab+'|'+cur.id; // new thread -> newest message; same thread -> keep the reader's place
+  }
+
+  // automated activity log
+  const lg=pEl('fnLog'); lg.replaceChildren();
+  log.forEach(a=>{
+    const li=document.createElement('li'); if(hl(a.bot)) li.className='hl';
+    const body=pipelineNode('div','log-body'); body.append(pipelineNode('span','log-text',a.text),attrEl('Processed by',a.bot,a.model));
+    li.append(pipelineNode('span','log-time',fmtConvTime(a.at)),body); lg.append(li);
+  });
+
+  if(focusKey){ const [k,v]=[focusKey[0],focusKey.slice(2)],el=portalEl.querySelector(k==='t'?'.th-item[data-id="'+CSS.escape(v)+'"]':'.fn-bot[data-pod="'+CSS.escape(v)+'"]'); if(el) el.focus({preventScroll:true}); }
+}
+pEl('fnBots').addEventListener('click',e=>{
+  const b=e.target.closest('.fn-bot'); if(!b||!portalSel[portalTab]) return;
+  portalSel[portalTab].bot=portalSel[portalTab].bot===b.dataset.pod?'':b.dataset.pod; renderPortalFn();
+});
+pEl('fnThreadList').addEventListener('click',e=>{
+  const b=e.target.closest('.th-item'); if(!b||!portalSel[portalTab]) return;
+  portalSel[portalTab].thread=b.dataset.id; renderPortalFn();
+  if(window.matchMedia('(max-width:900px)').matches) pEl('fnThreadCard').scrollIntoView({block:'start',behavior:reducedMotion.matches?'auto':'smooth'}); // one column on small screens: bring the thread into view
+});
+
+pEl('fnSampleBtn').addEventListener('click',()=>{ // the live feed isn't connected: show labelled sample threads so the bot + model attribution can be seen
+  portalConv=Object.assign(portalSampleConv(),{sample:true}); portalConvRendered=''; renderPortalFn();
+});
+/* ---- rendering (all server text is written with textContent, never innerHTML) ---- */
+function pipelineNode(tag,cls,text){ const n=document.createElement(tag); if(cls) n.className=cls; if(text!==undefined) n.textContent=text; return n; }
+function renderPortalPipeline(loading){
+  const host=pEl('pipelineRows'),total=Math.max(1,portalData.totalLeads);
+  host.textContent='';
+  if(loading) return;
+  if(!portalData.pipeline.length){ host.appendChild(pipelineNode('p','p-empty-note','No leads in the pipeline yet.')); return; }
+  portalData.pipeline.forEach(([stage,n])=>{
+    const pct=Math.min(100,n/total*100),wrap=pipelineNode('div','p-stage'),row=pipelineNode('div','p-stage-row'),bar=pipelineNode('div','p-bar'),fill=document.createElement('i');
+    wrap.dataset.stage=stage; wrap.dataset.value=n;
+    row.append(pipelineNode('span','',stage),pipelineNode('b','',n.toLocaleString('en-US')));
+    bar.setAttribute('role','progressbar'); bar.setAttribute('aria-label',stage+' share of total leads');
+    bar.setAttribute('aria-valuemin','0'); bar.setAttribute('aria-valuemax','100'); bar.setAttribute('aria-valuenow',String(Math.round(pct)));
+    fill.style.width=pct+'%'; bar.appendChild(fill); wrap.append(row,bar); host.appendChild(wrap);
+  });
+}
+function renderPortalStatus(){
+  const s=pEl('portalUpdated'); let txt='';
+  if(portalMode==='sample') txt='Sample data — not connected to a live account';
+  else if(portalMode==='loading') txt='Loading…';
+  else if(portalMode==='live'&&portalUpdatedAt){
+    const t=new Date(portalUpdatedAt).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'});
+    txt=(portalStale?'Couldn’t refresh — showing data from ':'Live · updated ')+t;
+  }
+  s.textContent=txt; s.dataset.state=portalMode+(portalStale?'-stale':'');
+}
+function renderPortal(){
+  portalRenderQueued=false;
+  const loading=portalMode==='loading';
+  portalEl.querySelectorAll('[data-bind]').forEach(el=>{ el.textContent=loading?'–':portalData[el.dataset.bind].toLocaleString('en-US'); });
+  portalEl.querySelectorAll('[data-metric]').forEach(el=>{ el.dataset.value=portalData[el.dataset.metric]; });
+  renderPortalPipeline(loading);
+  pEl('portalAi').classList.toggle('off',!portalData.aiEnabled);
+  pEl('portalAiText').textContent=portalData.aiEnabled?'AI ON':'AI OFF';
+  renderPortalStatus();
+}
+function syncPortalChrome(){ // which panel / header controls show for the current mode + tab + plan
+  const login=portalMode==='login',loading=portalMode==='loading';
+  renderPortalLocks();
+  portalEl.querySelector('[data-panel="login"]').hidden=!login;
+  portalEl.querySelector('[data-panel="overview"]').hidden=login||portalTab!=='overview';
+  const fnTab=!login&&!!PORTAL_FN_TABS[portalTab];
+  portalEl.querySelector('[data-panel="fn"]').hidden=!fnTab;
+  portalEl.querySelector('[data-panel="other"]').hidden=login||portalTab==='overview'||fnTab;
+  pEl('portalAi').hidden=login;
+  const so=pEl('portalSignOut'),word=portalMode==='live'?'Sign out':'Sign in';
+  so.hidden=login||loading||!portalNeedsLogin(); pEl('portalSoText').textContent=word; so.setAttribute('aria-label',word);
+  const active=portalEl.querySelector('.p-link.active'),label=active?portalTabLabel(active):'Overview';
+  pEl('portalEmptyTitle').textContent=label; pEl('portalTitle').textContent=login?'Client Login':label;
+  renderPortal();
+  if(fnTab) renderPortalFn();
+}
+
+/* ---- data: authenticated GETs - the token is sent in the X-Portal-Token header, never in the URL ---- */
+const portalUrl=u=>new URL(u,location.href);
+const portalHeaders=(token,extra)=>{ const h=Object.assign({Accept:'application/json'},extra||{}); if(PORTAL_CONFIG.requireToken) h[PORTAL_CONFIG.tokenHeader]=token; return h; };
+async function portalGet(url,token){
+  if(PORTAL_CONFIG.requireToken&&!PORTAL_TOKEN_RE.test(token||'')) throw new PortalAuthError('malformed token');
+  const ac=new AbortController(),timer=setTimeout(()=>ac.abort(),15000);
+  try{
+    const r=await fetch(portalUrl(url),{headers:portalHeaders(token),cache:'no-store',credentials:'omit',signal:ac.signal});
+    if(r.status===401||r.status===403) throw new PortalAuthError('unauthorized');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    return await r.json();
+  }catch(e){
+    if(e instanceof TypeError) console.warn('[portal] request failed before a response arrived. If the server is up, its CORS preflight must allow the '+PORTAL_CONFIG.tokenHeader+' header (Caddy: Access-Control-Allow-Headers "Content-Type, '+PORTAL_CONFIG.tokenHeader+'").');
+    throw e;
+  }finally{ clearTimeout(timer); }
+}
+async function loadPortalData(token){ // lead metrics + plan settings in parallel. The metrics decide success; settings only decide the plan.
+  const settings=PORTAL_CONFIG.settingsUrl
+    ?portalGet(PORTAL_CONFIG.settingsUrl,token).catch(e=>{ if(e instanceof PortalAuthError) throw e; console.warn('[portal] settings unavailable - gated tabs stay locked',e); return null; })
+    :Promise.resolve(null);
+  const [summary,st]=await Promise.all([portalGet(PORTAL_CONFIG.apiUrl,token),settings]);
+  const plan=st!==null?portalTierOf(st):(portalTierOf(summary)||undefined); // undefined = plan unknown (settings failed)
+  return {summary,plan};
+}
+function setLoginBusy(b){ const btn=pEl('portalLoginBtn'); btn.disabled=b; btn.textContent=b?'Checking…':'Sign in'; }
+function setLoginError(m){ pEl('portalLoginErr').textContent=m||''; }
+function enterPortalLogin(msg){
+  portalSeq++; stopPortalSources(); resetPortalConv(); portalMode='login'; portalPlan=''; setLoginBusy(false); setLoginError(msg); syncPortalChrome();
+  if(!portalEl.hidden){ const i=pEl('portalToken'); i.value=''; i.focus({preventScroll:true}); }
+}
+function enterPortalSample(){ portalSeq++; stopPortalSources(); resetPortalData(portalSample()); portalMode='sample'; portalPlan=''; portalStale=false; resetPortalConv(); portalConv=portalSampleConv(); syncPortalChrome(); }
+function portalSignOut(msg){ portalSeq++; portalStore.set(''); portalToken=''; resetPortalData(portalSample()); enterPortalLogin(msg||''); } // also wipes the numbers and re-locks the tabs
+async function portalConnect(token,fromForm){
+  const seq=++portalSeq; setLoginBusy(true);
+  try{
+    const data=await loadPortalData(token);
+    if(seq!==portalSeq) return;
+    portalToken=token; if(PORTAL_CONFIG.requireToken) portalStore.set(token);
+    resetPortalData(portalBlank()); updatePortal(normalizePortalPayload(data.summary));
+    portalPlan=data.plan||'';
+    resetPortalConv(); portalMode='live'; portalUpdatedAt=Date.now(); portalStale=false;
+    setLoginBusy(false); pEl('portalToken').value=''; setLoginError(''); syncPortalChrome(); startPortalSources();
+    if(PORTAL_FN_TABS[portalTab]) loadPortalConv();
+    if(fromForm) pEl('portalMain').focus({preventScroll:true});
+  }catch(e){
+    if(seq!==portalSeq) return;
+    setLoginBusy(false);
+    if(e instanceof PortalAuthError){ portalStore.set(''); portalToken=''; resetPortalData(portalSample()); enterPortalLogin(fromForm?'That token wasn’t recognized.':'Your session expired. Sign in again.'); }
+    else if(!PORTAL_CONFIG.requireToken) enterPortalSample();
+    else if(!fromForm&&portalMode==='live'){ portalStale=true; syncPortalChrome(); startPortalSources(); } // reopened with data on screen: keep it, flag it stale
+    else{ resetPortalData(portalSample()); enterPortalLogin('Couldn’t reach the portal server. Check your connection and try again.'); }
+  }
+}
+async function refreshPortal(){
+  if(portalMode!=='live'||!PORTAL_CONFIG.apiUrl||document.hidden) return;
+  const seq=portalSeq;
+  try{
+    const data=await loadPortalData(portalToken);
+    if(seq!==portalSeq||portalMode!=='live') return;
+    updatePortal(normalizePortalPayload(data.summary)); portalUpdatedAt=Date.now(); portalStale=false;
+    if(data.plan!==undefined) setPortalPlan(data.plan); else renderPortalStatus(); // a failed settings fetch keeps the plan we already know
+    if(PORTAL_FN_TABS[portalTab]) loadPortalConv();
+  }catch(e){
+    if(seq!==portalSeq||portalMode!=='live') return;
+    if(e instanceof PortalAuthError) portalSignOut('Your session expired. Sign in again.'); else{ portalStale=true; renderPortalStatus(); }
+  }
+}
+function connectPortalStream(){ // streaming is read with fetch (EventSource cannot send headers), so the token never goes into the URL
+  disconnectPortalStream();
+  if(!PORTAL_CONFIG.streamUrl) return;
+  const ac=new AbortController(),seq=portalSeq; portalStreamAbort=ac;
+  (async()=>{
+    while(!ac.signal.aborted){
+      try{
+        const r=await fetch(portalUrl(PORTAL_CONFIG.streamUrl),{headers:portalHeaders(portalToken,{Accept:'text/event-stream'}),cache:'no-store',credentials:'omit',signal:ac.signal});
+        if(r.status===401||r.status===403){ if(!ac.signal.aborted&&seq===portalSeq) portalSignOut('Your session expired. Sign in again.'); return; }
+        if(!r.ok||!r.body) throw new Error('HTTP '+r.status);
+        const rd=r.body.getReader(),dec=new TextDecoder(); let buf='';
+        for(;;){
+          const {done,value}=await rd.read(); if(done) break;
+          buf+=dec.decode(value,{stream:true}).replace(/\r\n?/g,'\n'); if(buf.length>1048576) buf='';
+          let i; while((i=buf.indexOf('\n\n'))>=0){
+            const ev=buf.slice(0,i); buf=buf.slice(i+2);
+            const data=ev.split('\n').filter(l=>l.startsWith('data:')).map(l=>l.slice(5).replace(/^ /,'')).join('\n');
+            if(data){ try{ ingestPortalPayload(JSON.parse(data)); }catch(_){ /* ignore malformed event */ } }
+          }
+        }
+      }catch(_){ if(ac.signal.aborted) return; }
+      await new Promise(res=>setTimeout(res,3000)); // dropped: reconnect
+    }
+  })();
+}
+function disconnectPortalStream(){ if(portalStreamAbort){ portalStreamAbort.abort(); portalStreamAbort=null; } }
+function startPortalSources(){
+  stopPortalSources(); connectPortalStream();
+  // a live stream replaces polling (a stale poll would overwrite fresher pushed values)
+  if(PORTAL_CONFIG.pollMs>0&&!portalStreamAbort) portalTimer=setInterval(refreshPortal,PORTAL_CONFIG.pollMs);
+}
+function stopPortalSources(){ clearInterval(portalTimer); portalTimer=0; disconnectPortalStream(); }
+function startPortal(){ // runs each time the portal view opens
+  portalToken=portalToken||portalStore.get();
+  if(!PORTAL_CONFIG.apiUrl){ enterPortalSample(); return; }
+  if(PORTAL_CONFIG.requireToken&&!portalToken){ enterPortalLogin(''); return; }
+  if(portalMode!=='live'){ resetPortalData(portalBlank()); portalMode='loading'; syncPortalChrome(); }
+  portalConnect(portalToken,false);
+}
+window.NewSitesPortal={state:clientPortalState,update:updatePortal,ingest:ingestPortalPayload,refresh:refreshPortal,config:PORTAL_CONFIG,
+  signIn:t=>{ t=String(t||'').trim(); if(t) return portalConnect(t,true); },signOut:()=>portalSignOut(''),mode:()=>portalMode,plan:()=>portalPlan,open:()=>routePortal(),close:()=>{ location.href='index.html'; }};
+
+/* ---- header, tabs, login form ---- */
+function showPortalToast(msg){
+  const t=pEl('portalToast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(portalToastTimer); portalToastTimer=setTimeout(()=>t.classList.remove('show'),2400);
+}
+function setPortalTab(id){
+  if(!portalEl.querySelector('.p-link[data-tab="'+id+'"]')) return;
+  markPortalTab(id); syncPortalChrome();
+  if(PORTAL_FN_TABS[id]&&portalMode==='live') loadPortalConv();
+}
+pEl('portalNav').addEventListener('click',e=>{
+  const b=e.target.closest('.p-link'); if(!b) return;
+  if(b.hasAttribute('data-locked')) showPortalToast(portalTabLabel(b)+' is locked on your current plan.'); else setPortalTab(b.dataset.tab);
+});
+pEl('portalLogin').addEventListener('submit',e=>{
+  e.preventDefault();
+  const t=pEl('portalToken').value.trim();
+  if(!t){ setLoginError('Enter your portal token.'); pEl('portalToken').focus(); return; }
+  if(!PORTAL_TOKEN_RE.test(t)){ setLoginError('That token wasn’t recognized.'); pEl('portalToken').focus(); return; }
+  setLoginError(''); portalConnect(t,true);
+});
+pEl('portalPreview').addEventListener('click',()=>enterPortalSample());
+pEl('portalSignOut').addEventListener('click',()=>{ if(portalMode==='live') portalSignOut(''); else enterPortalLogin(''); });
+
+/* ---- this page IS the portal, so it always shows the portal (no hash needed). Magic links (?token=XXXX and #/portal?token=XXXX) are
+   consumed by the early <head> script before anything else runs. ---- */
+let portalRouted=false;
+function routePortal(){
+  document.body.classList.add('in-portal');
+  document.title='NewSites.com — Client Portal';
+  if(!portalRouted){ portalRouted=true; window.scrollTo({top:0,behavior:'instant'}); setPortalTab('overview'); startPortal(); if(portalMode!=='login') pEl('portalMain').focus({preventScroll:true}); }
+  else renderPortal();
+}
+document.addEventListener('visibilitychange',()=>{ if(!document.hidden&&!portalStreamAbort) refreshPortal(); });
+setPortalTab('overview');
+routePortal();
+</script>
+</body>
+</html>
