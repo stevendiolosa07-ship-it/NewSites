@@ -495,6 +495,10 @@
     .topbar { background:linear-gradient(180deg, rgba(5,6,10,0.94) 0%, rgba(5,6,10,0.72) 62%, rgba(5,6,10,0) 100%); padding-bottom:16px; }
   }
   .nav-links { display:none; pointer-events:auto; }
+  /* phones: the top nav is hidden under 900px, so Client Login gets its own small link next to Get Started */
+  .nav-login { font-family:'Manrope',sans-serif; font-size:10.5px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold-bright,#E8C97A); text-decoration:none; white-space:nowrap; padding:9px 2px; }
+  @media (min-width:900px){ .nav-login { display:none; } }
+  @media (max-width:400px){ .nav-login .nl-client { display:none; } }
   @media (min-width:900px){
     .topbar { display:flex; align-items:center; gap:22px; }
     .topbar .mark { order:1; }
@@ -563,10 +567,11 @@
       <a href="#conversations">What We Do</a>
       <a href="#calculator">Calculator</a>
       <a href="#faq">FAQ</a>
-      <a href="https://164.92.110.116.nip.io/portal" style="color:var(--gold-bright,#E8C97A);">Client Login</a>
+      <a href="agent-ops.html#/portal" style="color:var(--gold-bright,#E8C97A);">Client Login</a>
     </nav>
     <div class="state-pill"><span class="sdot"></span><span id="stateText">Global Network</span></div>
     <div class="nav-right">
+      <a class="nav-login" href="agent-ops.html#/portal" aria-label="Client Login"><span class="nl-client">Client </span>Login</a>
       <a class="cta-link" href="#contact">Get Started</a>
     </div>
   </header>
