@@ -819,13 +819,32 @@
     setTimeout(() => closeBooking(), 3500);
   }
 
-  // Load live CRM data
+  // Load live CRM data. The CRM API requires an admin key: it is typed here, kept in sessionStorage only
+  // (cleared when the tab closes) and sent in the X-Admin-Key header. It is never stored in this file.
+  const esc = v => String(v == null ? '' : v).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+  const crmKey = () => { try { return sessionStorage.getItem('crm_key') || ''; } catch (e) { return ''; } };
+  const crmSetKey = k => { try { if (k) sessionStorage.setItem('crm_key', k); else sessionStorage.removeItem('crm_key'); } catch (e) {} };
+  function crmUnlock() {
+    const k = (window.prompt('CRM access key') || '').trim();
+    if (k) { crmSetKey(k); loadCRMData(); }
+  }
+  function crmLocked(panel, badge, msg) {
+    panel.innerHTML = '<div class="empty">' + esc(msg) + ' <a href="#" id="crm-unlock" style="color:var(--gold)">Enter key</a></div>';
+    const a = document.getElementById('crm-unlock');
+    if (a) a.addEventListener('click', e => { e.preventDefault(); crmUnlock(); });
+    badge.textContent = '\u{1F512}';
+  }
   async function loadCRMData() {
     const panel = document.getElementById('crm-panel-content');
     const badge = document.getElementById('crm-badge');
+    const key = crmKey();
+    if (!key) { crmLocked(panel, badge, 'CRM locked.'); return; }
     try {
-      const res = await fetch('https://164.92.110.116.nip.io:3003/api/contacts');
+      const res = await fetch('https://164.92.110.116.nip.io:3003/api/contacts', { headers: { 'X-Admin-Key': key } });
+      if (res.status === 401) { crmSetKey(''); crmLocked(panel, badge, 'CRM key rejected.'); return; }
+      if (!res.ok) throw new Error('CRM ' + res.status);
       const contacts = await res.json();
+      if (!Array.isArray(contacts)) throw new Error('bad CRM response');
       const total = contacts.length;
       const newLeads = contacts.filter(c => c.status === 'New lead').length;
       const hot = contacts.filter(c => c.score >= 7).length;
@@ -835,14 +854,14 @@
 
       const recent = contacts.slice(-4).reverse();
       const rows = recent.length ? recent.map(c => {
-        const initials = (c.name||'?').split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+        const initials = esc((c.name||'?').split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2));
         const scoreClass = c.score >= 7 ? 'tag-hot' : c.score >= 4 ? 'tag-warm' : 'tag-cold';
         const scoreLabel = c.score >= 7 ? 'Hot' : c.score >= 4 ? 'Warm' : 'Cold';
         return `<div class="lead-row">
           <div class="lead-avatar">${initials}</div>
           <div class="lead-info">
-            <div class="lead-name">${c.name || 'Unknown'}</div>
-            <div class="lead-source">${c.source || 'Manual'} · ${c.phone || ''}</div>
+            <div class="lead-name">${esc(c.name || 'Unknown')}</div>
+            <div class="lead-source">${esc(c.source || 'Manual')} · ${esc(c.phone || '')}</div>
           </div>
           <span class="lead-tag ${scoreClass}">${scoreLabel}</span>
         </div>`;
