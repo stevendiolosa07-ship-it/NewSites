@@ -163,7 +163,7 @@
   @keyframes demoBounce { 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-7px); } }
 
   /* Lead Gen showroom */
-  .leadgen { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px,1fr)); gap:16px; margin-top:8px; align-items:stretch; }
+  .leadgen { display:grid; grid-template-columns:repeat(auto-fit, minmax(min(320px,100%),1fr)); gap:16px; margin-top:8px; align-items:stretch; }
   .lg-card { display:flex; flex-direction:column; }
   .lg-card { padding:22px; border-radius:16px; background:rgba(15,15,18,0.6); border:1px solid rgba(212,175,55,0.18); transition:border-color .3s ease, transform .3s ease; }
   .lg-card:hover { border-color:rgba(212,175,55,0.4); transform:translateY(-3px); }
@@ -173,8 +173,8 @@
   .lg-card p { font-size:14.5px; color:rgba(244,236,210,0.82); line-height:1.65; }
 
   /* Conversations two-pane (chat + schedule) */
-  .hub-grid { display:grid; grid-template-columns:1fr; gap:20px; max-width:1320px; margin:0 auto; }
-  @media (min-width:860px){ .hub-grid { grid-template-columns:1fr 1fr; align-items:stretch; } }
+  .hub-grid { display:grid; grid-template-columns:minmax(0,1fr); gap:20px; max-width:1320px; margin:0 auto; }
+  @media (min-width:860px){ .hub-grid { grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:stretch; } }
   .sched { display:flex; flex-direction:column; gap:9px; }
   .sched-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:11px 13px; border-radius:10px; background:rgba(15,15,18,0.7); border:1px solid rgba(255,255,255,0.07); }
   .sched-row.hot { background:rgba(212,175,55,0.08); border-color:rgba(212,175,55,0.3); }
@@ -234,8 +234,8 @@
   .cr-title { font-family:'Cinzel',serif; font-weight:600; font-size:clamp(24px,4.4vw,46px); letter-spacing:0.05em; text-transform:uppercase; color:#fbf4dc; margin:8px 0 12px; line-height:1.05; }
   .cr-sub { font-size:15.5px; font-weight:500; color:rgba(244,236,210,0.66); max-width:520px; margin:0 auto; }
   .cr-label { font-size:11.5px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase; color:rgba(244,236,210,0.55); margin:22px 0 10px; }
-  .cr-cats { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; }
-  @media (min-width:620px){ .cr-cats { grid-template-columns:repeat(4,1fr); } }
+  .cr-cats { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  @media (min-width:620px){ .cr-cats { grid-template-columns:repeat(4,minmax(0,1fr)); } }
   .cr-cat { display:flex; align-items:center; justify-content:center; gap:10px; padding:17px 12px; border-radius:13px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.12); color:rgba(244,236,210,0.9); font-size:14px; font-weight:600; letter-spacing:0.04em; cursor:pointer; transition:all .25s ease; }
   .cr-cat svg { width:18px; height:18px; stroke:currentColor; fill:none; stroke-width:1.7; }
   .cr-cat:hover { border-color:rgba(212,175,55,0.4); color:#fff; }
@@ -390,9 +390,9 @@
   .eb-cta { display:inline-block; border:none; cursor:pointer; text-decoration:none; font-size:14px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink); background:linear-gradient(120deg,var(--gold-bright),var(--gold) 70%); padding:18px 38px; border-radius:999px; box-shadow:0 8px 30px rgba(212,175,55,0.32); transition:transform .2s ease, filter .2s ease; }
   .eb-cta:hover { transform:translateY(-2px); filter:brightness(1.06); }
   .eb-note { font-size:12px; color:rgba(244,236,210,0.5); margin-top:10px; letter-spacing:0.04em; }
-  .eb-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-  @media (min-width:640px){ .eb-grid { grid-template-columns:repeat(3,1fr); } }
-  @media (min-width:980px){ .eb-grid { grid-template-columns:repeat(4,1fr); } }
+  .eb-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+  @media (min-width:640px){ .eb-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+  @media (min-width:980px){ .eb-grid { grid-template-columns:repeat(4,minmax(0,1fr)); } }
   .eb-cap { display:flex; align-items:center; gap:11px; padding:14px 16px; border-radius:12px; border:1px solid rgba(212,175,55,0.16); background:rgba(255,255,255,0.02); cursor:pointer; }
   .eb-cap:hover { border-color:rgba(212,175,55,0.45); background:rgba(212,175,55,0.05); transform:translateY(-2px); }
   .eb-cap.flash { border-color:rgba(242,212,121,0.85); box-shadow:0 0 0 1px rgba(242,212,121,0.5), 0 0 60px rgba(212,175,55,0.35); }
@@ -509,6 +509,32 @@
     .topbar #nsPathSwap { order:4; }
     .topbar .nav-right { order:5; }
   }
+  /* ===== 2026-10 mobile fixes ===== */
+  .cr-cat { min-width:0; }
+  .chat-input input { min-width:0; }
+  .send-btn { flex:0 0 auto; }
+  @media (max-width:420px){ .cr-quota { flex-wrap:wrap; white-space:normal; } }
+  @media (max-width:420px){ .cr-cat { padding:15px 8px; gap:8px; flex-wrap:wrap; text-align:center; line-height:1.25; } }
+  /* The hero zooms the logo 22% with transform (visual only, layout box unchanged), which painted it over "Client Login". Phones and tablets keep it at layout size. */
+  @media (max-width:1100px){ .mark.big { transform:none; } }
+  @media (max-width:899px){
+    .topbar { grid-template-columns:minmax(0,1fr) auto; column-gap:12px; }
+    .topbar .mark { min-width:0; }
+    .topbar .nav-right { gap:12px; }
+  }
+  @media (max-width:420px){
+    .mark .glyph { width:30px; height:30px; }
+    .mark .name { font-size:14px; letter-spacing:0.14em; }
+    .cta-link { padding:9px 12px; letter-spacing:0.12em; font-size:10px; }
+    .nav-login { letter-spacing:0.12em; font-size:10px; }
+    .topbar .nav-right { gap:10px; }
+  }
+  @media (max-width:350px){
+    .mark .glyph { width:26px; height:26px; }
+    .mark .name { font-size:12px; letter-spacing:0.08em; }
+    .cta-link { padding:8px 9px; letter-spacing:0.06em; font-size:9.5px; }
+    .nav-login { letter-spacing:0.06em; font-size:9.5px; }
+  }
   html { scroll-behavior:smooth; }
   #conversations, #calculator, #crm, #leads, #website, #social, #enterprise-build, #enterprise-caps, #enterprise, #faq, #contact { scroll-margin-top:104px; }
   main.content { padding-bottom:110px; }
@@ -530,7 +556,7 @@
     #conversations { display:grid !important; grid-template-columns:0.85fr 1.15fr; gap:44px; align-items:center; }
     #conversations .sec-copy { text-align:left !important; margin:0 !important; }
     #conversations .sec-copy .note { margin:18px 0 0 !important; }
-    #conversations .hub-grid { grid-template-columns:1fr; }
+    #conversations .hub-grid { grid-template-columns:minmax(0,1fr); }
   }
 
   /* Free tool: wider desktop presence */
