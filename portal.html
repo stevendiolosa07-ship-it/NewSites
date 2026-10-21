@@ -525,6 +525,60 @@ section{margin-bottom:56px}
 .dm-tablewrap{overflow-x:auto}.dm-table{width:100%;border-collapse:collapse;font-size:13px}.dm-table th{font:700 10.5px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-dim);text-align:left;padding:8px 10px 8px 0}.dm-table td{padding:10px 10px 10px 0;border-top:1px solid rgba(212,175,55,.12);white-space:nowrap}
 .dm-table td:nth-child(2){white-space:normal;min-width:110px}
 @media(max-width:480px){.dm-table th:first-child,.dm-table td:first-child{display:none}}
+/* ---- Settings: AI Automation controls, AI Help Desk, Legal & Privacy; footer legal links; floating help button ---- */
+.st-subnav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.st-sub{font:700 13px/1 var(--sans);color:var(--ink-dim);background:rgba(24,21,15,.55);border:1px solid var(--border);border-radius:999px;padding:11px 16px;cursor:pointer;white-space:nowrap}
+.st-sub:hover{color:var(--ink);border-color:rgba(212,175,55,.5)}
+.st-sub[aria-selected="true"]{color:var(--gold);border-color:var(--gold);background:var(--gold-soft)}
+.st-sub:focus-visible,.st-switch:focus-visible,.hd-chip:focus-visible,.hd-send:focus-visible,.p-fab:focus-visible,.p-foot a:focus-visible,.st-legal a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.st-pane[hidden]{display:none}
+.st-card{margin-bottom:16px}
+.st-card h2{font-size:18px;font-weight:800;margin-bottom:6px}
+.st-card h3{font-size:15px;font-weight:700;margin:0 0 4px}
+.st-lede{color:var(--ink-dim);font-size:13.5px;line-height:1.5;max-width:68ch}
+.st-master{display:flex;align-items:center;justify-content:space-between;gap:18px}
+.st-master h2{margin-bottom:4px}
+.st-state{display:inline-block;margin-left:8px;font:700 10.5px/1 var(--sans);letter-spacing:.08em;vertical-align:middle;border-radius:999px;padding:5px 8px;color:#34D399;border:1px solid rgba(16,185,129,.4);background:var(--emerald-soft)}
+.st-state.off{color:#F87171;border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.12)}
+.st-switch{position:relative;flex:none;width:52px;height:30px;border-radius:999px;border:1px solid var(--border-strong);background:rgba(8,8,10,.7);cursor:pointer;transition:background .15s,border-color .15s;padding:0}
+.st-switch::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:var(--ink-dim);transition:transform .15s,background .15s}
+.st-switch[aria-checked="true"]{background:var(--emerald-soft);border-color:rgba(16,185,129,.55)}
+.st-switch[aria-checked="true"]::after{transform:translateX(22px);background:var(--emerald)}
+.st-switch[aria-disabled="true"]{opacity:.5;cursor:not-allowed}
+.st-note{min-height:20px;margin:0 0 12px;font-size:12.5px;font-weight:600;color:var(--ink-dim)}
+.st-note.err{color:#F87171}.st-note.ok{color:#34D399}
+.st-rows{display:flex;flex-direction:column;gap:10px}
+.st-row{display:flex;align-items:center;justify-content:space-between;gap:16px;background:rgba(8,8,10,.5);border:1px solid rgba(212,175,55,.18);border-radius:10px;padding:14px 16px}
+.st-row.paused{opacity:.55}
+.st-row b{font-size:14.5px;font-weight:800}
+.st-row p{margin:4px 0 0;font-size:12.5px;line-height:1.45;color:var(--ink-dim)}
+.st-fine{margin-top:14px;font-size:12px;line-height:1.5;color:var(--ink-faint)}
+.hd-log{display:flex;flex-direction:column;gap:12px;min-height:220px;max-height:440px;overflow-y:auto;padding:4px 4px 4px 0;margin:14px 0}
+.hd-msg{max-width:86%;padding:10px 14px;border-radius:14px;font-size:13.5px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere}
+.hd-msg.bot{align-self:flex-start;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-bottom-left-radius:4px}
+.hd-msg.you{align-self:flex-end;background:rgba(212,175,55,.15);border:1px solid rgba(212,175,55,.38);border-bottom-right-radius:4px}
+.hd-msg.sys{align-self:center;max-width:100%;text-align:center;font-size:12.5px;color:var(--ink-dim);background:none;border:1px dashed rgba(212,175,55,.32);border-radius:8px}
+.hd-chips{display:flex;gap:8px;flex-wrap:wrap}
+.hd-chip{font:600 12.5px/1.2 var(--sans);color:var(--ink-dim);background:rgba(24,21,15,.55);border:1px solid var(--border);border-radius:999px;padding:9px 13px;cursor:pointer;text-align:left}
+.hd-chip:hover{color:var(--ink);border-color:rgba(212,175,55,.5)}
+.hd-form{display:flex;gap:10px;align-items:flex-end}
+.hd-form textarea{flex:1;min-width:0;font:500 14px/1.4 var(--sans);color:var(--ink);background:rgba(8,8,10,.7);border:1px solid rgba(212,175,55,.25);border-radius:10px;padding:12px 14px;outline:none;resize:none;min-height:46px;max-height:140px}
+.hd-form textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(212,175,55,.18)}
+.hd-send{flex:none;width:auto;padding:14px 18px}
+.st-legal{max-width:78ch}
+.st-legal h3{margin:20px 0 6px;font-size:15px}
+.st-legal p,.st-legal li{font-size:13.5px;line-height:1.6;color:var(--ink-dim)}
+.st-legal ul{margin:6px 0 0 18px;padding:0}
+.st-legal a,.p-foot a{color:var(--gold)}
+.st-legal-links{display:flex;gap:10px 18px;flex-wrap:wrap;margin-top:18px;font-size:13px;font-weight:700}
+.p-foot{max-width:1180px;margin:0 auto;padding:0 24px calc(28px + env(safe-area-inset-bottom,0px));text-align:center;font-size:12px;line-height:1.7;color:var(--ink-faint)}
+.p-foot a{text-decoration:none;padding:6px 4px;display:inline-block}
+.p-foot a:hover{text-decoration:underline}
+.p-fab{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:40;display:inline-flex;align-items:center;gap:8px;font:800 13px/1 var(--sans);color:#08080A;background:var(--gold);border:1px solid var(--gold);border-radius:999px;padding:13px 16px;cursor:pointer;box-shadow:0 6px 24px rgba(0,0,0,.45)}
+.p-fab:hover{filter:brightness(1.08)}
+.p-fab[hidden]{display:none}
+@media(max-width:720px){.p-foot{padding-left:16px;padding-right:16px;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}.hd-msg{max-width:94%}.st-row{align-items:flex-start}.st-master{align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){.st-switch,.st-switch::after{transition:none}}
 </style>
 </head>
 <body>
@@ -635,10 +689,97 @@ section{margin-bottom:56px}
 
     <section data-panel="demo" aria-label="Demo preview" hidden><div id="demoRoot"></div></section>
 
+    <section data-panel="settings" aria-label="Settings" hidden>
+      <div class="st-subnav" role="tablist" aria-label="Settings sections">
+        <button type="button" role="tab" class="st-sub" id="stTabAi" data-st="ai" aria-selected="true" aria-controls="stPaneAi">AI Automation</button>
+        <button type="button" role="tab" class="st-sub" id="stTabHelp" data-st="help" aria-selected="false" aria-controls="stPaneHelp" tabindex="-1">Help &amp; Support</button>
+        <button type="button" role="tab" class="st-sub" id="stTabLegal" data-st="legal" aria-selected="false" aria-controls="stPaneLegal" tabindex="-1">Legal &amp; Privacy</button>
+      </div>
+
+      <div class="st-pane" id="stPaneAi" role="tabpanel" aria-labelledby="stTabAi">
+        <article class="p-card st-card st-master">
+          <div>
+            <h2>Auto-AI<span class="st-state" id="stMasterState">ON</span></h2>
+            <p class="st-lede">The master switch. When it is off, your bots stop acting on their own in every section below. Nothing is deleted, and each section keeps its own setting for when you turn it back on.</p>
+          </div>
+          <button type="button" class="st-switch" id="stMaster" role="switch" aria-checked="true" aria-label="Auto-AI master switch"></button>
+        </article>
+        <p class="st-note" id="stAiNote" role="status" aria-live="polite"></p>
+        <article class="p-card st-card">
+          <h3>Where autonomous AI is allowed</h3>
+          <p class="st-lede" style="margin-bottom:14px">Turn off any section to take over that work yourself. Changes apply to new activity right away.</p>
+          <div class="st-rows" id="stAiRows"></div>
+          <p class="st-fine">Opt-out requests (STOP) and HELP replies are always honored, even when Auto-AI is off. Messages already scheduled before you turn a section off are skipped, not sent late.</p>
+        </article>
+      </div>
+
+      <div class="st-pane" id="stPaneHelp" role="tabpanel" aria-labelledby="stTabHelp" hidden>
+        <article class="p-card st-card">
+          <h2>AI Help Desk</h2>
+          <p class="st-lede">Ask how your leads, call and text logs, and bot settings work. The assistant knows this portal and your NewSites features. It can explain and troubleshoot, but it can't change your account.</p>
+          <div class="hd-log" id="hdLog" role="log" aria-live="polite" aria-label="Help desk conversation"></div>
+          <div class="hd-chips" id="hdChips" aria-label="Suggested questions"></div>
+          <form class="hd-form" id="hdForm" autocomplete="off" style="margin-top:14px">
+            <textarea id="hdInput" rows="1" maxlength="1000" placeholder="Type your question…" aria-label="Your question"></textarea>
+            <button type="submit" class="p-btn hd-send" id="hdSend">Send</button>
+          </form>
+          <p class="st-fine" id="hdFine">AI answers can be wrong. For billing, legal or account changes, email <a href="mailto:stevendiolosa07@gmail.com">stevendiolosa07@gmail.com</a>. Help desk conversations may be saved to improve support.</p>
+        </article>
+      </div>
+
+      <div class="st-pane" id="stPaneLegal" role="tabpanel" aria-labelledby="stTabLegal" hidden>
+        <article class="p-card st-card st-legal">
+          <h2>Privacy Policy</h2>
+          <p class="st-lede">Last updated October 19, 2026. This is the version for portal users. The full public policy is at <a href="privacy.html">privacy.html</a>.</p>
+
+          <h3>1. Who this covers</h3>
+          <p>NewSites.com ("we") provides AI-powered call answering, texting, lead management and social posting for businesses. "You" means the business that holds this portal account. "Your contacts" means the people who call, text or submit their details to your business.</p>
+
+          <h3>2. Data we handle</h3>
+          <ul>
+            <li>Account data: your name, business details, email, phone number and portal access token.</li>
+            <li>Lead data: your contacts' names, phone numbers, emails, messages, lead scores and pipeline status.</li>
+            <li>Call data: call logs, recordings where enabled, and transcripts.</li>
+            <li>SMS/MMS data: message content, phone numbers, delivery status, and records of opt-in and opt-out.</li>
+            <li>Connected accounts: access tokens for social platforms and other tools you link.</li>
+            <li>Usage data: log data, IP address and browser type.</li>
+          </ul>
+
+          <h3>3. Text messaging (SMS/MMS)</h3>
+          <p>We send text messages only to people who contacted your business or agreed to be texted. Every contact can reply STOP to opt out and HELP for help, and we honor opt-outs automatically. No mobile information is shared with third parties or affiliates for marketing or promotional purposes. Opt-in data and consent are not shared with third parties except the providers that deliver messages, such as our carrier. See the <a href="sms.html">Text Messaging page</a>.</p>
+
+          <h3>4. AI interactions</h3>
+          <p>Our bots draft replies, summaries and posts using AI. To do this, the content of calls, texts and forms may be sent to AI model providers for processing. AI output can be wrong or incomplete, so review the settings and content you rely on. The Auto-AI controls in this Settings area let you decide where bots may act without your approval. Questions typed into the AI Help Desk are processed the same way and may be saved to improve support.</p>
+
+          <h3>5. Third-party services and integrations</h3>
+          <p>We share data only as needed to run the service, with providers such as our phone and SMS carrier (Twilio), AI model providers, email and payment providers, and any CRM, calendar or social platform (for example Meta, Google, X) you choose to connect. Those services have their own privacy policies. We do not sell personal information.</p>
+
+          <h3>6. Your responsibilities</h3>
+          <p>You are responsible for having the consent the law requires before your contacts are texted or called, for honoring opt-outs, for telling contacts when they are speaking with an AI assistant where the law requires it, and for call-recording notices that apply where you operate.</p>
+
+          <h3>7. Retention, security and your rights</h3>
+          <p>We keep data while your account is active or as needed to provide the service, and we use reasonable safeguards to protect it. No system is completely secure. You can ask us to access, correct, export or delete your data, or your contacts' data, by emailing us.</p>
+
+          <h3>8. Contact</h3>
+          <p>NewSites.com, <a href="mailto:stevendiolosa07@gmail.com">stevendiolosa07@gmail.com</a>. We may update this policy and will change the date above when we do.</p>
+
+          <div class="st-legal-links"><a href="privacy.html">Full Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="sms.html">Text Messaging terms</a></div>
+        </article>
+      </div>
+    </section>
+
     <section data-panel="other" aria-label="Section" hidden>
       <article class="p-card p-empty"><h2 id="portalEmptyTitle"></h2><p>This section isn't connected yet.</p></article>
     </section>
   </main>
+
+  <footer class="p-foot" id="portalFoot">
+    <span>© 2026 NewSites.com</span> ·
+    <a href="privacy.html">Privacy Policy</a> ·
+    <a href="terms.html">Terms of Service</a> ·
+    <a href="sms.html">Text Messaging</a>
+  </footer>
+  <button type="button" class="p-fab" id="portalHelpFab" hidden aria-label="Help and support"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2.5 3.5h11a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H8l-3 2.5V11.5H2.5a1 1 0 0 1-1-1v-6a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>Help</button>
 
   <div class="p-toast glass" id="portalToast" role="status" aria-live="polite"></div>
 </div>
@@ -1452,8 +1593,9 @@ function renderPortal(){
   portalEl.querySelectorAll('[data-bind]').forEach(el=>{ el.textContent=loading?'–':portalData[el.dataset.bind].toLocaleString('en-US'); });
   portalEl.querySelectorAll('[data-metric]').forEach(el=>{ el.dataset.value=portalData[el.dataset.metric]; });
   renderPortalPipeline(loading);
-  pEl('portalAi').classList.toggle('off',!portalData.aiEnabled);
-  pEl('portalAiText').textContent=portalData.aiEnabled?'AI ON':'AI OFF';
+  const aiOn=portalData.aiEnabled&&!window.portalAiMasterOff;
+  pEl('portalAi').classList.toggle('off',!aiOn);
+  pEl('portalAiText').textContent=aiOn?'AI ON':'AI OFF';
   renderPortalStatus();
 }
 function syncPortalChrome(){ // which panel / header controls show for the current mode + tab + plan
@@ -1465,7 +1607,10 @@ function syncPortalChrome(){ // which panel / header controls show for the curre
   portalEl.querySelector('[data-panel="fn"]').hidden=!fnTab;
   const demoTab=!login&&portalMode==='sample'&&!!DEMO_TABS[portalTab]; // sample preview: Operations, War Room, Finance and Social Engine show labelled sample panels
   portalEl.querySelector('[data-panel="demo"]').hidden=!demoTab;
-  portalEl.querySelector('[data-panel="other"]').hidden=login||portalTab==='overview'||fnTab||demoTab;
+  portalEl.querySelector('[data-panel="other"]').hidden=login||portalTab==='overview'||portalTab==='settings'||fnTab||demoTab;
+  portalEl.querySelector('[data-panel="settings"]').hidden=login||portalTab!=='settings';
+  pEl('portalHelpFab').hidden=login;
+  renderPortalSettings();
   pEl('portalAi').hidden=login;
   const so=pEl('portalSignOut'),word=portalMode==='live'?'Sign out':'Sign in';
   so.hidden=login||loading||!portalNeedsLogin(); pEl('portalSoText').textContent=word; so.setAttribute('aria-label',word);
@@ -1608,6 +1753,151 @@ pEl('portalLogin').addEventListener('submit',e=>{
 });
 pEl('portalPreview').addEventListener('click',()=>enterPortalSample());
 pEl('portalSignOut').addEventListener('click',()=>{ if(portalMode==='live') portalSignOut(''); else enterPortalLogin(''); });
+
+/* ===== Settings: AI Automation controls (master + per-section), AI Help Desk, Legal & Privacy ===== */
+const PORTAL_AI_URL=PORTAL_API+'/ai-controls',PORTAL_HELP_URL=PORTAL_API+'/help-chat';
+const AI_SECTIONS=[
+  {key:'leads',name:'Lead Generation',subs:'Speed-to-Lead replies and SMS text-backs to new leads and missed calls'},
+  {key:'voice',name:'AI Voice & SMS',subs:'Concierge booking and call transcription'},
+  {key:'social',name:'Social Engine',subs:'Automated post generation and auto-publishing'},
+  {key:'reputation',name:'Reputation / Follow-ups',subs:'Review request dispatcher and scheduled follow-ups'}
+];
+const aiCtl={master:true,sections:{leads:true,voice:true,social:true,reputation:true},loaded:false,loading:false,busy:false,mode:'idle'}; // mode: idle | ok | offline | sample
+const aiPrefix=()=>portalMode==='sample'?'Sample preview: changes are not saved.':'';
+function setAiNote(msg,kind){ const n=pEl('stAiNote'); n.textContent=msg||''; n.className='st-note'+(kind?' '+kind:''); }
+function normAiControls(j){
+  if(!j||typeof j!=='object') return null;
+  const src=(j.controls&&typeof j.controls==='object')?j.controls:j;
+  const m=src.master!==undefined?src.master:(src.enabled!==undefined?src.enabled:src.auto_ai);
+  const out={master:m!==false&&m!==0&&m!=='false',sections:{}};
+  AI_SECTIONS.forEach(s=>{ const v=src.sections&&typeof src.sections==='object'?src.sections[s.key]:undefined; out.sections[s.key]=v!==false&&v!==0&&v!=='false'; });
+  return out;
+}
+function syncAiMaster(){ window.portalAiMasterOff=!aiCtl.master; queuePortalRender(); }
+function renderAiControls(){
+  const locked=aiCtl.busy||aiCtl.mode==='offline'||aiCtl.mode==='idle'&&portalMode==='live'&&!aiCtl.loaded;
+  const m=pEl('stMaster'); m.setAttribute('aria-checked',String(aiCtl.master)); m.setAttribute('aria-disabled',String(locked));
+  const st=pEl('stMasterState'); st.textContent=aiCtl.master?'ON':'OFF'; st.classList.toggle('off',!aiCtl.master);
+  const rows=pEl('stAiRows');
+  if(!rows.children.length){
+    rows.innerHTML=AI_SECTIONS.map(s=>'<div class="st-row" data-row="'+s.key+'"><div><b>'+s.name+'</b><p>'+s.subs+'</p></div>'
+      +'<button type="button" class="st-switch" role="switch" data-ai="'+s.key+'" aria-label="'+s.name+' Auto-AI"></button></div>').join('');
+  }
+  rows.querySelectorAll('[data-ai]').forEach(b=>{
+    const k=b.dataset.ai; b.setAttribute('aria-checked',String(!!aiCtl.sections[k])); b.setAttribute('aria-disabled',String(locked));
+    b.closest('.st-row').classList.toggle('paused',!aiCtl.master);
+  });
+}
+async function loadAiControls(){
+  if(aiCtl.loading) return; aiCtl.loading=true;
+  try{
+    const n=normAiControls(await portalGet(PORTAL_AI_URL,portalToken));
+    if(!n) throw new Error('bad response');
+    aiCtl.master=n.master; aiCtl.sections=n.sections; aiCtl.mode='ok'; setAiNote('');
+  }catch(e){
+    if(e instanceof PortalAuthError){ aiCtl.loading=false; portalSignOut('Your session expired. Sign in again.'); return; }
+    aiCtl.mode='offline'; setAiNote('Automation controls aren’t connected on the server yet, so changes can’t be saved. Your bots keep running as they are.','err');
+  }
+  aiCtl.loaded=true; aiCtl.loading=false; syncAiMaster(); renderAiControls();
+}
+async function saveAiControls(prev){
+  if(portalMode!=='live'){ setAiNote(aiPrefix(),''); syncAiMaster(); renderAiControls(); return; }
+  aiCtl.busy=true; renderAiControls(); setAiNote('Saving…','');
+  const ac=new AbortController(),timer=setTimeout(()=>ac.abort(),15000);
+  try{
+    const r=await fetch(portalUrl(PORTAL_AI_URL),{method:'PUT',headers:portalHeaders(portalToken,{'Content-Type':'application/json'}),cache:'no-store',credentials:'omit',signal:ac.signal,
+      body:JSON.stringify({master:aiCtl.master,sections:aiCtl.sections})});
+    if(r.status===401||r.status===403) throw new PortalAuthError('unauthorized');
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const n=normAiControls(await r.json()); if(n){ aiCtl.master=n.master; aiCtl.sections=n.sections; }
+    setAiNote('Saved. The bots follow this right away.','ok');
+  }catch(e){
+    if(e instanceof PortalAuthError){ clearTimeout(timer); aiCtl.busy=false; portalSignOut('Your session expired. Sign in again.'); return; }
+    aiCtl.master=prev.master; aiCtl.sections=prev.sections; setAiNote('Couldn’t save that change, so it was reverted. Check your connection and try again.','err');
+  }finally{ clearTimeout(timer); }
+  aiCtl.busy=false; syncAiMaster(); renderAiControls();
+}
+function toggleAi(key){
+  if(aiCtl.busy||(portalMode==='live'&&aiCtl.mode!=='ok')) return;
+  const prev={master:aiCtl.master,sections:Object.assign({},aiCtl.sections)};
+  if(key==='master') aiCtl.master=!aiCtl.master; else aiCtl.sections[key]=!aiCtl.sections[key];
+  if(portalMode==='sample') setAiNote(aiPrefix(),'');
+  saveAiControls(prev);
+}
+pEl('stMaster').addEventListener('click',()=>toggleAi('master'));
+pEl('stAiRows').addEventListener('click',e=>{ const b=e.target.closest('[data-ai]'); if(b) toggleAi(b.dataset.ai); });
+
+/* ---- sub-tabs ---- */
+let stSub='ai';
+function updateFab(){ pEl('portalHelpFab').hidden=portalMode==='login'||(portalTab==='settings'&&stSub==='help'); }
+function setStSub(id,focus){
+  if(!['ai','help','legal'].includes(id)) return; stSub=id;
+  portalEl.querySelectorAll('.st-sub').forEach(b=>{ const on=b.dataset.st===id; b.setAttribute('aria-selected',String(on)); b.tabIndex=on?0:-1; });
+  [['ai','stPaneAi'],['help','stPaneHelp'],['legal','stPaneLegal']].forEach(([k,p])=>{ pEl(p).hidden=k!==id; });
+  if(id==='help') initHelpDesk();
+  updateFab();
+  if(focus){ const t=pEl(id==='ai'?'stTabAi':id==='help'?'stTabHelp':'stTabLegal'); t.focus(); }
+}
+portalEl.querySelector('.st-subnav').addEventListener('click',e=>{ const b=e.target.closest('.st-sub'); if(b) setStSub(b.dataset.st); });
+portalEl.querySelector('.st-subnav').addEventListener('keydown',e=>{
+  const ids=['ai','help','legal'],i=ids.indexOf(stSub);
+  if(e.key==='ArrowRight'){ e.preventDefault(); setStSub(ids[(i+1)%3],true); }
+  else if(e.key==='ArrowLeft'){ e.preventDefault(); setStSub(ids[(i+2)%3],true); }
+});
+
+/* ---- AI Help Desk ---- */
+const HD_CHIPS=['What do the Auto-AI switches do?','Why didn’t a lead get a text reply?','How does a contact opt out of texts?','How do I read my call and text logs?'];
+const HD_HELLO='Hi! I’m the NewSites help assistant. Ask me about your leads, call and text logs, or bot settings.';
+const hdHist=[]; let hdBusy=false,hdReady=false;
+function hdAdd(role,text){
+  const d=document.createElement('div'); d.className='hd-msg '+role; d.textContent=text;
+  const log=pEl('hdLog'); log.appendChild(d); log.scrollTop=log.scrollHeight; return d;
+}
+function initHelpDesk(){
+  const live=portalMode==='live';
+  pEl('hdInput').disabled=!live; pEl('hdSend').disabled=!live||hdBusy;
+  pEl('hdInput').placeholder=live?'Type your question…':'Sign in to use the help desk';
+  if(hdReady) return; hdReady=true;
+  hdAdd('bot',HD_HELLO);
+  pEl('hdChips').innerHTML=''; HD_CHIPS.forEach(q=>{ const b=document.createElement('button'); b.type='button'; b.className='hd-chip'; b.textContent=q; b.addEventListener('click',()=>sendHelp(q)); pEl('hdChips').appendChild(b); });
+}
+async function sendHelp(text){
+  text=String(text||'').trim().slice(0,1000);
+  if(!text||hdBusy) return;
+  if(portalMode!=='live'){ hdAdd('sys','The help desk needs a signed-in account. Sign in with your portal token to use it.'); return; }
+  hdBusy=true; pEl('hdSend').disabled=true; pEl('hdChips').hidden=true;
+  hdAdd('you',text); hdHist.push({role:'user',content:text});
+  const wait=hdAdd('sys','Thinking…'),ac=new AbortController(),timer=setTimeout(()=>ac.abort(),45000);
+  let reply='';
+  try{
+    const r=await fetch(portalUrl(PORTAL_HELP_URL),{method:'POST',headers:portalHeaders(portalToken,{'Content-Type':'application/json'}),cache:'no-store',credentials:'omit',signal:ac.signal,
+      body:JSON.stringify({messages:hdHist.slice(-10)})});
+    if(r.status===401||r.status===403) throw new PortalAuthError('unauthorized');
+    if(r.status===429) reply='You’re sending messages too quickly. Wait a minute and try again.';
+    else if(!r.ok) throw new Error('HTTP '+r.status);
+    else{ const j=await r.json(); reply=(j&&typeof j.reply==='string')?j.reply.trim().slice(0,4000):''; }
+    if(!reply) throw new Error('empty');
+  }catch(e){
+    if(e instanceof PortalAuthError){ clearTimeout(timer); wait.remove(); hdBusy=false; portalSignOut('Your session expired. Sign in again.'); return; }
+    reply='The help desk isn’t available right now. Email stevendiolosa07@gmail.com and we’ll answer there.';
+    hdHist.pop();
+  }finally{ clearTimeout(timer); }
+  wait.remove(); hdAdd('bot',reply); if(hdHist.length&&hdHist[hdHist.length-1].role==='user') hdHist.push({role:'assistant',content:reply});
+  hdBusy=false; initHelpDesk();
+}
+pEl('hdForm').addEventListener('submit',e=>{ e.preventDefault(); const i=pEl('hdInput'),v=i.value; i.value=''; i.style.height=''; sendHelp(v); });
+pEl('hdInput').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){ e.preventDefault(); pEl('hdForm').requestSubmit(); } });
+pEl('hdInput').addEventListener('input',e=>{ const t=e.target; t.style.height='auto'; t.style.height=Math.min(t.scrollHeight,140)+'px'; });
+pEl('portalHelpFab').addEventListener('click',()=>{ setPortalTab('settings'); setStSub('help'); pEl('hdInput').focus({preventScroll:true}); });
+
+/* ---- chrome hook: called from syncPortalChrome ---- */
+function renderPortalSettings(){
+  updateFab();
+  if(portalMode==='login'){ aiCtl.loaded=false; aiCtl.mode='idle'; aiCtl.master=true; aiCtl.sections={leads:true,voice:true,social:true,reputation:true}; window.portalAiMasterOff=false; hdHist.length=0; hdReady=false; pEl('hdLog').innerHTML=''; pEl('hdChips').hidden=false; return; }
+  if(portalMode==='sample'&&aiCtl.mode!=='sample'){ aiCtl.mode='sample'; setAiNote(aiPrefix(),''); }
+  if(portalMode==='live'&&!aiCtl.loaded&&!aiCtl.loading) loadAiControls();
+  renderAiControls(); initHelpDesk();
+}
 
 /* ---- Demo preview (sample mode only): Operations, War Room, Finance and Social Engine filled with LABELLED sample data so a visitor can click through
    every section. A real, signed-in account never sees this: its tabs follow the plan rule above and show real data or "not connected yet". ---- */
