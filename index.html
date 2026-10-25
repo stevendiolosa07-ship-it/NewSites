@@ -1808,8 +1808,10 @@
           pb.disabled=true; var orig=pb.textContent; pb.textContent="Posting...";
           try{
             var capEl=postEl.querySelector(".pt");
-            var r=await fetch("https://164.92.110.116.nip.io/api/social/publish",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({imageDataUrl:cv.toDataURL("image/png"),caption:capEl?capEl.textContent:""})});
+            var ok_=""; try{ ok_=sessionStorage.getItem("crm_key")||""; }catch(e4){}
+            var r=await fetch("https://164.92.110.116.nip.io/api/social/publish",{method:"POST",headers:{"Content-Type":"application/json","X-Admin-Key":ok_},body:JSON.stringify({imageDataUrl:cv.toDataURL("image/png"),caption:capEl?capEl.textContent:""})});
             var j={}; try{ j=await r.json(); }catch(e2){}
+            if(r.status===401){ try{ sessionStorage.removeItem("crm_key"); }catch(e5){} pb.textContent="Owner key rejected"; setTimeout(function(){ pb.textContent=orig; pb.disabled=false; },2600); return; }
             if(r.status===503){ pb.textContent="Connect Facebook first"; setTimeout(function(){ pb.textContent=orig; pb.disabled=false; },2600); return; }
             if(!r.ok||!j.ok) throw new Error(j.error||("HTTP "+r.status));
             pb.textContent="Posted \u2713"; pb.style.background="rgba(74,222,128,0.9)";
@@ -1858,7 +1860,7 @@
             }catch(e){ vb.textContent="Failed: "+String(e.message).slice(0,36); setTimeout(function(){ vb.textContent=vo; vb.disabled=false; },3200); }
           };
         }
-        row.appendChild(dl); row.appendChild(pb); row.appendChild(vb);
+        row.appendChild(dl); var ownerOn=false; try{ ownerOn=!!sessionStorage.getItem("crm_key"); }catch(e6){} if(ownerOn) row.appendChild(pb); row.appendChild(vb);
         postEl.appendChild(row);
       }
 
