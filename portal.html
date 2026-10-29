@@ -579,6 +579,39 @@ section{margin-bottom:56px}
 .p-fab[hidden]{display:none}
 @media(max-width:720px){.p-foot{padding-left:16px;padding-right:16px;padding-bottom:calc(84px + env(safe-area-inset-bottom,0px))}.hd-msg{max-width:94%}.st-row{align-items:flex-start}.st-master{align-items:flex-start}}
 @media(prefers-reduced-motion:reduce){.st-switch,.st-switch::after{transition:none}}
+
+/* CRM + Modules */
+.p-subnav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin:-6px 0 18px;padding-bottom:2px;border-bottom:1px solid rgba(212,175,55,.18)}
+.p-subnav::-webkit-scrollbar{display:none}
+.p-subnav[hidden]{display:none}
+.p-subnav .p-link{font-size:12.5px;padding:9px 11px}
+.crm-metrics{margin-top:16px}
+.crm-card{margin-top:16px}
+.crm-bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.crm-search{flex:1 1 260px;min-width:0;background:rgba(8,8,10,.6);border:1px solid var(--border);border-radius:8px;color:var(--ink);font:500 14px/1 var(--sans);padding:12px 14px}
+.crm-search:focus{outline:2px solid var(--gold);outline-offset:1px}
+.crm-count{color:var(--ink-dim);font-size:12.5px}
+.crm-stages{margin-bottom:14px}
+.crm-score{font-weight:800;color:var(--gold)}
+.crm-score.hot{color:#FF9A8A}
+.p-sn{color:var(--gold);font-weight:800;margin-right:2px}
+.mod-lede{color:var(--ink-dim);font-size:14px;line-height:1.55;margin:6px 0 0;max-width:70ch}
+.mod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:16px}
+.mod-card{display:flex;flex-direction:column;gap:8px;text-align:left;cursor:pointer;color:inherit;font:inherit;min-width:0}
+.mod-card:hover{border-color:rgba(212,175,55,.55)}
+.mod-card:focus-visible,.mod-back:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.mod-card.locked{opacity:.72}
+.mod-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mod-n{font:700 11px/1 var(--sans);letter-spacing:.1em;color:var(--gold)}
+.mod-name{font-size:15px;font-weight:800;margin:0}
+.mod-short{color:var(--ink-dim);font-size:13px;line-height:1.5;margin:0}
+.mod-foot{margin-top:auto;font-size:11.5px;color:var(--ink-faint)}
+.mod-back{background:none;border:0;color:var(--gold);font:700 13px/1 var(--sans);cursor:pointer;padding:6px 0;margin-bottom:10px}
+.mod-detail h2{font-size:22px;margin:0 0 4px}
+.mod-desc{font-size:15px;line-height:1.65;margin:14px 0 0;max-width:72ch}
+.mod-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-top:16px}
+.mod-meta .p-card h3{font-size:14px;margin:0 0 8px}
+.mod-meta .p-card p{margin:0 0 12px;color:var(--ink-dim);font-size:13.5px;line-height:1.55}
 </style>
 </head>
 <body>
@@ -591,11 +624,13 @@ section{margin-bottom:56px}
     <nav class="p-nav" id="portalNav" aria-label="Client portal">
       <button type="button" class="p-link active" data-tab="overview" aria-current="page">Overview</button>
       <button type="button" class="p-link" data-tab="leads">Lead Generation</button>
+      <button type="button" class="p-link" data-tab="crm">CRM</button>
       <button type="button" class="p-link" data-tab="voice">AI Voice &amp; SMS</button>
       <button type="button" class="p-link" data-tab="social">Social Engine</button>
       <button type="button" class="p-link locked" data-tab="ops" data-gated data-locked aria-disabled="true" title="Locked">Operations<svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button type="button" class="p-link locked" data-tab="war" data-gated data-locked aria-disabled="true" title="Locked">War Room <em class="p-demo">DEMO</em><svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <button type="button" class="p-link locked" data-tab="finance" data-gated data-locked aria-disabled="true" title="Locked">Finance<svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="p-link" data-tab="modules">Modules</button>
       <button type="button" class="p-link" data-tab="settings">Settings</button>
     </nav>
     <div class="p-actions">
@@ -606,6 +641,7 @@ section{margin-bottom:56px}
 
   <main class="p-main" id="portalMain" tabindex="-1">
     <h1 class="sr-only" id="portalTitle">Overview</h1>
+    <nav class="p-subnav" id="portalSubnav" aria-label="Modules" hidden></nav>
 
     <section data-panel="login" aria-label="Client login" hidden>
       <form class="p-card p-login" id="portalLogin" novalidate autocomplete="off">
@@ -643,7 +679,7 @@ section{margin-bottom:56px}
     <h2 class="ov-live-h" id="heroTitle">Your bot team</h2>
     <div class="office-hero">
       <div class="office-stage">
-        <canvas id="officeCanvas" width="1000" height="740" role="img" aria-label="Pixel-art office: one room per agent pod, with the gateway agent routing requests to each desk"></canvas>
+        <canvas id="officeCanvas" width="1000" height="740" role="img" aria-label="Pixel-art office: eight rooms, one per agent pod, with the gateway agent routing requests to each desk"></canvas>
         <div class="office-banner glass" id="officeBanner" role="status" aria-live="polite">
           <span class="ob-logo" id="obLogo"></span>
           <span class="ob-text"><b class="ob-name" id="obName"></b><span class="ob-model" id="obModel"></span></span>
@@ -768,6 +804,34 @@ section{margin-bottom:56px}
       </div>
     </section>
 
+    <section data-panel="crm" aria-label="CRM" hidden>
+      <article class="p-card fn-head">
+        <div class="fn-head-top">
+          <div><h2>CRM</h2><p class="fn-lede">Every lead the bots capture lands here, scored and staged. Search your contacts, filter by pipeline stage and see who needs you first.</p></div>
+          <span class="fn-sample" id="crmSample" hidden>SAMPLE DATA</span>
+        </div>
+      </article>
+      <div class="p-metrics crm-metrics">
+        <article class="p-card p-metric"><b class="p-num" data-bind="totalLeads">0</b><span>Total Leads</span></article>
+        <article class="p-card p-metric"><b class="p-num" data-bind="newThisWeek">0</b><span>New This Week</span></article>
+        <article class="p-card p-metric"><b class="p-num" data-bind="hotLeads">0</b><span>Hot Leads</span></article>
+        <article class="p-card p-metric"><b class="p-num" data-bind="scheduledFollowups">0</b><span>Scheduled Follow-ups</span></article>
+      </div>
+      <article class="p-card crm-card">
+        <div class="crm-bar">
+          <label class="sr-only" for="crmSearch">Search contacts</label>
+          <input class="crm-search" id="crmSearch" type="search" placeholder="Search name, phone, email or source" autocomplete="off" maxlength="80">
+          <span class="crm-count" id="crmCount" role="status" aria-live="polite"></span>
+        </div>
+        <div class="dm-chips crm-stages" id="crmStages" role="group" aria-label="Filter by pipeline stage"></div>
+        <div id="crmTable"></div>
+        <p class="dm-note" id="crmNote"></p>
+        <button type="button" class="dm-btn ghost" id="crmSampleBtn" hidden>Preview with sample contacts</button>
+      </article>
+    </section>
+
+    <section data-panel="mod" aria-label="Modules" hidden><div id="modRoot"></div></section>
+
     <section data-panel="other" aria-label="Section" hidden>
       <article class="p-card p-empty"><h2 id="portalEmptyTitle"></h2><p>This section isn't connected yet.</p></article>
     </section>
@@ -791,9 +855,12 @@ section{margin-bottom:56px}
 const tasks=[
  {pod:"Speed-to-Lead",model:"Gemini 3 Flash",dot:"google",sub:["Inbound Call Listener","SMS Converter","Instant Response Bot","Lead Classifier"]},
  {pod:"Lead Scorer",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Data Enrichment Bot","Intent Analyzer Bot","B2B Matcher Bot","CRM Sync Bot"]},
- {pod:"Content Bot",model:"GPT-5.4 Mini",dot:"openai",sub:["Copywriting Bot","Visual Asset Renderer","Multi-Platform Publisher","Asset Generator","Revenue Attribution","Upsell Trigger"]},
+ {pod:"Content Bot",model:"GPT-5.4 Mini",dot:"openai",sub:["Copywriting Bot","Visual Asset Renderer","Multi-Platform Publisher","Asset Generator"]},
  {pod:"Reputation Bot",model:"Kimi K2.6",dot:"moonshot",sub:["Sentiment Analyzer","Review Prompt Dispatcher","Escalation Handler"]},
- {pod:"Concierge Bot",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Speech-to-Text Transcriber","NLP Intent Engine","Calendar Booking Agent","Follow-up Notifier"]}
+ {pod:"Concierge Bot",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Speech-to-Text Transcriber","NLP Intent Engine","Calendar Booking Agent","Follow-up Notifier"]},
+ {pod:"Finance Bot",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Finance AI Analyst","Project Profit Tracker","Forecasting Bot","Report Builder"]},
+ {pod:"Revenue Engine",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Asset Tracker","Revenue Attribution","Upsell Trigger","Audit-Ready Reporter"]},
+ {pod:"Custom Systems",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Legacy API Connector","Workflow Builder","Document Intake Bot","Integration Architect"]}
 ];
 /* ===== Bot functions: ONE roster feeds the function pills, the office highlights, the agent list and the portal bot/model attribution ===== */
 const FUNCTIONS=[
@@ -801,10 +868,12 @@ const FUNCTIONS=[
   {id:'leads',label:'Lead Generation',hint:'Speed-to-Lead / Lead Scorer'},
   {id:'voice',label:'AI Voice & SMS',hint:'Concierge / Missed-Call Text Back'},
   {id:'social',label:'Social Engine',hint:'Content Generator'},
-  {id:'reputation',label:'Reputation',hint:'Review Request Follow-up'}
+  {id:'reputation',label:'Reputation',hint:'Review Request Follow-up'},
+  {id:'finance',label:'Finance & Revenue',hint:'Finance AI / Asset & Revenue Engine'},
+  {id:'custom',label:'Custom Systems',hint:'Integrations for bigger businesses'}
 ];
 const FN_BY_ID=Object.fromEntries(FUNCTIONS.map(f=>[f.id,f]));
-const POD_FN={'Speed-to-Lead':'leads','Lead Scorer':'leads','Concierge Bot':'voice','Content Bot':'social','Reputation Bot':'reputation'};
+const POD_FN={'Speed-to-Lead':'leads','Lead Scorer':'leads','Concierge Bot':'voice','Content Bot':'social','Reputation Bot':'reputation','Finance Bot':'finance','Revenue Engine':'finance','Custom Systems':'custom'};
 // The Speed-to-Lead pod is split across two functions: its call listener + SMS converter ARE the missed-call text-back (AI Voice & SMS),
 // while its instant responder + classifier work new leads (Lead Generation).
 const SUB_FN={'Inbound Call Listener':'voice','SMS Converter':'voice'};
@@ -921,18 +990,22 @@ const CORRIDOR={x:60,y:340,w:880,h:60};
 const MIDY=370;
 const LOBBY={x:410,y:300,w:180,h:140};
 const LOBBY_CX=LOBBY.x+LOBBY.w/2;
-const ROOM_DEFS=[
- {rx:80,ry:40,rw:240,rh:260,side:'top'},
- {rx:390,ry:40,rw:240,rh:260,side:'top'},
- {rx:700,ry:40,rw:240,rh:260,side:'top'},
- {rx:80,ry:440,rw:240,rh:260,side:'bottom'},
- {rx:700,ry:440,rw:240,rh:260,side:'bottom'},
+const ROOM_DEFS=[ // 4 x 2 grid: doors at x=155/385/615/845, so the two middle doors sit clear of the lobby walls (x=410 and x=590)
+ {rx:60,ry:40,rw:190,rh:260,side:'top'},
+ {rx:290,ry:40,rw:190,rh:260,side:'top'},
+ {rx:520,ry:40,rw:190,rh:260,side:'top'},
+ {rx:750,ry:40,rw:190,rh:260,side:'top'},
+ {rx:60,ry:440,rw:190,rh:260,side:'bottom'},
+ {rx:290,ry:440,rw:190,rh:260,side:'bottom'},
+ {rx:520,ry:440,rw:190,rh:260,side:'bottom'},
+ {rx:750,ry:440,rw:190,rh:260,side:'bottom'},
 ];
 function wrapLines(text,maxW,cw){
-  const words=text.split(' '); const lines=[]; let cur='';
-  words.forEach(w=>{
-    const test=cur?cur+' '+w:w;
-    if(cur&&test.length*cw>maxW){ lines.push(cur); cur=w; } else cur=test;
+  const toks=[]; text.split(' ').forEach(w=>{ if(w.length*cw>maxW&&w.indexOf('-')>0){ w.match(/[^-]+-?/g).forEach((p,i)=>toks.push({t:p,glue:i>0})); } else toks.push({t:w,glue:false}); }); // long hyphenated names break after the hyphen
+  const lines=[]; let cur='';
+  toks.forEach(k=>{
+    const test=cur?(k.glue?cur+k.t:cur+' '+k.t):k.t;
+    if(cur&&test.length*cw>maxW){ lines.push(cur); cur=k.t; } else cur=test;
   });
   if(cur) lines.push(cur);
   return lines.slice(0,3);
@@ -1137,8 +1210,10 @@ function drawOfficeRoom(r){
   octx.strokeRect(r.x,r.y,r.w,r.h); octx.shadowBlur=0;
   octx.strokeStyle='#1b1712'; octx.lineWidth=8; octx.beginPath();
   octx.moveTo(r.doorX-18,r.doorY); octx.lineTo(r.doorX+18,r.doorY); octx.stroke();
-  octx.fillStyle='#D4AF37'; octx.font="14px 'Press Start 2P'"; octx.textAlign='center';
-  octx.fillText(r.name.toUpperCase(),r.x+r.w/2,r.y+28);
+  octx.fillStyle='#D4AF37'; octx.textAlign='center';
+  const rn=r.name.toUpperCase(); let rfs=14; octx.font=rfs+"px 'Press Start 2P'";
+  while(rfs>8&&octx.measureText(rn).width>r.w-16){ rfs--; octx.font=rfs+"px 'Press Start 2P'"; } // long room names shrink to fit the room
+  octx.fillText(rn,r.x+r.w/2,r.y+28);
   const nowMs=performance.now();
   r.desks.forEach(d=>{
     const active=bannerAgent&&bannerAgent.room===r&&bannerAgent.desk===d,k=1-d.dim;
@@ -1212,6 +1287,7 @@ const PORTAL_API='https://164.92.110.116.nip.io/portal-api';
 const PORTAL_CONFIG={
   apiUrl:PORTAL_API+'/summary',       // lead metrics. '' = no live API: the portal shows built-in sample numbers, labelled as sample data
   settingsUrl:PORTAL_API+'/settings', // account settings incl. the plan tier, fetched together with the metrics. '' = skip (plan unknown -> gated tabs stay locked)
+  contactsUrl:PORTAL_API+'/contacts', // CRM tab contact list (GET, X-Portal-Token). Until the server has this route the tab says so and the pipeline counts still work
   conversationsUrl:PORTAL_API+'/conversations', // Lead Generation / AI Voice & SMS threads + activity, fetched when one of those tabs opens. '' = off. Needs a server route (see the format below)
   requireToken:true,                  // the client's portal token is required; false is only for a public, non-sensitive feed
   tokenHeader:'X-Portal-Token',       // the token travels ONLY in this request header - never in a URL
@@ -1327,9 +1403,10 @@ window.addEventListener('newsites:portal-data',e=>ingestPortalPayload(e.detail))
 /* ---- plan tier -> which gated tabs are open (display rule only; the server enforces real access) ---- */
 const PORTAL_LOCK_SVG='<svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const portalGatesOpen=()=>(portalMode==='sample'&&PORTAL_CONFIG.unlockInSample!==false)||(portalMode==='live'&&PORTAL_CONFIG.unlockPlans.map(s=>String(s).toLowerCase()).includes(portalPlan));
-function portalTabLabel(btn){ const c=btn.cloneNode(true); c.querySelectorAll('.p-demo,.p-lock').forEach(n=>n.remove()); return c.textContent.trim().replace(/\s+/g,' '); } // tab name without the DEMO badge / lock icon
+function portalTabLabel(btn){ const c=btn.cloneNode(true); c.querySelectorAll('.p-demo,.p-lock,.p-sn').forEach(n=>n.remove()); return c.textContent.trim().replace(/\s+/g,' '); } // tab name without the DEMO badge / lock icon
 function markPortalTab(id){
   portalEl.querySelectorAll('.p-link').forEach(b=>{const on=b.dataset.tab===id; b.classList.toggle('active',on); if(on) b.setAttribute('aria-current','page'); else b.removeAttribute('aria-current');});
+  if(id.indexOf('m-')===0){ const pm=portalEl.querySelector('.p-link[data-tab="modules"]'); if(pm){ pm.classList.add('active'); pm.setAttribute('aria-current','page'); } } // a module page keeps the Modules tab lit
   portalTab=id;
 }
 function renderPortalLocks(){
@@ -1339,7 +1416,7 @@ function renderPortalLocks(){
     if(open){ b.removeAttribute('data-locked'); b.removeAttribute('aria-disabled'); b.removeAttribute('title'); const i=b.querySelector('.p-lock'); if(i) i.remove(); }
     else{ b.setAttribute('data-locked',''); b.setAttribute('aria-disabled','true'); b.title='Locked'; if(!b.querySelector('.p-lock')) b.insertAdjacentHTML('beforeend',PORTAL_LOCK_SVG); }
   });
-  const cur=portalEl.querySelector('.p-link.active'); if(cur&&cur.hasAttribute('data-locked')) markPortalTab('overview'); // a tab that just re-locked can't stay open
+  const cur=portalEl.querySelector('.p-link[data-tab="'+portalTab+'"]'); if(cur&&cur.hasAttribute('data-locked')) markPortalTab('overview'); // a tab that just re-locked can't stay open
 }
 function setPortalPlan(p){ p=p||''; if(p!==portalPlan){ portalPlan=p; syncPortalChrome(); } }
 
@@ -1361,7 +1438,7 @@ const PORTAL_FN_TABS={
 const portalEmptyConv=status=>({status:status||'idle',threads:[],activity:[]});
 let portalConv=portalEmptyConv(),portalConvRendered='',portalConvMissing=false; // portalConvMissing: the server answered 404/501 once, so stop asking until the next sign-in
 const portalSel={};
-function resetPortalConv(){ portalConv=portalEmptyConv(); portalConvRendered=''; portalConvMissing=false; Object.keys(PORTAL_FN_TABS).forEach(k=>{ portalSel[k]={thread:'',bot:PORTAL_FN_TABS[k].primary.toLowerCase()}; }); }
+function resetPortalConv(){ if(typeof crmReset==='function') crmReset(); portalConv=portalEmptyConv(); portalConvRendered=''; portalConvMissing=false; Object.keys(PORTAL_FN_TABS).forEach(k=>{ portalSel[k]={thread:'',bot:PORTAL_FN_TABS[k].primary.toLowerCase()}; }); }
 resetPortalConv();
 
 /* sample threads: relative times, bot names from the roster, models resolved from the roster */
@@ -1593,6 +1670,7 @@ function renderPortal(){
   portalEl.querySelectorAll('[data-bind]').forEach(el=>{ el.textContent=loading?'–':portalData[el.dataset.bind].toLocaleString('en-US'); });
   portalEl.querySelectorAll('[data-metric]').forEach(el=>{ el.dataset.value=portalData[el.dataset.metric]; });
   renderPortalPipeline(loading);
+  if(portalTab==='crm'&&typeof renderPortalCrm==='function') renderPortalCrm();
   const aiOn=portalData.aiEnabled&&!window.portalAiMasterOff;
   pEl('portalAi').classList.toggle('off',!aiOn);
   pEl('portalAiText').textContent=aiOn?'AI ON':'AI OFF';
@@ -1607,18 +1685,24 @@ function syncPortalChrome(){ // which panel / header controls show for the curre
   portalEl.querySelector('[data-panel="fn"]').hidden=!fnTab;
   const demoTab=!login&&portalMode==='sample'&&!!DEMO_TABS[portalTab]; // sample preview: Operations, War Room, Finance and Social Engine show labelled sample panels
   portalEl.querySelector('[data-panel="demo"]').hidden=!demoTab;
-  portalEl.querySelector('[data-panel="other"]').hidden=login||portalTab==='overview'||portalTab==='settings'||fnTab||demoTab;
+  const crmTab=!login&&portalTab==='crm',modTab=!login&&(portalTab==='modules'||portalTab.indexOf('m-')===0);
+  portalEl.querySelector('[data-panel="crm"]').hidden=!crmTab;
+  portalEl.querySelector('[data-panel="mod"]').hidden=!modTab;
+  pEl('portalSubnav').hidden=!modTab;
+  portalEl.querySelector('[data-panel="other"]').hidden=login||portalTab==='overview'||portalTab==='settings'||fnTab||demoTab||crmTab||modTab;
   portalEl.querySelector('[data-panel="settings"]').hidden=login||portalTab!=='settings';
   pEl('portalHelpFab').hidden=login;
   renderPortalSettings();
   pEl('portalAi').hidden=login;
   const so=pEl('portalSignOut'),word=portalMode==='live'?'Sign out':'Sign in';
   so.hidden=login||loading||!portalNeedsLogin(); pEl('portalSoText').textContent=word; so.setAttribute('aria-label',word);
-  const active=portalEl.querySelector('.p-link.active'),label=active?portalTabLabel(active):'Overview';
+  const active=portalEl.querySelector('.p-link[data-tab="'+portalTab+'"]')||portalEl.querySelector('.p-link.active'),label=active?portalTabLabel(active):'Overview';
   pEl('portalEmptyTitle').textContent=label; pEl('portalTitle').textContent=login?'Client Login':label;
   renderPortal();
   if(fnTab) renderPortalFn();
   if(demoTab) renderPortalDemo();
+  if(crmTab) renderPortalCrm();
+  if(modTab) renderPortalMods();
 }
 
 /* ---- data: authenticated GETs - the token is sent in the X-Portal-Token header, never in the URL ---- */
@@ -1739,11 +1823,13 @@ function setPortalTab(id){
   if(!portalEl.querySelector('.p-link[data-tab="'+id+'"]')) return;
   markPortalTab(id); syncPortalChrome();
   if(PORTAL_FN_TABS[id]&&portalMode==='live') loadPortalConv();
+  if(id==='crm') loadPortalContacts();
+  window.scrollTo({top:0,behavior:'instant'});
 }
-pEl('portalNav').addEventListener('click',e=>{
+['portalNav','portalSubnav'].forEach(nid=>pEl(nid).addEventListener('click',e=>{
   const b=e.target.closest('.p-link'); if(!b) return;
   if(b.hasAttribute('data-locked')) showPortalToast(portalTabLabel(b)+' is locked on your current plan.'); else setPortalTab(b.dataset.tab);
-});
+}));
 pEl('portalLogin').addEventListener('submit',e=>{
   e.preventDefault();
   const t=pEl('portalToken').value.trim();
@@ -2039,6 +2125,118 @@ pEl('demoRoot').addEventListener('click',e=>{
   else if(act==='range') S.finance.range=n;
   renderPortalDemo();
   if(['plat','task','rule','range'].includes(act)){ const again=pEl('demoRoot').querySelector('[data-act="'+act+'"][data-id="'+CSS.escape(id)+'"]'); if(again) again.focus({preventScroll:true}); }
+});
+
+/* ===== CRM tab: live pipeline counts from the summary, contact list from PORTAL_CONFIG.contactsUrl ===================================
+   Expected response of GET contactsUrl:
+   {"contacts":[{"id":"c1","name":"Dana R.","phone":"(555) 010-0101","email":"dana@example.com","stage":"New Lead","score":78,"source":"Missed-call text-back","last":"2026-10-16T14:14:00Z"}]}
+   All text is written with textContent. A 404/501 means "route not built yet": the tab says so instead of showing an empty table. ===== */
+var crmSt={q:'',stage:'All',status:'idle',rows:[],seq:0};
+function crmReset(){ if(!crmSt) return; crmSt.q=''; crmSt.stage='All'; crmSt.status='idle'; crmSt.rows=[]; crmSt.seq++; var s=document.getElementById('crmSearch'); if(s) s.value=''; }
+var CRM_SAMPLE=[
+  {name:'Priya K.',phone:'(555) 010-0163',email:'priya@example.com',stage:'New Lead',score:81,source:'Missed-call text-back',last:'Today'},
+  {name:'Dana R.',phone:'(555) 010-0142',email:'dana@example.com',stage:'New Lead',score:62,source:'Website form',last:'Yesterday'},
+  {name:'Lena W.',phone:'(555) 010-0108',email:'lena@example.com',stage:'New Lead',score:42,source:'Google Business',last:'Mon'}
+];
+function crmClean(j){
+  const list=Array.isArray(j)?j:(j&&Array.isArray(j.contacts)?j.contacts:null); if(!list) return null;
+  const t=(v,n)=>String(v==null?'':v).replace(/[\r\n]+/g,' ').slice(0,n);
+  return list.slice(0,500).map(c=>({name:t(c&&c.name,80)||'Unknown',phone:t(c&&c.phone,40),email:t(c&&c.email,120),stage:t(c&&c.stage,40)||'New Lead',score:(c&&Number.isFinite(Number(c.score)))?Math.max(0,Math.min(100,Math.round(Number(c.score)))):null,source:t(c&&c.source,60),last:t(c&&c.last,40)}));
+}
+async function loadPortalContacts(){
+  if(portalMode==='sample'){ crmSt.status='sample'; crmSt.rows=CRM_SAMPLE.slice(); renderPortalCrm(); return; }
+  if(portalMode!=='live') return;
+  if(!PORTAL_CONFIG.contactsUrl){ crmSt.status='missing'; renderPortalCrm(); return; }
+  const my=++crmSt.seq; crmSt.status='loading'; renderPortalCrm();
+  try{
+    const rows=crmClean(await portalGet(PORTAL_CONFIG.contactsUrl,portalToken));
+    if(my!==crmSt.seq) return;
+    if(!rows){ crmSt.status='error'; crmSt.rows=[]; } else { crmSt.status='ok'; crmSt.rows=rows; }
+  }catch(e){
+    if(my!==crmSt.seq) return;
+    crmSt.rows=[]; crmSt.status=/HTTP (404|501)/.test(String(e&&e.message))?'missing':'error';
+  }
+  renderPortalCrm();
+}
+function renderPortalCrm(){
+  if(!document.getElementById('crmTable')) return;
+  const stages=['All'].concat(portalData.pipeline.map(p=>p[0]));
+  crmSt.rows.forEach(r=>{ if(stages.indexOf(r.stage)<0) stages.push(r.stage); });
+  if(stages.indexOf(crmSt.stage)<0) crmSt.stage='All';
+  const chips=pEl('crmStages'); chips.textContent='';
+  stages.forEach(s=>{
+    const n=s==='All'?(portalMode==='live'?portalData.totalLeads:null):((portalData.pipeline.find(p=>p[0]===s)||[0,null])[1]);
+    const b=pipelineNode('button','dm-chip',s+(n!=null&&n!==''?' · '+Number(n).toLocaleString('en-US'):'')); b.type='button'; b.dataset.stage=s; b.setAttribute('aria-pressed',String(crmSt.stage===s)); chips.appendChild(b);
+  });
+  pEl('crmSample').hidden=crmSt.status!=='sample';
+  const host=pEl('crmTable'),note=pEl('crmNote'),sb=pEl('crmSampleBtn'); host.textContent=''; sb.hidden=true;
+  const q=crmSt.q.trim().toLowerCase();
+  const rows=crmSt.rows.filter(r=>(crmSt.stage==='All'||r.stage===crmSt.stage)&&(!q||[r.name,r.phone,r.email,r.source].join(' ').toLowerCase().indexOf(q)>=0));
+  pEl('crmCount').textContent=(crmSt.status==='ok'||crmSt.status==='sample')?rows.length+' of '+crmSt.rows.length+' contacts':'';
+  if(crmSt.status==='loading'||crmSt.status==='idle'){ note.textContent=portalMode==='loading'||crmSt.status==='loading'?'Loading contacts…':''; return; }
+  if(crmSt.status==='missing'){ note.textContent='Your contact list isn’t connected to this portal yet. The pipeline counts above are live. Your team can switch the list on without changing anything else.'; sb.hidden=false; return; }
+  if(crmSt.status==='error'){ note.textContent='Couldn’t load your contacts just now. Try again in a minute.'; return; }
+  if(!rows.length){ note.textContent=crmSt.rows.length?'No contacts match that search.':'No contacts yet. New leads appear here the moment a bot captures them.'; return; }
+  note.textContent=crmSt.status==='sample'?'Sample contacts, not your real data.':'';
+  const t=pipelineNode('table','dm-table'),th=pipelineNode('thead'),hr=pipelineNode('tr');
+  ['Name','Contact','Stage','Score','Source','Last activity'].forEach(h=>{ const c=pipelineNode('th','',h); c.scope='col'; hr.appendChild(c); }); th.appendChild(hr); t.appendChild(th);
+  const tb=pipelineNode('tbody');
+  rows.forEach(r=>{
+    const tr=pipelineNode('tr'),sc=pipelineNode('td','crm-score'+(r.score!=null&&r.score>=75?' hot':''),r.score==null?'–':String(r.score));
+    tr.append(pipelineNode('td','',r.name),pipelineNode('td','',[r.phone,r.email].filter(Boolean).join(' · ')||'–'),pipelineNode('td','',r.stage),sc,pipelineNode('td','',r.source||'–'),pipelineNode('td','',r.last||'–'));
+    tb.appendChild(tr);
+  });
+  t.appendChild(tb); const w=pipelineNode('div','dm-tablewrap'); w.appendChild(t); host.appendChild(w);
+}
+pEl('crmSearch').addEventListener('input',e=>{ crmSt.q=e.target.value; renderPortalCrm(); });
+pEl('crmStages').addEventListener('click',e=>{ const b=e.target.closest('[data-stage]'); if(!b) return; crmSt.stage=b.dataset.stage; renderPortalCrm(); const again=pEl('crmStages').querySelector('[data-stage="'+CSS.escape(crmSt.stage)+'"]'); if(again) again.focus({preventScroll:true}); });
+pEl('crmSampleBtn').addEventListener('click',()=>{ crmSt.status='sample'; crmSt.rows=CRM_SAMPLE.slice(); renderPortalCrm(); });
+
+/* ===== Modules: the skill-tree modules from the homepage, each with its own page (sub-tab strip under the header) =====
+   Text comes from index.html's capability list. Related-section buttons are navigation only; nothing here claims a module is switched on. */
+var MODS=[{"id": "cost", "n": "01", "name": "Dynamic Cost-Arbitrage Engine", "short": "Our system acts like a smart traffic controller for your AI tasks.", "desc": "Our system acts like a smart traffic controller for your AI tasks. It routes simple, everyday jobs to lightning-fast, cheap models and only wakes up the heavy, expensive models for complex analysis. This slashes your monthly AI bills by up to 70% while keeping system speeds blazing fast.", "beta": false, "tab": "", "tabName": ""}, {"id": "guard", "n": "02", "name": "Executive Guardrail Gateways", "short": "Safety first. Before the AI fires off a mass email campaign, alerts thousands of leads, or schedules a payment, the…", "desc": "Safety first. Before the AI fires off a mass email campaign, alerts thousands of leads, or schedules a payment, the system builds the draft entirely but pauses for your 1-click 'Executive Approval.' You maintain absolute control over everything the system does.", "beta": false, "tab": "settings", "tabName": "Settings"}, {"id": "tree", "n": "03", "name": "Interactive Operational Skill Tree", "short": "A live visual dashboard that shows you exactly what your AI system knows how to do right now, what it is currently…", "desc": "A live visual dashboard that shows you exactly what your AI system knows how to do right now, what it is currently learning, and what advanced skills will unlock next as your business scales month-over-month.", "beta": false, "tab": "ops", "tabName": "Operations"}, {"id": "score", "n": "04", "name": "Autonomous Lead Scoring", "short": "The AI immediately reads every incoming lead's profile, intent, and background data, sorting the hot buyers from the…", "desc": "The AI immediately reads every incoming lead's profile, intent, and background data, sorting the hot buyers from the window shoppers so your sales team only calls people who are ready to close.", "beta": false, "tab": "leads", "tabName": "Lead Generation"}, {"id": "map", "n": "05", "name": "CRM Data Mapping", "short": "No more messy data or manual entries. The system automatically reads, organizes, and updates your entire customer…", "desc": "No more messy data or manual entries. The system automatically reads, organizes, and updates your entire customer database across all your apps in real-time, keeping your pipeline perfectly clean.", "beta": false, "tab": "crm", "tabName": "CRM"}, {"id": "agents", "n": "06", "name": "Multi-Agent Collaboration", "short": "Think of this as an army of specialized digital employees.", "desc": "Think of this as an army of specialized digital employees. A lead-capture AI talks seamlessly to a scheduling AI, which passes info to a data-enrichment AI—all working together behind the scenes to close deals.", "beta": false, "tab": "overview", "tabName": "Your bot team"}, {"id": "api", "n": "07", "name": "Legacy API Hooking", "short": "We don't force you to change how you work.", "desc": "We don't force you to change how you work. Our system seamlessly hooks into your old, existing tools and legacy software, breathing new life into your current tech stack without a costly 'rip-and-replace.'", "beta": false, "tab": "", "tabName": ""}, {"id": "nurture", "n": "08", "name": "Instant Auto-Nurture", "short": "The second a customer reaches out—day or night—the system instantly responds with hyper-personalized answers, keeping…", "desc": "The second a customer reaches out—day or night—the system instantly responds with hyper-personalized answers, keeping your prospects warm and moving them down the sales funnel on autopilot.", "beta": false, "tab": "voice", "tabName": "AI Voice & SMS"}, {"id": "enrich", "n": "09", "name": "Real-Time Pipeline Enrichment", "short": "As soon as a new contact drops into your pipeline, the AI scrapes public records, corporate data, and social metrics to…", "desc": "As soon as a new contact drops into your pipeline, the AI scrapes public records, corporate data, and social metrics to instantly give your team a full dossier on who the buyer is before you even speak to them.", "beta": false, "tab": "leads", "tabName": "Lead Generation"}, {"id": "intake", "n": "10", "name": "Document Intake & Extraction", "short": "Erase manual data entry. Upload complex contracts, invoices, tax forms, or spreadsheets, and the system instantly pulls…", "desc": "Erase manual data entry. Upload complex contracts, invoices, tax forms, or spreadsheets, and the system instantly pulls out the exact figures, key terms, and summaries you need in seconds.", "beta": false, "tab": "", "tabName": ""}, {"id": "custom", "n": "11", "name": "Custom Systems & Integrations", "short": "Your business is unique. This is our blank-canvas node where we build bespoke, highly intricate tools engineered entirely…", "desc": "Your business is unique. This is our blank-canvas node where we build bespoke, highly intricate tools engineered entirely around your company's proprietary operational workflows.", "beta": false, "tab": "", "tabName": ""}, {"id": "finance", "n": "12", "name": "Finance AI Engine", "short": "Your books get a tireless analyst on staff. The system reads live revenue and expense data to forecast cash flow weeks…", "desc": "Your books get a tireless analyst on staff. The system reads live revenue and expense data to forecast cash flow weeks ahead, recognizes revenue automatically as it's earned, and keeps the ledger reconciled in real time — so you see a cash crunch coming before it hits, not after.", "beta": false, "tab": "finance", "tabName": "Finance"}, {"id": "pm", "n": "13", "name": "Project Management AI", "short": "Every project gets a running scoreboard. The system tracks true profitability per project as costs and hours roll in…", "desc": "Every project gets a running scoreboard. The system tracks true profitability per project as costs and hours roll in, automates routine task handoffs, and flags when a team member is overloaded — catching a project that's bleeding margin while there's still time to fix it.", "beta": true, "tab": "ops", "tabName": "Operations"}, {"id": "reporting", "n": "14", "name": "Custom Reporting & Forecasting", "short": "Skip the spreadsheet marathon. Build any custom report straight from live data in minutes, hand execs a KPI dashboard…", "desc": "Skip the spreadsheet marathon. Build any custom report straight from live data in minutes, hand execs a KPI dashboard that updates itself, and run automated scenario models before you commit budget — no analyst required to pull the numbers first.", "beta": false, "tab": "finance", "tabName": "Finance"}, {"id": "assets", "n": "15", "name": "Automated Asset & Revenue Engine", "short": "Fixed assets stop falling through the cracks.", "desc": "Fixed assets stop falling through the cracks. The system auto-tracks every asset from purchase through depreciation and keeps compliance reporting audit-ready year-round, so year-end doesn't turn into a scramble to reconstruct twelve months of paperwork.", "beta": false, "tab": "finance", "tabName": "Finance"}];
+(function buildModSubnav(){
+  const nav=pEl('portalSubnav'),all=pipelineNode('button','p-link p-sub','All modules'); all.type='button'; all.dataset.tab='modules'; nav.appendChild(all);
+  MODS.forEach(m=>{
+    const b=pipelineNode('button','p-link p-sub locked'); b.appendChild(pipelineNode('span','p-sn',m.n+' ')); b.appendChild(document.createTextNode(m.name)); b.type='button'; b.dataset.tab='m-'+m.id; b.setAttribute('data-gated',''); b.setAttribute('data-locked',''); b.setAttribute('aria-disabled','true'); b.title='Locked';
+    nav.appendChild(b);
+  });
+})();
+function modTag(m){ return m.beta?pipelineNode('span','dm-tag cy','Beta'):null; }
+function renderPortalMods(){
+  const root=pEl('modRoot'); root.textContent='';
+  const open=portalGatesOpen(),m=MODS.find(x=>'m-'+x.id===portalTab);
+  if(!m){
+    const head=pipelineNode('article','p-card fn-head'),top=pipelineNode('div','fn-head-top'),box=pipelineNode('div');
+    box.append(pipelineNode('h2','','Modules'),pipelineNode('p','mod-lede','Everything NewSites can build into your business, in one place. Open a module to see what it does and where it connects to your account.'));
+    top.appendChild(box); if(portalMode==='sample') top.appendChild(pipelineNode('span','fn-sample','SAMPLE DATA')); head.appendChild(top); root.appendChild(head);
+    const grid=pipelineNode('div','mod-grid');
+    MODS.forEach(x=>{
+      const c=pipelineNode('button','p-card mod-card'+(open?'':' locked')),top2=pipelineNode('div','mod-top');
+      c.type='button'; c.dataset.open=x.id; top2.append(pipelineNode('span','mod-n',x.n)); const t=modTag(x); if(t) top2.appendChild(t);
+      c.append(top2,pipelineNode('h3','mod-name',x.name),pipelineNode('p','mod-short',x.short),pipelineNode('span','mod-foot',open?(x.tabName?'Connects to '+x.tabName:'Set up with your team'):'Locked on your current plan'));
+      grid.appendChild(c);
+    });
+    root.appendChild(grid); return;
+  }
+  const back=pipelineNode('button','mod-back','← All modules'); back.type='button'; back.dataset.back='1'; root.appendChild(back);
+  const card=pipelineNode('article','p-card mod-detail'),row=pipelineNode('div','mod-top');
+  row.append(pipelineNode('span','mod-n','MODULE '+m.n)); const t=modTag(m); if(t) row.appendChild(t);
+  card.append(row,pipelineNode('h2','',m.name),pipelineNode('p','mod-desc',m.desc)); root.appendChild(card);
+  const meta=pipelineNode('div','mod-meta'),st=pipelineNode('article','p-card'),rel=pipelineNode('article','p-card');
+  st.append(pipelineNode('h3','','Status'),pipelineNode('p','',portalMode==='sample'?'Sample preview. This shows how the module appears in your portal.':'Not switched on for your account yet. Ask the help desk and your NewSites team will set it up with you.'));
+  const ask=pipelineNode('button','dm-btn','Ask about this module'); ask.type='button'; ask.dataset.help='1'; st.appendChild(ask);
+  rel.append(pipelineNode('h3','','Related section'));
+  if(m.tab){ rel.appendChild(pipelineNode('p','','This module works alongside the '+m.tabName+' section of your portal.')); const go=pipelineNode('button','dm-btn ghost','Open '+m.tabName); go.type='button'; go.dataset.go=m.tab; rel.appendChild(go); }
+  else rel.appendChild(pipelineNode('p','','This module is built to order around your business, so it has no standing section yet.'));
+  meta.append(st,rel); root.appendChild(meta);
+}
+pEl('modRoot').addEventListener('click',e=>{
+  const o=e.target.closest('[data-open]'),g=e.target.closest('[data-go]'),bk=e.target.closest('[data-back]'),h=e.target.closest('[data-help]');
+  if(o){ const m=MODS.find(x=>x.id===o.dataset.open); if(!portalGatesOpen()){ showPortalToast((m?m.name:'This module')+' is locked on your current plan.'); return; } setPortalTab('m-'+o.dataset.open); }
+  else if(g) setPortalTab(g.dataset.go);
+  else if(bk) setPortalTab('modules');
+  else if(h){ const f=pEl('portalHelpFab'); if(f) f.click(); }
 });
 /* ---- this page IS the portal, so it always shows the portal (no hash needed). Magic links (?token=XXXX and #/portal?token=XXXX) are
    consumed by the early <head> script before anything else runs. ---- */
