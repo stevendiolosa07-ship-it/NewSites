@@ -210,10 +210,10 @@ section{margin-bottom:56px}
 @media(min-width:1000px){.fn-dir-label{display:inline}}
 @media(max-width:480px){.fn-count{display:none}.fn-pill{padding:8px 12px}}
 
-/* ---- The office: first thing on the page under the header. Its height is capped so the agent list starts on the first screen; the width follows the 1000x740 ratio ---- */
+/* ---- The office: first thing on the page under the header. Its height is capped so the agent list starts on the first screen; the office fills the panel up to 960px wide (1000x940 canvas ratio) ---- */
 #network.hero{--cap:max(380px,calc(100vh - var(--stick-h,0px) - 190px));margin-bottom:44px}
-.office-hero{display:flex;justify-content:center;padding:10px;border:1px solid var(--border);border-radius:var(--radius);background:#0d0b11}
-.office-stage{position:relative;width:min(100%,calc(var(--cap)*1.3514))}
+.office-hero{display:flex;justify-content:center;padding:6px;border:1px solid var(--border);border-radius:var(--radius);background:#0d0b11}
+.office-stage{position:relative;width:min(100%,960px)}
 #officeCanvas{width:100%;height:auto;display:block;border-radius:8px;background:#141019}
 
 /* ---- Vertical agent list: header (title, live queue status, route button) + a scroll box showing ~4.6 rows ---- */
@@ -679,7 +679,7 @@ section{margin-bottom:56px}
     <h2 class="ov-live-h" id="heroTitle">Your bot team</h2>
     <div class="office-hero">
       <div class="office-stage">
-        <canvas id="officeCanvas" width="1000" height="740" role="img" aria-label="Pixel-art office: eight rooms, one per agent pod, with the gateway agent routing requests to each desk"></canvas>
+        <canvas id="officeCanvas" width="1000" height="940" role="img" aria-label="Pixel-art office: eight rooms, one per agent pod, with the gateway agent routing requests to each desk"></canvas>
         <div class="office-banner glass" id="officeBanner" role="status" aria-live="polite">
           <span class="ob-logo" id="obLogo"></span>
           <span class="ob-text"><b class="ob-name" id="obName"></b><span class="ob-model" id="obModel"></span></span>
@@ -984,21 +984,21 @@ function avatarThumb(look,hairColor){
   paintAvatar(c.getContext('2d'),0,0,CELL,look,hairColor);
   return c.toDataURL();
 }
-const OW=1000,OH=740;
-const OUTER={x:20,y:20,w:960,h:700};
-const CORRIDOR={x:60,y:340,w:880,h:60};
-const MIDY=370;
-const LOBBY={x:410,y:300,w:180,h:140};
+const OW=1000,OH=940;
+const OUTER={x:20,y:20,w:960,h:900};
+const CORRIDOR={x:60,y:440,w:880,h:60};
+const MIDY=470;
+const LOBBY={x:410,y:400,w:180,h:140};
 const LOBBY_CX=LOBBY.x+LOBBY.w/2;
 const ROOM_DEFS=[ // 4 x 2 grid: doors at x=155/385/615/845, so the two middle doors sit clear of the lobby walls (x=410 and x=590)
- {rx:60,ry:40,rw:190,rh:260,side:'top'},
- {rx:290,ry:40,rw:190,rh:260,side:'top'},
- {rx:520,ry:40,rw:190,rh:260,side:'top'},
- {rx:750,ry:40,rw:190,rh:260,side:'top'},
- {rx:60,ry:440,rw:190,rh:260,side:'bottom'},
- {rx:290,ry:440,rw:190,rh:260,side:'bottom'},
- {rx:520,ry:440,rw:190,rh:260,side:'bottom'},
- {rx:750,ry:440,rw:190,rh:260,side:'bottom'},
+ {rx:60,ry:40,rw:190,rh:360,side:'top'},
+ {rx:290,ry:40,rw:190,rh:360,side:'top'},
+ {rx:520,ry:40,rw:190,rh:360,side:'top'},
+ {rx:750,ry:40,rw:190,rh:360,side:'top'},
+ {rx:60,ry:540,rw:190,rh:360,side:'bottom'},
+ {rx:290,ry:540,rw:190,rh:360,side:'bottom'},
+ {rx:520,ry:540,rw:190,rh:360,side:'bottom'},
+ {rx:750,ry:540,rw:190,rh:360,side:'bottom'},
 ];
 function wrapLines(text,maxW,cw){
   const toks=[]; text.split(' ').forEach(w=>{ if(w.length*cw>maxW&&w.indexOf('-')>0){ w.match(/[^-]+-?/g).forEach((p,i)=>toks.push({t:p,glue:i>0})); } else toks.push({t:w,glue:false}); }); // long hyphenated names break after the hyphen
