@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="theme-color" content="#05060c" />
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://164.92.110.116.nip.io; object-src 'none'; base-uri 'self'; form-action 'self'" />
 <title>New Sites AI Brain</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1071,6 +1071,8 @@
           <form id="demoForm" novalidate>
             <div class="field"><label for="f-name">Your name</label><input id="f-name" type="text" required placeholder="Jane Smith" /></div>
             <div class="field"><label for="f-email">Email</label><input id="f-email" type="email" required placeholder="jane@yourbusiness.com" /></div>
+            <div class="field"><label for="f-phone">Phone</label><input id="f-phone" type="tel" required placeholder="(555) 123-4567" autocomplete="tel" /></div>
+            <div class="field"><label for="f-biz">Business name (optional)</label><input id="f-biz" type="text" placeholder="Your business" autocomplete="organization" /></div>
             <div class="field f-path-a"><label for="f-focus">Where should we start?</label>
               <select id="f-focus">
                 <option value="crm">CRM &amp; Lead Pipeline</option>
@@ -1092,7 +1094,8 @@
             <div class="field f-path-b"><label for="f-custom">Where should we start? Tell us what you really want</label>
               <textarea id="f-custom" rows="3" placeholder="e.g. Our CRM needs to talk to billing, and calls answered after hours..."></textarea>
             </div>
-            <button class="submit-btn" type="submit">Get Started</button>
+            <button class="submit-btn" type="submit" id="demoSubmit">Get Started</button>
+            <div id="formErr" role="alert" style="display:none;color:#ff9a8a;font-size:12.5px;line-height:1.5;margin-top:10px;text-align:center"></div>
           </form>
           <div class="fineprint">Typical setup is live within 24 hours. No card required to start.</div>
         </div>
@@ -1123,27 +1126,10 @@
       <div class="mstep" id="stepChoose">
         <div class="modal-title">Start your New Sites plan</div>
         <p class="modal-sub">Choose how you'd like to check out. You can change or cancel anytime.</p>
-        <button class="pay-opt" id="optCard"><span class="po-ic"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span><span><b>Link Your Card</b><small>Enter your card details securely</small></span></button>
-        <button class="pay-opt" id="optExpress"><span class="po-ic"><svg viewBox="0 0 24 24"><path d="M13 3L5 13h6l-1 8 8-10h-6z"/></svg></span><span><b>Pay with PayStripe</b><small>Express checkout with saved credentials</small></span></button>
+        <a class="pay-opt" href="https://buy.stripe.com/3cI3cw73R0bp9OderPcQU01" target="_blank" rel="noopener" style="text-decoration:none"><span class="po-ic"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span><span><b>Starter &middot; $97/mo</b><small>Secure checkout by Stripe. Cancel anytime.</small></span></a>
+        <a class="pay-opt" href="https://buy.stripe.com/28E3cw73R5vJ9Od6ZncQU02" target="_blank" rel="noopener" style="text-decoration:none"><span class="po-ic"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span><span><b>Growth &middot; $297/mo</b><small>Most popular. Secure checkout by Stripe.</small></span></a>
+        <a class="pay-opt" href="https://buy.stripe.com/8x2cN69bZ8HV1hH2J7cQU03" target="_blank" rel="noopener" style="text-decoration:none"><span class="po-ic"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg></span><span><b>Empire &middot; $597/mo</b><small>Everything included. Secure checkout by Stripe.</small></span></a>
         <button class="pay-opt" id="optEnterprise" style="border-color:var(--gold);"><span class="po-ic"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg></span><span><b>Enterprise / 50+ employees</b><small>Book a strategy call &mdash; custom build &amp; contract</small></span></button>
-      </div>
-
-      <div class="mstep" id="stepCard" hidden>
-        <button class="mback" data-back="stepChoose">&larr; Back</button>
-        <div class="modal-title">Link your card</div>
-        <div class="mfield"><label>Card number</label><input id="ccNum" inputmode="numeric" placeholder="1234 5678 9012 3456" /></div>
-        <div class="mrow"><div class="mfield"><label>Expiry</label><input id="ccExp" placeholder="MM/YY" /></div><div class="mfield"><label>CVC</label><input id="ccCvc" inputmode="numeric" placeholder="123" /></div></div>
-        <div class="mfield"><label>Name on card</label><input id="ccName" placeholder="Jane Smith" /></div>
-        <button class="modal-btn" id="payCardBtn">Subscribe</button>
-        <div class="mnote">Secured by Stripe. Card details are processed by Stripe and never stored on our servers.</div>
-      </div>
-
-      <div class="mstep" id="stepExpress" hidden>
-        <button class="mback" data-back="stepChoose">&larr; Back</button>
-        <div class="modal-title">Pay with PayStripe</div>
-        <p class="modal-sub">Use your saved PayStripe credentials for one-tap checkout.</p>
-        <div class="mfield"><label>Email</label><input id="exEmail" type="email" placeholder="you@business.com" /></div>
-        <button class="modal-btn" id="payExpressBtn">Continue with PayStripe</button>
       </div>
 
       <div class="mstep" id="stepSettings" hidden>
@@ -1165,6 +1151,7 @@
         <p class="modal-sub">A few quick questions so we can scope the right build and bring the right people to the call.</p>
         <div class="mfield"><label>Company name</label><input id="entCompany" placeholder="Acme Corp" /></div>
         <div class="mrow"><div class="mfield"><label>Your name</label><input id="entName" placeholder="Jane Smith" /></div><div class="mfield"><label>Work email</label><input id="entEmail" type="email" placeholder="jane@acme.com" /></div></div>
+        <div class="mfield"><label>Phone</label><input id="entPhone" type="tel" placeholder="(555) 123-4567" autocomplete="tel" /></div>
         <div class="mfield"><label>Annual revenue</label><select id="entRevenue"><option value="">Select...</option><option>Under $1M</option><option>$1M - $5M</option><option>$5M - $20M</option><option>$20M - $100M</option><option>$100M+</option></select></div>
         <div class="mfield"><label>Number of employees</label><select id="entEmployees"><option value="">Select...</option><option>1 - 10</option><option>11 - 50</option><option>51 - 200</option><option>201 - 1,000</option><option>1,000+</option></select></div>
         <div class="mfield"><label>Monthly call / lead volume</label><select id="entVolume"><option value="">Select...</option><option>Under 100</option><option>100 - 500</option><option>500 - 2,000</option><option>2,000 - 10,000</option><option>10,000+</option></select></div>
@@ -1656,6 +1643,11 @@
 
   /* ---- contact form + chat (plain DOM, independent of the 3D engine) ---- */
   (function(){
+    window.nsSendLead=function(p){ // POSTs a lead to the NewSites server; rejects unless the server confirms it saved it
+      return fetch("https://164.92.110.116.nip.io/contact-form",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)})
+        .then(function(r){ return r.json().catch(function(){ return {}; }); })
+        .then(function(d){ if(!d||!d.success) throw new Error("not saved"); return d; });
+    };
     var form=document.getElementById("demoForm");
     if(form){
       form.addEventListener("submit", function(e){
@@ -1664,21 +1656,31 @@
         var email=(document.getElementById("f-email").value||"").trim();
         var arrSel=document.getElementById("f-arr");
         if(arrSel && arrSel.value && document.body.classList.contains("ns-path-b")){ var cEl=document.getElementById("f-custom"); if(cEl){ cEl.value = "[ARR: " + arrSel.options[arrSel.selectedIndex].text + "] " + cEl.value; } }
-        if(!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){
-          if(!name){ document.getElementById("f-name").focus(); } else { document.getElementById("f-email").focus(); }
+        var phoneEl=document.getElementById("f-phone"), bizEl=document.getElementById("f-biz"), errEl=document.getElementById("formErr"), subBtn=document.getElementById("demoSubmit");
+        var phone=(phoneEl&&phoneEl.value||"").trim(), biz=(bizEl&&bizEl.value||"").trim();
+        errEl.style.display="none";
+        if(!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || phone.replace(/\D/g,"").length<7){
+          if(!name){ document.getElementById("f-name").focus(); } else if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ document.getElementById("f-email").focus(); } else { phoneEl.focus(); errEl.textContent="Please enter a phone number we can reach you on."; errEl.style.display="block"; }
           return;
         }
         var customEl=document.getElementById("f-custom");
-        var msg;
-        if(document.body.classList.contains("ns-path-b") && customEl && customEl.value.trim()){
+        var msg, focusSel=document.getElementById("f-focus"), pathB=document.body.classList.contains("ns-path-b");
+        if(pathB && customEl && customEl.value.trim()){
           msg="Thanks "+name+" - we got your build request and we'll reach out shortly.";
         } else {
-          var focusSel=document.getElementById("f-focus");
           msg="Thanks "+name+" - we'll reach out to set up your "+focusSel.options[focusSel.selectedIndex].text+" automation shortly.";
         }
-        document.getElementById("formWrap").style.display="none";
-        document.getElementById("okMsg").textContent=msg;
-        document.getElementById("formOk").style.display="block";
+        var note=(pathB?"[Path B build request] ":"[Homepage Get Started] ")+(pathB?"":"Wants: "+focusSel.options[focusSel.selectedIndex].text+". ")+(customEl&&customEl.value.trim()?customEl.value.trim():"");
+        subBtn.disabled=true; var subTxt=subBtn.textContent; subBtn.textContent="Sending...";
+        window.nsSendLead({name:name,email:email,phone:phone,businessName:biz,message:note}).then(function(){
+          document.getElementById("formWrap").style.display="none";
+          document.getElementById("okMsg").textContent=msg;
+          document.getElementById("formOk").style.display="block";
+        }).catch(function(){
+          subBtn.disabled=false; subBtn.textContent=subTxt;
+          errEl.textContent="That didn't go through. Please try again in a moment, or email us directly.";
+          errEl.style.display="block";
+        });
       });
     }
     var send=document.getElementById("chatSend"), input=document.getElementById("chatInput");
@@ -2014,8 +2016,6 @@
       Array.prototype.slice.call(document.querySelectorAll(".cta-link")).forEach(function(btn){ btn.addEventListener("click", function(e){ e.preventDefault(); openModal(); }); });
       document.getElementById("payClose").addEventListener("click", closeModal);
       payModal.addEventListener("click", function(e){ if(e.target===payModal) closeModal(); });
-      document.getElementById("optCard").addEventListener("click", function(){ showStep("card"); });
-      document.getElementById("optExpress").addEventListener("click", function(){ showStep("express"); });
       document.getElementById("optEnterprise").addEventListener("click", function(){ showStep("enterprise"); });
       var entBtn=document.getElementById("enterpriseBtn");
       if(entBtn) entBtn.addEventListener("click", function(){ openModal(); showStep("enterprise"); });
@@ -2026,18 +2026,22 @@
         if(!company){ document.getElementById("entCompany").focus(); return; }
         if(!name){ document.getElementById("entName").focus(); return; }
         if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ document.getElementById("entEmail").focus(); return; }
-        // To deliver these leads, POST this payload to your VPS /contact or a sales
-        // endpoint (on the stable domain) so it emails/logs the qualified request:
-        // { company, name, email, revenue, employees, volume, budget, timeline, goals }
-        document.getElementById("entDoneMsg").textContent = "Thanks " + name + " - our team will reach out within one business day to schedule your strategy call for " + company + ".";
-        showStep("enterpriseDone");
+        var entPhone=document.getElementById("entPhone").value.trim();
+        if(entPhone.replace(/\D/g,"").length<7){ document.getElementById("entPhone").focus(); return; }
+        function ev(id){ var el=document.getElementById(id); return el?(el.value||"").trim():""; }
+        var entMsg="[Enterprise strategy call request] Revenue: "+(ev("entRevenue")||"-")+" | Employees: "+(ev("entEmployees")||"-")+" | Volume: "+(ev("entVolume")||"-")+" | Budget: "+(ev("entBudget")||"-")+" | Timeline: "+(ev("entTimeline")||"-")+" | Goals: "+(ev("entGoals")||"-");
+        var entBtn2=document.getElementById("entSubmit"), entTxt=entBtn2.textContent; entBtn2.disabled=true; entBtn2.textContent="Sending...";
+        window.nsSendLead({name:name,email:email,phone:entPhone,businessName:company,message:entMsg}).then(function(){
+          entBtn2.disabled=false; entBtn2.textContent=entTxt;
+          document.getElementById("entDoneMsg").textContent = "Thanks " + name + " - our team will reach out within one business day to schedule your strategy call for " + company + ".";
+          showStep("enterpriseDone");
+        }).catch(function(){
+          entBtn2.disabled=false; entBtn2.textContent="That didn't go through - try again";
+        });
       });
       document.getElementById("entDoneClose").addEventListener("click", closeModal);
       Array.prototype.slice.call(document.querySelectorAll(".mback")).forEach(function(b){ b.addEventListener("click", function(){ showStep("choose"); }); });
-      // NOTE: mock checkout. Wire payCardBtn / payExpressBtn to a VPS endpoint that
-      // creates a Stripe PaymentIntent or Checkout Session server-side (keys off the client).
-      document.getElementById("payCardBtn").addEventListener("click", function(){ showStep("settings"); });
-      document.getElementById("payExpressBtn").addEventListener("click", function(){ showStep("settings"); });
+      // Checkout: the plan buttons in the modal are real Stripe Payment Links; there is no card form on this site.
 
       var autoSwitch=document.getElementById("autoSwitch"), autoLabel=document.getElementById("autoLabel"), autoDesc=document.getElementById("autoDesc");
       var autopilot=true;
