@@ -153,6 +153,8 @@
   .form-ok .check { width:54px; height:54px; margin:0 auto 16px; border-radius:50%; border:2px solid var(--gold); display:grid; place-items:center; color:var(--gold-bright); font-size:26px; box-shadow:0 0 26px rgba(212,175,55,0.4); }
   .form-ok h3 { font-family:'Cinzel',serif; color:#fff; font-size:22px; margin-bottom:8px; }
   .form-ok p { color:rgba(244,236,210,0.7); font-size:13px; }
+  .sms-consent { font-size:11px; line-height:1.55; color:rgba(244,236,210,0.55); margin:4px 0 14px; text-align:left; }
+  .sms-consent a { color:var(--gold-bright,#e8c766); text-decoration:underline; }
   .contact .fineprint { text-align:center; margin-top:18px; font-size:10.5px; letter-spacing:0.1em; color:rgba(244,236,210,0.4); }
 
   .page-foot { text-align:center; padding:6vh 0 5vh; color:rgba(244,236,210,0.4); font-size:11px; letter-spacing:0.3em; text-transform:uppercase; }
@@ -1094,6 +1096,7 @@
             <div class="field f-path-b"><label for="f-custom">Where should we start? Tell us what you really want</label>
               <textarea id="f-custom" rows="3" placeholder="e.g. Our CRM needs to talk to billing, and calls answered after hours..."></textarea>
             </div>
+            <p class="sms-consent">By submitting this form you agree to receive text messages from NewSites.com about your request at the number above, including AI-assisted replies. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to opt out or HELP for help. Consent is not a condition of purchase. See our <a href="sms.html">Text Messaging Terms</a> and <a href="privacy.html">Privacy Policy</a>.</p>
             <button class="submit-btn" type="submit" id="demoSubmit">Get Started</button>
             <div id="formErr" role="alert" style="display:none;color:#ff9a8a;font-size:12.5px;line-height:1.5;margin-top:10px;text-align:center"></div>
           </form>
@@ -1158,6 +1161,7 @@
         <div class="mfield"><label>Budget range</label><select id="entBudget"><option value="">Select...</option><option>Under $1k / mo</option><option>$1k - $5k / mo</option><option>$5k - $20k / mo</option><option>$20k+ / mo</option></select></div>
         <div class="mfield"><label>Timeline to start</label><select id="entTimeline"><option value="">Select...</option><option>ASAP</option><option>Within a month</option><option>This quarter</option><option>Just exploring</option></select></div>
         <div class="mfield"><label>What do you want to automate?</label><textarea class="cr-textarea" id="entGoals" placeholder="e.g. inbound call answering and qualification for 6 locations, plus follow-up across SMS and email."></textarea></div>
+        <p class="sms-consent">By submitting this form you agree to receive text messages from NewSites.com about your request at the number above, including AI-assisted replies. Message frequency varies. Msg &amp; data rates may apply. Reply STOP to opt out or HELP for help. Consent is not a condition of purchase. See our <a href="sms.html">Text Messaging Terms</a> and <a href="privacy.html">Privacy Policy</a>.</p>
         <button class="modal-btn" id="entSubmit">Request my strategy call</button>
         <div class="mnote">A specialist will reach out within one business day to schedule.</div>
       </div>
@@ -2328,5 +2332,22 @@
     });
   })();
   </script>
+<script>
+/* Links to #contact (and the old contact.html, which forwards here) skip the intro, pick the Local track and land on the form. */
+(function(){ if(location.hash!=='#contact') return;
+  var step=0, tries=0, tm=setInterval(function(){
+    try{
+      var gate=document.getElementById('nsGate'), sk=document.getElementById('nsgSkip'), c=document.getElementById('contact');
+      var enter=document.getElementById('nsgEnter'), a=document.getElementById('nsgA');
+      var open=gate && !gate.classList.contains('hidden');
+      if(step===0){ if(sk && !sk.classList.contains('hidden')){ sk.click(); step=1; } }
+      else if(step===1 && open){ var intro=document.getElementById('nsgIntro'); if(intro && intro.classList.contains('on') && enter){ enter.click(); } step=2; }
+      else if(step===2 && open){ var fork=document.getElementById('nsgFork'); if(fork && fork.classList.contains('on') && a){ a.click(); step=3; } }
+      else if(step===3 && gate && gate.classList.contains('hidden')){ if(c) c.scrollIntoView({block:'start'}); clearInterval(tm); }
+    }catch(e){}
+    if(++tries>100) clearInterval(tm);
+  },250);
+})();
+</script>
 </body>
 </html>
