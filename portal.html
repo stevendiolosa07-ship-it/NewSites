@@ -593,6 +593,9 @@ section{margin-bottom:56px}
 .crm-count{color:var(--ink-dim);font-size:12.5px}
 .crm-stages{margin-bottom:14px}
 .crm-score{font-weight:800;color:var(--gold)}
+.pl-sel,.pl-date{font:600 12px var(--sans);color:var(--ink);background:rgba(24,21,15,.7);border:1px solid var(--border);border-radius:8px;padding:6px 8px;max-width:132px}
+.pl-note{width:100%;box-sizing:border-box;font:13px/1.4 var(--sans);color:var(--ink);background:rgba(24,21,15,.7);border:1px solid var(--border);border-radius:8px;padding:8px;margin:6px 0}
+.pl-due{color:var(--gold);font-weight:700}.pl-sub{display:block;font-size:11.5px;color:var(--ink-dim)}.pl-table td{vertical-align:top}.pl-hist{font-size:12px;color:var(--ink-dim);margin:0 0 6px}
 .crm-score.hot{color:#FF9A8A}
 .p-sn{color:var(--gold);font-weight:800;margin-right:2px}
 .mod-lede{color:var(--ink-dim);font-size:14px;line-height:1.55;margin:6px 0 0;max-width:70ch}
@@ -1287,6 +1290,7 @@ const PORTAL_API='https://164.92.110.116.nip.io/portal-api';
 const PORTAL_CONFIG={
   apiUrl:PORTAL_API+'/summary',       // lead metrics. '' = no live API: the portal shows built-in sample numbers, labelled as sample data
   settingsUrl:PORTAL_API+'/settings', // account settings incl. the plan tier, fetched together with the metrics. '' = skip (plan unknown -> gated tabs stay locked)
+  pipelineUrl:'https://164.92.110.116.nip.io/billing/portal', // CRM pipeline: GET /leads, POST /lead (same X-Portal-Token). If it is not reachable the tab falls back to contactsUrl
   contactsUrl:PORTAL_API+'/contacts', // CRM tab contact list (GET, X-Portal-Token). Until the server has this route the tab says so and the pipeline counts still work
   conversationsUrl:PORTAL_API+'/conversations', // Lead Generation / AI Voice & SMS threads + activity, fetched when one of those tabs opens. '' = off. Needs a server route (see the format below)
   requireToken:true,                  // the client's portal token is required; false is only for a public, non-sensitive feed
@@ -2131,8 +2135,8 @@ pEl('demoRoot').addEventListener('click',e=>{
    Expected response of GET contactsUrl:
    {"contacts":[{"id":"c1","name":"Dana R.","phone":"(555) 010-0101","email":"dana@example.com","stage":"New Lead","score":78,"source":"Missed-call text-back","last":"2026-10-16T14:14:00Z"}]}
    All text is written with textContent. A 404/501 means "route not built yet": the tab says so instead of showing an empty table. ===== */
-var crmSt={q:'',stage:'All',status:'idle',rows:[],seq:0};
-function crmReset(){ if(!crmSt) return; crmSt.q=''; crmSt.stage='All'; crmSt.status='idle'; crmSt.rows=[]; crmSt.seq++; var s=document.getElementById('crmSearch'); if(s) s.value=''; }
+var crmSt={q:'',stage:'All',status:'idle',rows:[],seq:0,mode:'',pipe:null,open:'',err:''};
+function crmReset(){ if(!crmSt) return; crmSt.q=''; crmSt.stage='All'; crmSt.status='idle'; crmSt.rows=[]; crmSt.mode=''; crmSt.pipe=null; crmSt.open=''; crmSt.err=''; crmSt.seq++; var s=document.getElementById('crmSearch'); if(s) s.value=''; }
 var CRM_SAMPLE=[
   {name:'Priya K.',phone:'(555) 010-0163',email:'priya@example.com',stage:'New Lead',score:81,source:'Missed-call text-back',last:'Today'},
   {name:'Dana R.',phone:'(555) 010-0142',email:'dana@example.com',stage:'New Lead',score:62,source:'Website form',last:'Yesterday'},
@@ -2155,6 +2159,14 @@ async function loadPortalContacts(){
   if(portalMode!=='live') return;
   if(!PORTAL_CONFIG.contactsUrl){ crmSt.status='missing'; renderPortalCrm(); return; }
   const my=++crmSt.seq; crmSt.status='loading'; renderPortalCrm();
+  if(PORTAL_CONFIG.pipelineUrl){
+    try{
+      const pj=await portalGet(PORTAL_CONFIG.pipelineUrl+'/leads',portalToken);
+      if(my!==crmSt.seq) return;
+      if(pj&&Array.isArray(pj.leads)){ crmSt.mode='pipe'; crmSt.pipe=pj; crmSt.status='ok'; crmSt.err=''; if(crmSt.stage==='All') crmSt.stage='__now'; renderPortalCrm(); return; }
+    }catch(e){ if(my!==crmSt.seq) return; }
+    crmSt.mode='';
+  }
   try{
     const rows=crmClean(await portalGet(PORTAL_CONFIG.contactsUrl,portalToken));
     if(my!==crmSt.seq) return;
@@ -2165,8 +2177,73 @@ async function loadPortalContacts(){
   }
   renderPortalCrm();
 }
+/* ----- Pipeline view (live data from the billing service): working now vs past, stages, follow-ups, notes ----- */
+function plPost(body){
+  return fetch(portalUrl(PORTAL_CONFIG.pipelineUrl+'/lead'),{method:'POST',headers:portalHeaders(portalToken,{'Content-Type':'application/json'}),body:JSON.stringify(body),credentials:'omit',cache:'no-store'})
+    .then(r=>r.json().then(j=>{ if(!r.ok) throw new Error(j&&j.error?String(j.error):'HTTP '+r.status); return j; },()=>{ throw new Error('HTTP '+r.status); }));
+}
+function plCounts(){
+  const p=crmSt.pipe,today=p.today||'';
+  p.past=p.leads.filter(l=>l.stage==='Won'||l.stage==='Lost').length; p.current=p.leads.length-p.past;
+  p.due=p.leads.filter(l=>l.follow_up_at&&l.follow_up_at<=today&&l.stage!=='Won'&&l.stage!=='Lost').length;
+}
+function plSave(id,patch){
+  crmSt.err='';
+  return plPost(Object.assign({id:id},patch)).then(v=>{
+    const i=crmSt.pipe.leads.findIndex(l=>l.id===id); if(i>=0) crmSt.pipe.leads[i]=v; plCounts(); renderPortalCrm();
+  }).catch(e=>{ crmSt.err='Couldn’t save that change: '+String(e&&e.message||'error').slice(0,120); renderPortalCrm(); });
+}
+function plDay(v){ if(!v) return ''; const d=new Date(String(v).slice(0,10)+'T12:00:00'); return isNaN(d.getTime())?String(v).slice(0,10):d.toLocaleDateString('en-US',{month:'short',day:'numeric'}); }
+function renderPipe(){
+  const p=crmSt.pipe,today=p.today||'',all=p.leads,isPast=l=>l.stage==='Won'||l.stage==='Lost',isDue=l=>!!l.follow_up_at&&l.follow_up_at<=today&&!isPast(l);
+  const WORK=['New Lead','Contacted','Replied','Booked'];
+  let view=crmSt.stage; if(view==='All'||(view==='__due'&&!p.due)) view=crmSt.stage='__now';
+  const chips=pEl('crmStages'); chips.textContent='';
+  const defs=[['__now','Working now',p.current]]; if(p.due) defs.push(['__due','Follow-ups due',p.due]);
+  WORK.forEach(s=>defs.push([s,s,all.filter(l=>l.stage===s).length])); defs.push(['__past','Past (won / lost)',p.past]);
+  defs.forEach(d=>{ const b=pipelineNode('button','dm-chip',d[1]+' · '+Number(d[2]).toLocaleString('en-US')); b.type='button'; b.dataset.stage=d[0]; b.setAttribute('aria-pressed',String(view===d[0])); chips.appendChild(b); });
+  pEl('crmSample').hidden=true;
+  const host=pEl('crmTable'),note=pEl('crmNote'),sb=pEl('crmSampleBtn'); host.textContent=''; sb.hidden=true;
+  const q=crmSt.q.trim().toLowerCase();
+  const inView=l=>view==='__now'?!isPast(l):view==='__past'?isPast(l):view==='__due'?isDue(l):l.stage===view;
+  const rows=all.filter(l=>inView(l)&&(!q||[l.name,l.company,l.phone,l.email,l.source,l.city].join(' ').toLowerCase().indexOf(q)>=0));
+  pEl('crmCount').textContent=rows.length+' of '+all.length+' leads';
+  if(crmSt.err){ const e=pipelineNode('p','dm-note',crmSt.err); host.appendChild(e); }
+  if(p.due&&view!=='__due'&&view!=='__past'){ const d=pipelineNode('p','dm-note pl-due',p.due+(p.due===1?' follow-up is':' follow-ups are')+' due today or overdue.'); host.appendChild(d); }
+  if(!rows.length){ note.textContent=all.length?'No leads here.':'No leads yet. New leads appear here the moment a bot captures them or your team adds them.'; return; }
+  note.textContent='Scores are automatic: intent, contact details and how far a lead has moved. Hover a score to see why. Moving a lead to Replied, Booked, Won or Lost stops any automatic emails to it.';
+  const t=pipelineNode('table','dm-table pl-table'),th=pipelineNode('thead'),hr=pipelineNode('tr');
+  ['Lead','Contact','Stage','Score','Follow-up','Email','Notes'].forEach(h=>{ const c=pipelineNode('th','',h); c.scope='col'; hr.appendChild(c); }); th.appendChild(hr); t.appendChild(th);
+  const tb=pipelineNode('tbody');
+  rows.forEach(l=>{
+    const tr=pipelineNode('tr');
+    const c1=pipelineNode('td',''); c1.appendChild(pipelineNode('b','',l.name||l.company||l.email||'Unknown')); const sub=[l.company&&l.name?l.company:'',l.title,l.city].filter(Boolean).join(' · '); if(sub) c1.appendChild(pipelineNode('span','pl-sub',sub));
+    const c2=pipelineNode('td','',[l.email,l.phone].filter(Boolean).join(' · ')||'–');
+    const c3=pipelineNode('td',''),sel=pipelineNode('select','pl-sel'); sel.setAttribute('aria-label','Stage for '+(l.name||'lead'));
+    const opts=p.stages.slice(); if(opts.indexOf(l.stage)<0) opts.unshift(l.stage);
+    opts.forEach(s=>{ const o=pipelineNode('option','',s); o.value=s; if(s===l.stage) o.selected=true; sel.appendChild(o); });
+    sel.addEventListener('change',()=>{ plSave(l.id,{stage:sel.value}); }); c3.appendChild(sel);
+    const c4=pipelineNode('td','crm-score'+(l.score>=75?' hot':''),String(l.score)); c4.title=l.why||'';
+    const c5=pipelineNode('td',''),di=pipelineNode('input','pl-date'); di.type='date'; di.value=l.follow_up_at||''; di.setAttribute('aria-label','Follow-up date for '+(l.name||'lead'));
+    di.addEventListener('change',()=>{ plSave(l.id,{follow_up_at:di.value}); }); c5.appendChild(di); if(isDue(l)) c5.appendChild(pipelineNode('span','pl-sub pl-due','Due '+plDay(l.follow_up_at)));
+    const es=l.email_status==='unsubscribed'?'Unsubscribed':l.email_status==='active'||l.email_status==='done'?'Email '+l.email_step+' of 3 sent':l.email_status==='stopped'?'Stopped':'';
+    const c6=pipelineNode('td','',es||'–');
+    const c7=pipelineNode('td',''),nb=pipelineNode('button','dm-btn ghost',crmSt.open===l.id?'Close':(l.notes.length?'Notes ('+l.notes.length+')':'Add note')); nb.type='button';
+    nb.addEventListener('click',()=>{ crmSt.open=crmSt.open===l.id?'':l.id; renderPortalCrm(); }); c7.appendChild(nb);
+    tr.append(c1,c2,c3,c4,c5,c6,c7); tb.appendChild(tr);
+    if(crmSt.open===l.id){
+      const r2=pipelineNode('tr'),td=pipelineNode('td',''); td.colSpan=7;
+      l.notes.forEach(n=>{ td.appendChild(pipelineNode('p','pl-hist',(n.at?crmWhen(n.at)+': ':'')+n.note)); });
+      const ta=pipelineNode('textarea','pl-note'); ta.rows=2; ta.maxLength=500; ta.placeholder='Add a note (what you said, what they need)'; ta.setAttribute('aria-label','Note for '+(l.name||'lead'));
+      const sv=pipelineNode('button','dm-btn','Save note'); sv.type='button'; sv.addEventListener('click',()=>{ const v=ta.value.trim(); if(v) plSave(l.id,{note:v}); });
+      td.append(ta,sv); r2.appendChild(td); tb.appendChild(r2);
+    }
+  });
+  t.appendChild(tb); const w=pipelineNode('div','dm-tablewrap'); w.appendChild(t); host.appendChild(w);
+}
 function renderPortalCrm(){
   if(!document.getElementById('crmTable')) return;
+  if(crmSt.mode==='pipe'&&crmSt.status==='ok'&&crmSt.pipe){ renderPipe(); return; }
   const stages=['All'].concat(portalData.pipeline.map(p=>p[0]));
   crmSt.rows.forEach(r=>{ if(stages.indexOf(r.stage)<0) stages.push(r.stage); });
   if(stages.indexOf(crmSt.stage)<0) crmSt.stage='All';
