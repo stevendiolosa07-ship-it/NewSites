@@ -593,6 +593,16 @@ section{margin-bottom:56px}
 .crm-count{color:var(--ink-dim);font-size:12.5px}
 .crm-stages{margin-bottom:14px}
 .crm-score{font-weight:800;color:var(--gold)}
+.gr-card{margin-bottom:16px}.gr-card h3{margin:0 0 6px}.gr-metrics{margin-bottom:16px}.p-metric .pl-sub{display:block;margin-top:4px}
+.gr-bars{display:flex;gap:10px;align-items:flex-end;height:140px;margin:14px 0 6px}
+.gr-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;font:600 11px var(--sans);color:var(--ink-dim);gap:4px}
+.gr-bar{width:100%;max-width:46px;background:var(--gold);border-radius:6px 6px 0 0;min-height:2px}
+.gr-ul{list-style:none;margin:8px 0 0;padding:0}.gr-li{padding:10px 0;border-top:1px solid rgba(212,175,55,.15)}
+.gr-li-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.gr-li-c{font-size:12.5px;color:var(--ink-dim);margin-top:2px;display:flex;gap:14px;flex-wrap:wrap}.gr-li-c a{color:var(--gold)}
+.gr-f{display:flex;flex-direction:column;gap:4px;margin:10px 0}.gr-f label{font:700 12px var(--sans);color:var(--ink-dim)}
+.gr-in{width:100%;box-sizing:border-box;font:14px var(--sans);color:var(--ink);background:rgba(24,21,15,.7);border:1px solid var(--border);border-radius:8px;padding:10px}
+.gr-bad{color:#ff8a80!important}.gr-chip{font:800 11px var(--sans);padding:3px 8px;border-radius:999px;border:1px solid rgba(212,175,55,.4);color:var(--gold)}
+.gr-actions{display:flex;gap:10px;flex-wrap:wrap;margin:10px 0}.pl-vrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0}#growthNote:empty{display:none}
 .pl-sel,.pl-date{font:600 12px var(--sans);color:var(--ink);background:rgba(24,21,15,.7);border:1px solid var(--border);border-radius:8px;padding:6px 8px;max-width:132px}
 .pl-note{width:100%;box-sizing:border-box;font:13px/1.4 var(--sans);color:var(--ink);background:rgba(24,21,15,.7);border:1px solid var(--border);border-radius:8px;padding:8px;margin:6px 0}
 .pl-due{color:var(--gold);font-weight:700}.pl-sub{display:block;font-size:11.5px;color:var(--ink-dim)}.pl-table td{vertical-align:top}.pl-hist{font-size:12px;color:var(--ink-dim);margin:0 0 6px}
@@ -628,11 +638,12 @@ section{margin-bottom:56px}
       <button type="button" class="p-link active" data-tab="overview" aria-current="page">Overview</button>
       <button type="button" class="p-link" data-tab="leads">Lead Generation</button>
       <button type="button" class="p-link" data-tab="crm">CRM</button>
+      <button type="button" class="p-link" data-tab="growth">Growth</button>
       <button type="button" class="p-link" data-tab="voice">AI Voice &amp; SMS</button>
       <button type="button" class="p-link" data-tab="social">Social Engine</button>
-      <button type="button" class="p-link locked" data-tab="ops" data-gated data-locked aria-disabled="true" title="Locked">Operations<svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <button type="button" class="p-link locked" data-tab="war" data-gated data-locked aria-disabled="true" title="Locked">War Room <em class="p-demo">DEMO</em><svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-      <button type="button" class="p-link locked" data-tab="finance" data-gated data-locked aria-disabled="true" title="Locked">Finance<svg class="p-lock" viewBox="0 0 16 16" aria-hidden="true"><path d="M5 7V5.5a3 3 0 0 1 6 0V7M4 7h8a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button type="button" class="p-link" data-tab="ops">Operations</button>
+      <button type="button" class="p-link" data-tab="war">War Room</button>
+      <button type="button" class="p-link" data-tab="finance">Finance</button>
       <button type="button" class="p-link" data-tab="modules">Modules</button>
       <button type="button" class="p-link" data-tab="settings">Settings</button>
     </nav>
@@ -833,6 +844,12 @@ section{margin-bottom:56px}
       </article>
     </section>
 
+    <section data-panel="growth" aria-label="Growth" hidden>
+      <article class="p-card fn-head"><div class="fn-head-top"><div><h2 id="growthTitle"></h2><p class="fn-lede" id="growthLede"></p></div></div></article>
+      <p class="st-note" id="growthNote" role="status" aria-live="polite"></p>
+      <div id="growthRoot"></div>
+    </section>
+
     <section data-panel="mod" aria-label="Modules" hidden><div id="modRoot"></div></section>
 
     <section data-panel="other" aria-label="Section" hidden>
@@ -861,9 +878,9 @@ const tasks=[
  {pod:"Content Bot",model:"GPT-5.4 Mini",dot:"openai",sub:["Copywriting Bot","Visual Asset Renderer","Multi-Platform Publisher","Asset Generator"]},
  {pod:"Reputation Bot",model:"Kimi K2.6",dot:"moonshot",sub:["Sentiment Analyzer","Review Prompt Dispatcher","Escalation Handler"]},
  {pod:"Concierge Bot",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Speech-to-Text Transcriber","NLP Intent Engine","Calendar Booking Agent","Follow-up Notifier"]},
- {pod:"Finance Bot",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Finance AI Analyst","Project Profit Tracker","Forecasting Bot","Report Builder"]},
- {pod:"Revenue Engine",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Asset Tracker","Revenue Attribution","Upsell Trigger","Audit-Ready Reporter"]},
- {pod:"Custom Systems",model:"Claude Sonnet 4.6",dot:"anthropic",sub:["Legacy API Connector","Workflow Builder","Document Intake Bot","Integration Architect"]}
+ {pod:"Finance Bot",model:"Automation engine",dot:"anthropic",sub:["ROI Tracker","Pipeline Forecaster","Deal Value Ledger","Weekly Report Builder"]},
+ {pod:"Revenue Engine",model:"Automation engine",dot:"anthropic",sub:["Win-Back Emailer","Repeat-Business Nudger","Review Requester","Revenue Attribution"]},
+ {pod:"Custom Systems",model:"Human-built",dot:"anthropic",sub:["Request Intake","Quote Tracker","Build Queue"]}
 ];
 /* ===== Bot functions: ONE roster feeds the function pills, the office highlights, the agent list and the portal bot/model attribution ===== */
 const FUNCTIONS=[
@@ -872,8 +889,8 @@ const FUNCTIONS=[
   {id:'voice',label:'AI Voice & SMS',hint:'Concierge / Missed-Call Text Back'},
   {id:'social',label:'Social Engine',hint:'Content Generator'},
   {id:'reputation',label:'Reputation',hint:'Review Request Follow-up'},
-  {id:'finance',label:'Finance & Revenue',hint:'Finance AI / Asset & Revenue Engine'},
-  {id:'custom',label:'Custom Systems',hint:'Integrations for bigger businesses'}
+  {id:'finance',label:'Finance & Revenue',hint:'ROI, pipeline forecast, win-back and review emails'},
+  {id:'custom',label:'Custom Systems',hint:'Request a custom integration or automation'}
 ];
 const FN_BY_ID=Object.fromEntries(FUNCTIONS.map(f=>[f.id,f]));
 const POD_FN={'Speed-to-Lead':'leads','Lead Scorer':'leads','Concierge Bot':'voice','Content Bot':'social','Reputation Bot':'reputation','Finance Bot':'finance','Revenue Engine':'finance','Custom Systems':'custom'};
@@ -1690,10 +1707,12 @@ function syncPortalChrome(){ // which panel / header controls show for the curre
   const demoTab=!login&&portalMode==='sample'&&!!DEMO_TABS[portalTab]; // sample preview: Operations, War Room, Finance and Social Engine show labelled sample panels
   portalEl.querySelector('[data-panel="demo"]').hidden=!demoTab;
   const crmTab=!login&&portalTab==='crm',modTab=!login&&(portalTab==='modules'||portalTab.indexOf('m-')===0);
+  const growthTab=!login&&(portalTab==='growth'||(portalMode==='live'&&(portalTab==='finance'||portalTab==='ops'||portalTab==='war')));
+  portalEl.querySelector('[data-panel="growth"]').hidden=!growthTab;
   portalEl.querySelector('[data-panel="crm"]').hidden=!crmTab;
   portalEl.querySelector('[data-panel="mod"]').hidden=!modTab;
   pEl('portalSubnav').hidden=!modTab;
-  portalEl.querySelector('[data-panel="other"]').hidden=login||portalTab==='overview'||portalTab==='settings'||fnTab||demoTab||crmTab||modTab;
+  portalEl.querySelector('[data-panel="other"]').hidden=login||portalTab==='overview'||portalTab==='settings'||fnTab||demoTab||crmTab||modTab||growthTab;
   portalEl.querySelector('[data-panel="settings"]').hidden=login||portalTab!=='settings';
   pEl('portalHelpFab').hidden=login;
   renderPortalSettings();
@@ -1828,6 +1847,7 @@ function setPortalTab(id){
   markPortalTab(id); syncPortalChrome();
   if(PORTAL_FN_TABS[id]&&portalMode==='live') loadPortalConv();
   if(id==='crm') loadPortalContacts();
+  if(id==='growth'||((id==='finance'||id==='ops'||id==='war')&&portalMode==='live')) loadGrowth();
   window.scrollTo({top:0,behavior:'instant'});
 }
 ['portalNav','portalSubnav'].forEach(nid=>pEl(nid).addEventListener('click',e=>{
@@ -2222,7 +2242,7 @@ function renderPipe(){
     const c3=pipelineNode('td',''),sel=pipelineNode('select','pl-sel'); sel.setAttribute('aria-label','Stage for '+(l.name||'lead'));
     const opts=p.stages.slice(); if(opts.indexOf(l.stage)<0) opts.unshift(l.stage);
     opts.forEach(s=>{ const o=pipelineNode('option','',s); o.value=s; if(s===l.stage) o.selected=true; sel.appendChild(o); });
-    sel.addEventListener('change',()=>{ plSave(l.id,{stage:sel.value}); }); c3.appendChild(sel);
+    sel.addEventListener('change',()=>{ const patch={stage:sel.value}; if(sel.value==='Won'&&l.value_cents==null){ let v=null; try{ v=window.prompt('Nice. What was this job worth in dollars? (optional, you can change it later)',''); }catch(e){ v=null; } v=String(v==null?'':v).replace(/[$,\s]/g,''); if(v!==''&&isFinite(Number(v))&&Number(v)>=0) patch.value=v; } plSave(l.id,patch); }); c3.appendChild(sel);
     const c4=pipelineNode('td','crm-score'+(l.score>=75?' hot':''),String(l.score)); c4.title=l.why||'';
     const c5=pipelineNode('td',''),di=pipelineNode('input','pl-date'); di.type='date'; di.value=l.follow_up_at||''; di.setAttribute('aria-label','Follow-up date for '+(l.name||'lead'));
     di.addEventListener('change',()=>{ plSave(l.id,{follow_up_at:di.value}); }); c5.appendChild(di); if(isDue(l)) c5.appendChild(pipelineNode('span','pl-sub pl-due','Due '+plDay(l.follow_up_at)));
@@ -2236,11 +2256,122 @@ function renderPipe(){
       l.notes.forEach(n=>{ td.appendChild(pipelineNode('p','pl-hist',(n.at?crmWhen(n.at)+': ':'')+n.note)); });
       const ta=pipelineNode('textarea','pl-note'); ta.rows=2; ta.maxLength=500; ta.placeholder='Add a note (what you said, what they need)'; ta.setAttribute('aria-label','Note for '+(l.name||'lead'));
       const sv=pipelineNode('button','dm-btn','Save note'); sv.type='button'; sv.addEventListener('click',()=>{ const v=ta.value.trim(); if(v) plSave(l.id,{note:v}); });
-      td.append(ta,sv); r2.appendChild(td); tb.appendChild(r2);
+      td.append(ta,sv);
+      const vr=pipelineNode('div','pl-vrow'),vi=pipelineNode('input','pl-date pl-val'); vi.type='number'; vi.min='0'; vi.step='0.01'; vi.placeholder='Deal value $'; vi.value=l.value_cents==null?'':String(l.value_cents/100); vi.setAttribute('aria-label','Deal value in dollars for '+(l.name||'lead'));
+      const vb=pipelineNode('button','dm-btn ghost','Save deal value'); vb.type='button'; vb.addEventListener('click',()=>{ plSave(l.id,{value:vi.value}); }); vr.append(pipelineNode('span','pl-sub','Deal value'),vi,vb);
+      if(l.review==='sent') vr.appendChild(pipelineNode('span','pl-sub','Review request sent'));
+      else if(l.email){ const rb=pipelineNode('button','dm-btn ghost',l.review==='queued'?'Send the review request now':'Ask for a review now'); rb.type='button'; rb.addEventListener('click',()=>{ plSave(l.id,{action:'review'}); }); vr.appendChild(rb); }
+      td.appendChild(vr); r2.appendChild(td); tb.appendChild(r2);
     }
   });
   t.appendChild(tb); const w=pipelineNode('div','dm-tablewrap'); w.appendChild(t); host.appendChild(w);
 }
+/* ----- Growth: Finance, Operations and War Room (live numbers) plus the Growth tab (Revenue Engine, review and booking links, custom systems) ----- */
+const GROWTH_TEXT={
+  finance:['Finance','What your leads earn you, what they cost, and what is still in the pipeline. Add a deal value to a lead in the CRM and it is counted here.'],
+  ops:['Operations','Today’s follow-ups, booked jobs and new leads nobody has contacted yet.'],
+  war:['War Room','Hot leads, replies waiting on you and leads going cold: the people worth your next call.'],
+  growth:['Growth','Review requests, win-back and repeat-business emails, your booking and review links, and custom system requests.']
+};
+const gSt={seq:0,note:'',bad:false};
+const gUsd=c=>c==null?'–':'$'+(c/100).toLocaleString('en-US',{minimumFractionDigits:c%100?2:0,maximumFractionDigits:2});
+function gReq(path,body){
+  const o={method:body?'POST':'GET',headers:portalHeaders(portalToken,body?{'Content-Type':'application/json'}:{}),credentials:'omit',cache:'no-store'}; if(body) o.body=JSON.stringify(body);
+  return fetch(portalUrl(PORTAL_CONFIG.pipelineUrl+path),o).then(r=>r.json().then(j=>{ if(!r.ok) throw new Error(j&&j.error?String(j.error):'HTTP '+r.status); return j; },()=>{ throw new Error('HTTP '+r.status); }));
+}
+const gErr=e=>String(e&&e.message||'error').slice(0,160);
+function gMsg(text,bad){ gSt.note=text; gSt.bad=!!bad; const n=document.getElementById('growthNote'); if(n){ n.textContent=text; n.className='st-note'+(bad?' gr-bad':''); } }
+function loadGrowth(){
+  const root=document.getElementById('growthRoot'); if(!root) return; const tab=portalTab,my=++gSt.seq,tx=GROWTH_TEXT[tab]||GROWTH_TEXT.growth;
+  document.getElementById('growthTitle').textContent=tx[0]; document.getElementById('growthLede').textContent=tx[1]; root.textContent='';
+  if(portalMode==='sample'){ gMsg(''); root.appendChild(pipelineNode('p','dm-note','Sample preview. Sign in with your portal token to see your own numbers here.')); return; }
+  if(portalMode!=='live') return;
+  root.appendChild(pipelineNode('p','dm-note','Loading…'));
+  const need=tab==='finance'?['/finance']:tab==='growth'?['/revenue','/settings','/custom']:['/leads'];
+  Promise.all(need.map(p=>gReq(p))).then(rs=>{ if(my!==gSt.seq||portalTab!==tab) return; root.textContent=''; ({finance:gFinance,ops:gOps,war:gWar,growth:gGrowth})[tab](root,rs); gMsg(gSt.note,gSt.bad); gSt.note=''; gSt.bad=false; })
+    .catch(e=>{ if(my!==gSt.seq) return; root.textContent=''; root.appendChild(pipelineNode('p','dm-note gr-bad','Could not load this section: '+gErr(e))); });
+}
+function gMetric(v,l,sub){ const a=pipelineNode('article','p-card p-metric'); a.appendChild(pipelineNode('b','p-num',v)); a.appendChild(pipelineNode('span','',l)); if(sub) a.appendChild(pipelineNode('span','pl-sub',sub)); return a; }
+function gCard(title,lede){ const a=pipelineNode('article','p-card gr-card'); a.appendChild(pipelineNode('h3','',title)); if(lede) a.appendChild(pipelineNode('p','st-lede',lede)); return a; }
+function gFinance(root,rs){
+  const f=rs[0], m=pipelineNode('div','p-metrics gr-metrics'), m2=pipelineNode('div','p-metrics gr-metrics');
+  m.append(gMetric(gUsd(f.won_revenue_cents),'Won so far',f.won+(f.won===1?' job':' jobs')+(f.avg_deal_cents?' · avg '+gUsd(f.avg_deal_cents):'')),
+    gMetric(f.return_multiple?f.return_multiple+'x':'–','Return on your plan','You have paid '+gUsd(f.plan_paid_cents)),
+    gMetric(gUsd(f.pipeline_cents),'Open pipeline','Forecast '+gUsd(f.forecast_cents)),
+    gMetric(f.close_rate==null?'–':f.close_rate+'%','Close rate',f.won+' won · '+f.lost+' lost'));
+  m2.append(gMetric(gUsd(f.lead_spend_cents),'Spent on leads',f.leads_bought+' leads bought'),gMetric(gUsd(f.cost_per_lead_cents),'Cost per lead'),gMetric(gUsd(f.cost_per_win_cents),'Lead cost per win'),gMetric(gUsd(f.budget_left_cents),'Lead budget left'));
+  root.append(m,m2);
+  const todo=[]; if(f.won_without_value) todo.push(f.won_without_value+(f.won_without_value===1?' won job has':' won jobs have')+' no deal value yet. Open the lead in the CRM and add one so your return is counted.');
+  if(f.stale_leads) todo.push(f.stale_leads+(f.stale_leads===1?' open lead has':' open leads have')+' had no activity for 7+ days.'); if(f.follow_ups_due) todo.push(f.follow_ups_due+(f.follow_ups_due===1?' follow-up is':' follow-ups are')+' due today or overdue.');
+  if(todo.length){ const c=gCard('Do this next'); const ul=pipelineNode('ul','gr-ul'); todo.forEach(t=>{ const li=pipelineNode('li','gr-li',t); ul.appendChild(li); }); c.appendChild(ul); root.appendChild(c); }
+  const c=gCard('Last 6 months','Revenue from jobs you won, by the month they were won. Small number under each bar is new leads that month.'), top=Math.max.apply(null,f.months.map(x=>x.revenue_cents).concat([1])), bars=pipelineNode('div','gr-bars'); bars.setAttribute('role','img'); bars.setAttribute('aria-label','Won revenue by month');
+  f.months.forEach(x=>{ const col=pipelineNode('div','gr-col'),v=pipelineNode('span','',x.revenue_cents?gUsd(x.revenue_cents):''),b=pipelineNode('div','gr-bar'); b.style.height=Math.max(2,Math.round(x.revenue_cents/top*100))+'%'; b.title=x.month+': '+gUsd(x.revenue_cents)+', '+x.won+' won'; col.append(v,b,pipelineNode('span','',x.month.slice(5)+'/'+x.month.slice(2,4)),pipelineNode('span','pl-sub',String(x.leads))); bars.appendChild(col); });
+  c.appendChild(bars); root.appendChild(c);
+  const s=gCard('Where your money comes from','Won revenue by lead source.');
+  if(!f.sources.length) s.appendChild(pipelineNode('p','dm-note','No leads yet.')); else {
+    const t=pipelineNode('table','dm-table'),th=pipelineNode('tr'); ['Source','Leads','Won','Revenue'].forEach(h=>{ const x=pipelineNode('th','',h); x.scope='col'; th.appendChild(x); }); t.appendChild(pipelineNode('thead')).appendChild(th);
+    const tb=pipelineNode('tbody'); f.sources.forEach(x=>{ const tr=pipelineNode('tr'); tr.append(pipelineNode('td','',x.source),pipelineNode('td','',String(x.leads)),pipelineNode('td','',String(x.won)),pipelineNode('td','',gUsd(x.revenue_cents))); tb.appendChild(tr); }); t.appendChild(tb);
+    const w=pipelineNode('div','dm-tablewrap'); w.appendChild(t); s.appendChild(w); }
+  s.appendChild(pipelineNode('p','dm-note','Forecast = open pipeline value × chance by stage (New 5%, Contacted 10%, Replied 30%, Booked 60%). Return on your plan = won revenue ÷ what you have paid NewSites.')); root.appendChild(s);
+}
+const gPast=l=>l.stage==='Won'||l.stage==='Lost';
+function gLeadRow(l,extra){
+  const li=pipelineNode('li','gr-li'),top=pipelineNode('div','gr-li-top'); top.appendChild(pipelineNode('b','',l.name||l.company||l.email||'Unknown'));
+  top.appendChild(pipelineNode('span','pl-sub',l.stage+' · score '+l.score+(l.value_cents?' · '+gUsd(l.value_cents):'')+(extra?' · '+extra:''))); li.appendChild(top);
+  const c=pipelineNode('div','gr-li-c');
+  if(l.phone){ const a=pipelineNode('a','',l.phone); a.href='tel:'+String(l.phone).replace(/[^\d+]/g,''); c.appendChild(a); }
+  if(l.email){ const a=pipelineNode('a','',l.email); a.href='mailto:'+String(l.email).replace(/[^A-Za-z0-9@._+\-]/g,''); c.appendChild(a); }
+  if(l.company&&l.company!==l.name) c.appendChild(pipelineNode('span','',l.company)); if(!c.children.length) c.appendChild(pipelineNode('span','','no contact details')); li.appendChild(c); return li;
+}
+function gList(root,title,lede,leads,empty){
+  const c=gCard(title,lede); if(!leads.length) c.appendChild(pipelineNode('p','dm-note',empty)); else { const ul=pipelineNode('ul','gr-ul'); leads.slice(0,12).forEach(l=>ul.appendChild(gLeadRow(l.lead||l,l.extra))); c.appendChild(ul); if(leads.length>12) c.appendChild(pipelineNode('p','dm-note','…and '+(leads.length-12)+' more in the CRM.')); }
+  root.appendChild(c);
+}
+function gCrmBtn(root){ const a=pipelineNode('div','gr-actions'),b=pipelineNode('button','dm-btn','Open the CRM'); b.type='button'; b.addEventListener('click',()=>setPortalTab('crm')); a.appendChild(b); root.appendChild(a); }
+function gOps(root,rs){
+  const p=rs[0],today=p.today||'',L=p.leads||[],due=L.filter(l=>l.follow_up_at&&l.follow_up_at<=today&&!gPast(l)).map(l=>({lead:l,extra:'due '+plDay(l.follow_up_at)})),
+    booked=L.filter(l=>l.stage==='Booked'),fresh=L.filter(l=>l.stage==='New Lead').sort((a,b)=>b.score-a.score);
+  gCrmBtn(root);
+  gList(root,'Follow-ups due today','Everyone you promised to get back to.',due,'Nothing due. Set a follow-up date on a lead in the CRM and it shows up here.');
+  gList(root,'Booked','Leads that have a booking.',booked,'No booked leads right now.');
+  gList(root,'New leads nobody has contacted','Best first: the highest-scoring leads you have not reached yet.',fresh,'Every lead has been contacted.');
+}
+function gWar(root,rs){
+  const L=(rs[0].leads||[]).filter(l=>!gPast(l)),hot=L.filter(l=>l.score>=75),replied=L.filter(l=>l.stage==='Replied'),cold=L.filter(l=>{ const t=Date.parse(l.last||''); return t>0&&Date.now()-t>7*864e5; }).map(l=>({lead:l,extra:'quiet '+Math.floor((Date.now()-Date.parse(l.last))/864e5)+' days'}));
+  gCrmBtn(root);
+  gList(root,'Hot leads','Score 75 or higher: high intent, complete details or already moving. Call these first.',hot,'No hot leads right now.');
+  gList(root,'Replied: waiting on you','They answered. A fast reply wins the job.',replied,'No replies waiting.');
+  gList(root,'Going cold','No activity for 7+ days. Turn on win-back emails in Growth to re-engage them automatically.',cold,'Nothing is going cold.');
+}
+function gField(label,id,value,ph,area){ const w=pipelineNode('div','gr-f'),l=pipelineNode('label','',label),i=pipelineNode(area?'textarea':'input','gr-in'); l.htmlFor=id; i.id=id; if(area) i.rows=3; else i.type='text'; i.value=value||''; i.placeholder=ph||''; i.maxLength=area?400:300; w.append(l,i); return [w,i]; }
+function gRow(name,desc,on,off,fn){ const r=pipelineNode('div','st-row'),d=pipelineNode('div'); d.appendChild(pipelineNode('b','',name)); d.appendChild(pipelineNode('p','',desc)); const b=pipelineNode('button','st-switch'); b.type='button'; b.setAttribute('role','switch'); b.setAttribute('aria-label',name); b.setAttribute('aria-checked',String(!!on)); if(off) b.setAttribute('aria-disabled','true'); b.addEventListener('click',()=>{ if(!off) fn(!on); }); r.append(d,b); return r; }
+function gSave(patch,ok){ return gReq('/settings',patch).then(()=>{ gSt.note=ok||'Saved.'; gSt.bad=false; loadGrowth(); }).catch(e=>gMsg('Could not save: '+gErr(e),true)); }
+const GR_STATUS={new:'Received',quoted:'Quoted',building:'Building',done:'Done',declined:'Declined'};
+function gGrowth(root,rs){
+  const rv=rs[0],st=rs[1],cu=rs[2],rows=pipelineNode('div','st-rows'),gate=rv.gate_open;
+  const c1=gCard('Revenue Engine','Emails that bring back money you have already earned. Each one goes from your business name, replies come to '+(st.owner_email||'you')+', and every lead can unsubscribe.');
+  rows.append(
+    gRow('Review requests',(rv.review_link_set?'':'Add your Google review link below first. ')+'Every customer you mark Won gets one Google review request about 4 hours later. '+rv.sent.review+' sent, '+rv.review_waiting+' waiting.',rv.review_auto,false,v=>gSave({review_auto:v})),
+    gRow('Win-back emails',(gate?'':'Not available yet: outbound email to past leads is switched off for the whole platform until the legal footer is configured. ')+'One email to leads quiet for '+rv.react_days+'+ days, at most once every 90 days. '+rv.ready_reactivate+' ready now · '+rv.sent.reactivate+' sent.',rv.reactivation,!gate,v=>gSave({reactivation:v})),
+    gRow('Repeat-business emails',(gate?'':'Not available yet: switched off for the whole platform. ')+'A thank-you and rebooking email '+rv.repeat_days+' days after a job is won. '+rv.ready_repeat+' ready now · '+rv.sent.repeat+' sent.',rv.repeat,!gate,v=>gSave({repeat:v})),
+    gRow('Weekly report email','Every Monday: leads, jobs won, follow-ups due, pipeline and return on your plan.',st.weekly,false,v=>gSave({weekly:v})));
+  c1.appendChild(rows);
+  const nf=gField('Offer to include in win-back and repeat emails (optional)','grNote',st.note,'Example: 10% off if you book this month'); const nb=pipelineNode('button','dm-btn','Save offer'); nb.type='button'; nb.addEventListener('click',()=>gSave({note:nf[1].value})); c1.append(nf[0],nb);
+  if(rv.recent.length){ c1.appendChild(pipelineNode('h3','','Recent activity')); const ul=pipelineNode('ul','gr-ul'); rv.recent.forEach(x=>{ const li=pipelineNode('li','gr-li'); li.appendChild(pipelineNode('b','',x.who)); li.appendChild(pipelineNode('span','pl-sub',' · '+x.what+(x.at?' · '+crmWhen(x.at):''))); ul.appendChild(li); }); c1.appendChild(ul); }
+  root.appendChild(c1);
+  const c2=gCard('Reviews and booking','These two links power your review requests, your AI replies and your emails.');
+  const f1=gField('Google review link','grRev',st.google_review_url,'https://g.page/r/…/review'),f2=gField('Booking link (Calendly, Google Calendar, your own page)','grBook',st.calendar_link,'https://calendly.com/your-name');
+  const hint=pipelineNode('p','dm-note','Find your Google review link: Google Business Profile → Ask for reviews → Copy link. It must start with https://'); const sv=pipelineNode('button','dm-btn','Save links'); sv.type='button'; sv.addEventListener('click',()=>gSave({google_review_url:f1[1].value,calendar_link:f2[1].value},'Links saved.'));
+  const rr=pipelineNode('div','st-rows'); rr.appendChild(gRow('Let the AI confirm appointment times itself',st.calendar_link?'Off: the AI sends your booking link and lets people pick a time. On: it may agree to a time and then send the link to lock it in.':'Add a booking link first.',st.can_ai_commit_times,!st.calendar_link,v=>gSave({can_ai_commit_times:v})));
+  c2.append(f1[0],f2[0],hint,sv,rr); root.appendChild(c2);
+  const c3=gCard('Custom systems','Need something built for your business: a QuickBooks sync, a booking-system integration, a document intake flow? Describe it and you get a quote and timeline by email. Builds are done by the NewSites team.');
+  const t=gField('What do you need? (short title)','grCt','', 'Example: Sync paid invoices from QuickBooks'),d=gField('Details','grCd','','What should it do, which tools are involved, what does success look like?',true),b=gField('Budget (optional)','grCb','','Example: $500'); d[1].maxLength=4000; t[1].maxLength=120; b[1].maxLength=60;
+  const go=pipelineNode('button','dm-btn','Send request'); go.type='button'; go.addEventListener('click',()=>{ go.disabled=true; gReq('/custom',{title:t[1].value,details:d[1].value,budget:b[1].value}).then(()=>{ gSt.note='Request sent. You will get a quote by email.'; gSt.bad=false; loadGrowth(); }).catch(e=>{ go.disabled=false; gMsg('Could not send: '+gErr(e),true); }); });
+  c3.append(t[0],d[0],b[0],go);
+  if(cu.requests.length){ c3.appendChild(pipelineNode('h3','','Your requests')); const ul=pipelineNode('ul','gr-ul'); cu.requests.forEach(r=>{ const li=pipelineNode('li','gr-li'),top=pipelineNode('div','gr-li-top'); top.appendChild(pipelineNode('b','',r.title)); top.appendChild(pipelineNode('span','gr-chip',GR_STATUS[r.status]||r.status)); li.appendChild(top); li.appendChild(pipelineNode('p','dm-note',r.details)); if(r.reply) li.appendChild(pipelineNode('p','dm-note','NewSites: '+r.reply)); ul.appendChild(li); }); c3.appendChild(ul); }
+  root.appendChild(c3);
+}
+
 function renderPortalCrm(){
   if(!document.getElementById('crmTable')) return;
   if(crmSt.mode==='pipe'&&crmSt.status==='ok'&&crmSt.pipe){ renderPipe(); return; }
