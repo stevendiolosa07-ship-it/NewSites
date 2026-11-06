@@ -204,13 +204,24 @@ $("#f").addEventListener("submit", async e => {
   status("Researching what's live in your niche… this takes 30–60 seconds.");
 
   try {
+    let adminKey = "";
+    try { adminKey = sessionStorage.getItem("ns_admin_key") || ""; } catch (_) {}
+    if (!adminKey) {
+      adminKey = (window.prompt("Admin key (required to run the marketing engine):") || "").trim();
+      if (!adminKey) { status("Admin key required.", true); return; }
+    }
     const r = await fetch(API_BASE.replace(/\/$/, "") + "/marketing/strategy", {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: { "content-type": "application/json", "x-admin-key": adminKey },
       body: JSON.stringify(body)
     });
+    if (r.status === 401) {
+      try { sessionStorage.removeItem("ns_admin_key"); } catch (_) {}
+      throw new Error("Wrong admin key. Try again.");
+    }
     const j = await r.json();
     if (!r.ok || !j.ok) throw new Error(j.error || ("Request failed (" + r.status + ")"));
+    try { sessionStorage.setItem("ns_admin_key", adminKey); } catch (_) {}
     clearStatus();
     render(j.playbook, j.cached);
   } catch (err) {
