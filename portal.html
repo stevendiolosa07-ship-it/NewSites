@@ -3570,6 +3570,7 @@ function load(key){
   }
   S.seq = S.tasks.reduce(function(m, t){ return Math.max(m, t.seq || 0); }, 0);
   S.done = 0; board = null;
+  v2Reset();
 }
 
 /* ---------- audit log: SHA-256 hash chain, stored in this browser ---------- */
@@ -3610,7 +3611,20 @@ function matches(r, type, ctx){
 function emit(type, ctx){
   ctx = ctx || {};
   if(!S.key || ctx.src === "rule" || ctx.src === "auto") return;
-  S.rules.slice().forEach(function(r){ if(r.on && matches(r, type, ctx)) runRule(r, type, ctx, false); });
+  var hits = S.rules.filter(function(r){ return r.on && matches(r, type, ctx); });
+  var gated = hits.filter(v2Gated);
+  hits.forEach(function(r){ if(!v2Gated(r)) runRule(r, type, ctx, false); });
+  if(!gated.length) return;
+  /* "Who creates hot-lead tasks" is decided HERE, at the moment a task would be created, from a fresh answer from the server, not from what this
+     page read up to 10 s ago. A switch made a moment ago is therefore honoured by the very next hot lead. */
+  if(ctx.v2fallback || !v2Live()){ gated.forEach(function(r){ if(ctx.v2fallback || !v2Paused(r)) runRule(r, type, ctx, false); }); return; }
+  var key = S.key;
+  v2Fresh().then(function(){
+    if(key !== S.key) return;
+    var paused = false;
+    gated.forEach(function(r){ if(!r.on || S.rules.indexOf(r) < 0) return; if(v2Paused(r)) paused = true; else runRule(r, type, ctx, false); });
+    if(paused) v2Watch(ctx);
+  });
 }
 function tpl(s, vars){ return String(s || "").replace(/\{(\w+)\}/g, function(m, k){ return vars[k] == null ? m : vars[k]; }); }
 function sendHook(a, evt, cb){
@@ -3966,10 +3980,10 @@ function ruleText(r){
 function renderAuto(){
   var root = $("vwAuto"); if(!root) return;
   var edit = can("auto", "e"), dis = edit ? "" : " disabled";
-  var h = '<div class="lw-stack"><article class="p-card"><div class="lw-h"><h3>Automations</h3><span class="lw-tag">' + S.rules.filter(function(r){ return r.on; }).length + ' active</span></div>' +
+  var h = '<div class="lw-stack">' + v2Card() + '<article class="p-card"><div class="lw-h"><h3>Automations</h3><span class="lw-tag">' + S.rules.filter(function(r){ return r.on; }).length + ' active</span></div>' +
     '<p class="lw-warn"><b>These rules run in this browser, while the portal is open.</b> They are not 24/7 server jobs: if nobody has the portal open, nothing fires. Rule actions never trigger other rules. Webhooks can be sent to Discord, Slack, Make, Zapier or any HTTPS endpoint; some destinations block browser reads, in which case delivery shows as unconfirmed.</p>';
   h += S.rules.length ? '<ul class="lw-rules">' + S.rules.map(function(r){
-    return '<li class="lw-rule' + (r.on ? "" : " off") + '"><button type="button" class="lw-sw' + (r.on ? " on" : "") + '" role="switch" aria-checked="' + !!r.on + '" aria-label="Enable ' + esc(r.name) + '" data-rt="' + r.id + '"' + dis + '></button><div><b>' + esc(r.name) + '</b><small>' + ruleText(r) + '</small><small>' + (r.runs || 0) + ' runs' + (r.last ? " · last " + new Date(r.last).toLocaleString() : "") + (r.res ? ' · <span class="lw-res">' + esc(r.res) + "</span>" : "") + '</small></div><div class="lw-ra"><button type="button" class="lw-btn ghost sm" data-rtest="' + r.id + '"' + dis + '>Test</button><button type="button" class="lw-btn ghost sm" data-rdel="' + r.id + '"' + dis + '>Delete</button></div></li>';
+    return '<li class="lw-rule' + (r.on ? "" : " off") + '"><button type="button" class="lw-sw' + (r.on ? " on" : "") + '" role="switch" aria-checked="' + !!r.on + '" aria-label="Enable ' + esc(r.name) + '" data-rt="' + r.id + '"' + dis + '></button><div><b>' + esc(r.name) + '</b><small>' + ruleText(r) + '</small>' + (v2Paused(r) ? '<small class="lw-res">Paused here: the server creates these tasks (see Hot-lead tasks above).</small>' : '') + '<small>' + (r.runs || 0) + ' runs' + (r.last ? " · last " + new Date(r.last).toLocaleString() : "") + (r.res ? ' · <span class="lw-res">' + esc(r.res) + "</span>" : "") + '</small></div><div class="lw-ra"><button type="button" class="lw-btn ghost sm" data-rtest="' + r.id + '"' + dis + '>Test</button><button type="button" class="lw-btn ghost sm" data-rdel="' + r.id + '"' + dis + '>Delete</button></div></li>';
   }).join("") + '</ul>' : '<p class="lw-note">No rules yet. Build one below.</p>';
   h += '</article><article class="p-card"><div class="lw-h"><h3>New rule</h3></div><form id="lwRuleForm" autocomplete="off"><div class="lw-row"><div class="lw-f grow"><label for="lwrN">Name</label><input class="lw-in" id="lwrN" maxlength="80" placeholder="e.g. Ping Discord on hot leads"' + dis + '></div></div>' +
     '<div class="lw-row" style="margin-top:10px"><div class="lw-f"><label for="lwrT">When</label><select class="lw-in" id="lwrT"' + dis + '>' + TRIGS.map(function(x){ return '<option value="' + x[0] + '">' + x[1] + '</option>'; }).join("") + '</select></div><div class="lw-f" id="lwrCw" hidden><label for="lwrC">Column</label><select class="lw-in" id="lwrC"' + dis + '>' + COLS.map(function(c, i){ return '<option value="' + i + '">' + c.n + '</option>'; }).join("") + '</select></div><div class="lw-f"><label for="lwrA">Then</label><select class="lw-in" id="lwrA"' + dis + '>' + ACTS.map(function(x){ return '<option value="' + x[0] + '">' + x[1] + '</option>'; }).join("") + '</select></div></div>' +
@@ -4005,6 +4019,248 @@ function initAutoEvents(){
     if(!name){ rule.name = ruleText(rule).replace(/<[^>]+>/g, "").slice(0, 80); }
     S.rules.push(rule); persist("rules"); audit("automation", "rule.create", rule.name); renderAuto();
   });
+}
+
+/* ---------- server workspace (portal-api /v2): portal_token bridge + who creates hot-lead tasks ----------
+   Nothing here does anything until the portal is LIVE and the server answers; until then every rule behaves exactly as before.
+   Once connected, the server may own "a lead became hot -> create a task" (24/7). While it does, this browser's own
+   lead.hot -> task rules are paused, so each hot lead yields ONE task instead of one per engine. */
+var V2_BASE = String(window.PORTAL_V2_BASE || "https://164.92.110.116.nip.io/portal-api/v2");
+var V2_MODULE = String(window.PORTAL_V2_MODULE || "./portal-v2/portal-client.js");
+var V2 = { state:"off", client:null, me:null, engine:null, msg:"", ok:false, at:0, loading:null, fails:0 };
+/* Who sees what. Clients see NOTHING from this feature until their portal is live on the server (or was, in this browser). A server that is
+   not deployed yet, is down, or answers with a proxy error page is invisible: this browser simply keeps doing what it always did.
+   The person connecting a client's portal opens the portal link with ?v2=setup once (remembered in that browser) to see the connect cards. */
+var V2_SETUP = (function(){ var q = /[?&]v2=setup(&|#|$)/.test(location.search); try{ if(q) localStorage.setItem("portal.v2.setup", "1"); return q || localStorage.getItem("portal.v2.setup") === "1"; }catch(e){ return q; } })();
+var V2_POLL_MS = 10000, V2_TICK_MS = 5000; /* the card re-reads the server every 10 s (checked every 5 s). It only decides what is SHOWN: creating a task re-checks first (v2Fresh) */
+var V2_FIRE_MS = 3000;       /* a fresh "who creates hot-lead tasks" answer is waited for at most this long, then the last answer is used */
+var V2_WATCH_MS = 180000;    /* while the server owns hot-lead tasks: a hot lead this page saw gets this long to become a server task before this page makes it */
+var V2_WATCH_LAG_MS = 120000;/* the server may have made the task BEFORE this page's own refresh noticed the lead: look this far back */
+function v2Known(){ return lsGet(S.key + ":v2owner", "") !== ""; } /* this browser has talked to the server successfully before */
+function v2Backoff(){ return Math.min(60000 * Math.pow(2, Math.max(0, (V2.fails || 1) - 1)), 900000); } /* 1, 2, 4, 8, 15 min */
+/* state: off | connecting | bridged (limited portal link) | signed-in (owner/admin device) | not-linked | rejected | disabled | unavailable */
+
+/* Bridge sessions live in sessionStorage (per tab, like the portal token itself); an owner/admin device session persists in
+   localStorage. Both are keyed by tenant so a different client's portal link never inherits this one's session. */
+var v2Store = {
+  get:function(k){ try{ return localStorage.getItem(k + ":owner") || sessionStorage.getItem(k + ":bridge"); }catch(e){ return null; } },
+  set:function(k, v){ try{ var b = /"kind":"bridge"/.test(v); (b ? sessionStorage : localStorage).setItem(k + (b ? ":bridge" : ":owner"), v); }catch(e){} },
+  del:function(k){ try{ localStorage.removeItem(k + ":owner"); sessionStorage.removeItem(k + ":bridge"); }catch(e){} }
+};
+function v2Key(){ return "portal.v2.session:" + (S.key || ""); }
+function v2Live(){ return V2.state === "bridged" || V2.state === "signed-in"; }
+/* Who creates hot-lead tasks right now. A brief outage keeps the last answer instead of flipping to a second engine. */
+function v2Owner(){
+  if(portalMode !== "live") return "browser";
+  if(V2.engine) return V2.engine.hot_lead_owner;
+  if(V2.state === "unavailable" || V2.state === "connecting" || (V2.state === "off" && v2Known())) return lsGet(S.key + ":v2owner", "browser");
+  return "browser";
+}
+function v2Gated(r){ return !!r && r.trig && r.act && r.trig.type === "lead.hot" && r.act.type === "task"; }
+function v2Paused(r){ return v2Gated(r) && v2Owner() === "server"; }
+function v2Reset(){ if(V2.watch){ clearTimeout(V2.watch.t); } V2.state = "off"; V2.client = null; V2.me = null; V2.engine = null; V2.loading = null; V2.msg = ""; V2.ok = false; V2.fails = 0; V2.watch = null; }
+
+/* Ask the server NOW who creates hot-lead tasks (called when a hot lead arrives, just before a task would be created). Never rejects:
+   if the server does not answer within V2_FIRE_MS the last answer stands. */
+function v2Fresh(){
+  var c = V2.client; if(!c || !v2Live()) return Promise.resolve();
+  return new Promise(function(done){
+    var t = setTimeout(done, V2_FIRE_MS);
+    c.automations.engine().then(function(e){
+      clearTimeout(t);
+      if(V2.client === c){ V2.engine = e; V2.fails = 0; V2.at = Date.now(); lsSet(S.key + ":v2owner", e.hot_lead_owner); }
+      done();
+    }, function(err){
+      clearTimeout(t);
+      if(err && err.status === 401 && V2.client === c){ V2.state = "off"; V2.client = null; V2.loading = null; V2.me = null; V2.engine = null; } /* session expired: reconnects on the next tick; the last owner stays in force meanwhile */
+      done();
+    });
+  });
+}
+/* While the server owns hot-lead tasks this page does not create them, but it does keep a tally of the hot leads it saw. A few minutes later it asks
+   the server how many hot-lead tasks it really made since then. Any it did not make (the lead feed to the server broke, the server was down) this page
+   creates itself, and says so. A server that is slow rather than broken may then also make its own: that is the price of never losing a hot lead. */
+function v2Watch(ctx){
+  if(!v2Live()) return;
+  var w = V2.watch;
+  if(!w){ w = V2.watch = { key:S.key, first:Date.now(), delta:0, tries:0, t:null }; w.t = setTimeout(v2WatchCheck, V2_WATCH_MS); }
+  w.delta += Math.max(1, +ctx.delta || 1);
+}
+function v2WatchCheck(){
+  var w = V2.watch;
+  if(!w) return;
+  if(w.key !== S.key){ V2.watch = null; return; }
+  /* A server that cannot be reached is exactly the case this exists for: not being able to ask counts as a failed try, it never cancels the watch. */
+  var failed = function(){
+    if(V2.watch !== w) return;
+    if(++w.tries < 3){ w.t = setTimeout(v2WatchCheck, 60000); return; } /* try twice more, then cover it */
+    V2.watch = null; v2Fallback(w.delta, false);
+  };
+  var c = V2.client;
+  if(!c || !c.auth.isSignedIn()){ failed(); return; }
+  c.automations.engine({ hotSince:new Date(w.first - V2_WATCH_LAG_MS).toISOString() }).then(function(e){
+    if(V2.watch !== w) return;
+    V2.watch = null; V2.engine = e; V2.fails = 0; lsSet(S.key + ":v2owner", e.hot_lead_owner);
+    if(e.hot_lead_owner !== "server") return; /* handed back meanwhile: the browser engine covers everything from now on */
+    var missing = w.delta - (+e.hot_tasks_since || 0);
+    if(missing > 0) v2Fallback(missing, true);
+  }, failed);
+}
+function v2Fallback(n, confirmed){
+  var h = +portalData.hotLeads || 0;
+  var msg = confirmed
+    ? "The server did not create " + (n > 1 ? n + " hot-lead tasks" : "a hot-lead task") + " in time, so this browser did. Check that your lead feed still points at the server."
+    : "Could not confirm that the server created " + (n > 1 ? "the hot-lead tasks" : "the hot-lead task") + ", so this browser did.";
+  emit("lead.hot", { count:h, delta:n, title:"Hot leads: " + h, v2fallback:true });
+  showPortalToast(msg); audit("automation", "engine.fallback", msg);
+}
+function v2Dur(ms){
+  var m = Math.round(ms / 60000);
+  if(m < 90) return m + " minute" + (m === 1 ? "" : "s");
+  var h = Math.round(ms / 3600000); if(h < 48) return h + " hours";
+  var d = Math.round(ms / 86400000); return d + " days";
+}
+function v2Disconnect(){
+  var c = V2.client, k = v2Key();
+  v2Reset();
+  try{ if(c && c.auth.isSignedIn()) c.auth.logout().catch(function(){}); }catch(e){}
+  v2Store.del(k);
+}
+function v2Fail(e){
+  var c = e && e.code;
+  V2.me = null; V2.engine = null; V2.ok = false; V2.fails = (V2.fails || 0) + 1;
+  V2.state = c === "not_linked" ? "not-linked" : c === "legacy_token_rejected" ? "rejected" : c === "bridge_disabled" ? "disabled" : "unavailable";
+  V2.msg = "";
+}
+function v2Connect(){
+  if(V2.loading || portalMode !== "live" || !portalToken || !S.key) return;
+  var key = S.key;
+  V2.state = "connecting"; V2.at = Date.now(); V2.msg = "";
+  V2.loading = import(V2_MODULE).then(function(mod){
+    if(key !== S.key) throw { stale:true };
+    var c = V2.client = mod.createPortalClient({ baseUrl:V2_BASE, storage:v2Store, storageKey:v2Key() });
+    var have = c.auth.isSignedIn() ? c.auth.me().catch(function(e){ if(e && e.status === 401) return null; throw e; }) : Promise.resolve(null);
+    return have.then(function(me){
+      if(me) return me;
+      return c.auth.bridge(portalToken, "portal.html").then(function(){ return c.auth.me(); });
+    });
+  }).then(function(me){
+    if(key !== S.key) throw { stale:true };
+    V2.me = me; V2.state = me.session && me.session.kind === "bridge" ? "bridged" : "signed-in";
+    return v2Refresh(true);
+  }).catch(function(e){
+    if(e && e.stale) return;
+    v2Fail(e);
+  }).then(function(){ V2.loading = null; V2.at = Date.now(); v2Paint(); });
+}
+function v2Refresh(force){
+  if(!V2.client || !v2Live()) return Promise.resolve();
+  if(!force && Date.now() - V2.at < V2_POLL_MS) return Promise.resolve();
+  V2.at = Date.now();
+  return V2.client.automations.engine().then(function(e){
+    V2.engine = e; V2.fails = 0; lsSet(S.key + ":v2owner", e.hot_lead_owner); v2Paint();
+  }, function(e){
+    if(e && e.status === 401){ var c = V2.client; V2.state = "off"; V2.client = null; V2.loading = null; V2.me = null; V2.engine = null; return; } /* session expired: reconnect on the next tick */
+    V2.state = "unavailable"; V2.engine = null; V2.fails = (V2.fails || 0) + 1; v2Paint();
+  });
+}
+function v2Tick(){
+  if(portalMode !== "live"){ if(V2.state !== "off") v2Reset(); return; }
+  if(V2.loading) return;
+  var age = Date.now() - V2.at;
+  if(V2.state === "off") v2Connect();
+  else if(v2Live()){ if(age > V2_POLL_MS && !document.hidden) v2Refresh(false); }
+  else if(age > v2Backoff()) V2.state = "off"; /* not-linked / rejected / unavailable: try again later, backing off up to 15 min */
+}
+function v2Paint(){
+  if(portalTab !== "automations") return;
+  var root = $("vwAuto"), a = document.activeElement, card = $("lwV2");
+  if(!root) return;
+  if(card && a && root.contains(a) && /^(INPUT|SELECT|TEXTAREA)$/.test(a.tagName)){ card.outerHTML = v2Card(); return; }
+  renderAuto();
+}
+function v2Show(){
+  var st = V2.state;
+  if(portalMode !== "live" || st === "off") return false;
+  if(v2Live() || V2_SETUP) return true;
+  return (st === "unavailable" || st === "connecting") && v2Known();
+}
+function v2Card(){
+  var st = V2.state;
+  if(!v2Show()) return '<article class="p-card" id="lwV2" hidden></article>';
+  var own = v2Owner(), e = V2.engine, perms = (V2.me && V2.me.permissions) || {}, canSwitch = !!perms.can_manage_automations;
+  var h = '<article class="p-card" id="lwV2"><div class="lw-h"><h3>Hot-lead tasks</h3><span class="lw-tag">' + (own === "server" ? "Created by the server" : "Created by this browser") + '</span></div>';
+  if(st === "connecting"){
+    h += '<p class="lw-note">Connecting to your workspace server…</p>';
+  } else if(v2Live()){
+    var who = V2.me ? esc(V2.me.user.display_name) + " · " + (st === "bridged" ? "limited portal link" : esc(V2.me.user.is_primary_owner ? "Primary Owner" : V2.me.user.role)) : "";
+    h += '<p class="lw-note">Connected to workspace <b>' + esc(V2.me && V2.me.company ? V2.me.company.name : "") + '</b> as <b>' + who + '</b>. When a lead becomes hot, <b>' +
+      (own === "server" ? "the server creates the task, 24/7" : "this browser creates the task, while the portal is open") + '</b>. Each time a hot lead arrives this page asks the server who creates the task, so a hot lead produces one task. If the server does not turn a hot lead this page saw into a task within a few minutes, this page creates it and tells you.</p>';
+    if(own === "server" && e && e.lead_feed_stale){
+      var quiet = e.last_server_lead_at ? Date.now() - Date.parse(e.last_server_lead_at) : 0;
+      h += '<p class="lw-warn"><b>Your lead feed has gone quiet.</b> ' + (e.last_server_lead_at ? 'No lead has reached the server for ' + v2Dur(quiet) : 'No lead has ever reached the server') +
+        (e.lead_feed_stale_after_ms ? ', longer than this workspace normally goes without one (' + v2Dur(e.lead_feed_stale_after_ms) + ')' : '') +
+        '. The server cannot create tasks for hot leads it never receives. While this page is open it covers any hot lead it sees and tells you; otherwise point your lead feed at the server again, or hand hot-lead tasks back to this browser.</p>';
+    }
+    if(own === "server" && e && e.default_rule && !e.default_rule.enabled) h += '<p class="lw-warn"><b>The server\'s hot-lead rule is switched off,</b> so the server creates no hot-lead tasks. Switch it on in the server automations, or hand hot-lead tasks back to this browser.</p>';
+    if(own === "server" && e && !e.default_rule) h += '<p class="lw-warn"><b>The server has no hot-lead rule.</b> Re-create it in the server automations, or hand hot-lead tasks back to this browser.</p>';
+    if(canSwitch){
+      h += '<div class="lw-row" style="margin-top:10px"><button type="button" class="lw-btn ghost sm" data-v2own="' + (own === "server" ? "browser" : "server") + '">' + (own === "server" ? "Let this browser create hot-lead tasks" : "Let the server create hot-lead tasks (24/7)") + '</button>' +
+        (st === "signed-in" ? '<button type="button" class="lw-btn ghost sm" data-v2link>Link this portal link to the workspace</button><button type="button" class="lw-btn ghost sm" data-v2out>Disconnect this device</button>' : '') + '</div>';
+    } else {
+      h += '<p class="lw-note">Only a workspace owner or admin can change who creates hot-lead tasks.</p>';
+    }
+  } else if(st === "not-linked"){
+    h += '<p class="lw-note">This portal link is not connected to a server workspace yet, so <b>this browser keeps creating hot-lead tasks</b> and nothing has changed for you. To connect: the workspace owner gets a one-time device code from the server, enters it here, then links this portal.</p>' +
+      '<div class="lw-row"><div class="lw-f grow"><label for="lwV2Code">Device code</label><input class="lw-in" id="lwV2Code" maxlength="12" autocomplete="off" spellcheck="false" placeholder="XXXX-XXXX"></div><button type="button" class="lw-btn" data-v2code>Connect this device</button></div>';
+  } else if(st === "rejected"){
+    h += '<p class="lw-warn">The server no longer accepts this portal link (it was rotated or revoked in the old portal). This browser creates hot-lead tasks while it is open, and the server hands them back to browsers when its portal link stops working. To reconnect: the workspace owner replaces the link with the new token on the server (rotate), which needs no other change.</p>';
+  } else if(st === "disabled"){
+    h += '<p class="lw-note">The server bridge is switched off. This browser keeps creating hot-lead tasks.</p>';
+  } else {
+    h += '<p class="lw-note">Can\'t reach the workspace server right now. Hot-lead tasks stay with <b>' + (own === "server" ? "the server" : "this browser") + '</b> (last known) and this page retries automatically.</p>';
+  }
+  if(V2.msg) h += '<p class="lw-note ' + (V2.ok ? "" : "lw-bad") + '" role="status">' + esc(V2.msg) + '</p>';
+  return h + '</article>';
+}
+function v2Click(ev){
+  var t = ev.target.closest && ev.target.closest("[data-v2own],[data-v2code],[data-v2link],[data-v2out]");
+  if(!t || !V2.client) return;
+  var c = V2.client;
+  function done(ok, msg){ V2.ok = ok; V2.msg = msg || ""; v2Paint(); }
+  if(t.hasAttribute("data-v2own")){
+    var want = t.getAttribute("data-v2own"); t.disabled = true;
+    c.automations.setEngineOwner(want).then(function(e){
+      V2.engine = e; lsSet(S.key + ":v2owner", e.hot_lead_owner);
+      audit("automation", "engine.owner", "Hot-lead tasks are now created by " + (e.hot_lead_owner === "server" ? "the server" : "this browser"));
+      done(true, "Saved.");
+    }, function(err){ done(false, err && err.message || "Could not change it."); });
+  } else if(t.hasAttribute("data-v2code")){
+    var code = (($("lwV2Code") || {}).value || "").trim(); if(!code){ done(false, "Enter the device code."); return; }
+    t.disabled = true;
+    c.auth.redeemDeviceCode(code, "portal.html").then(function(){ return c.auth.me(); }).then(function(me){
+      V2.me = me; V2.state = me.session && me.session.kind === "bridge" ? "bridged" : "signed-in"; V2.msg = ""; return v2Refresh(true);
+    }).then(function(){ done(true, "Connected. Next: link this portal link so every device that opens it connects automatically."); },
+      function(err){ done(false, err && err.status === 400 ? "That code is invalid or expired. Ask the server for a new one." : (err && err.message || "Could not connect.")); });
+  } else if(t.hasAttribute("data-v2link")){
+    t.disabled = true;
+    c.team.createLegacyLink(portalToken, "Client portal link").then(function(){
+      audit("session", "bridge.link", "Portal link connected to the workspace");
+      done(true, "Linked. Anyone who opens this portal link now signs in to the workspace as a limited member (12-hour sessions). Revoke it any time from the server.");
+    }, function(err){
+      var m = err && err.code === "token_already_linked" ? "This portal link is already linked." : err && err.code === "legacy_token_invalid" ? "The portal API did not accept this link's token." : (err && err.message || "Could not link.");
+      done(err && err.code === "token_already_linked", m);
+    });
+  } else if(t.hasAttribute("data-v2out")){
+    v2Disconnect(); v2Paint();
+  }
+}
+function v2Init(){
+  var rp = renderPortal; renderPortal = function(){ var r = rp.apply(this, arguments); try{ v2Tick(); }catch(err){ if(window.console) console.error("server workspace", err); } return r; };
+  var so = portalSignOut; portalSignOut = function(){ try{ v2Disconnect(); }catch(err){} return so.apply(this, arguments); };
+  var root = $("vwAuto"); if(root) root.addEventListener("click", v2Click);
+  setInterval(function(){ try{ v2Tick(); }catch(err){} }, V2_TICK_MS);
+  document.addEventListener("visibilitychange", function(){ try{ if(document.hidden) return; if(v2Live()) v2Refresh(true); else v2Tick(); }catch(err){} });
 }
 
 /* ---------- access & roles ---------- */
@@ -4164,6 +4420,7 @@ function init(){
   var _so = portalSignOut; portalSignOut = function(msg){ audit("session", "session.end", msg ? "Signed out: " + msg : "Signed out"); return _so.apply(this, arguments); };
   var _sa = saveAiControls; saveAiControls = function(){ var r = _sa.apply(this, arguments); try{ audit("settings", "ai.change", "Auto-AI: master " + (aiCtl.master ? "on" : "off") + "; sections off: " + (Object.keys(aiCtl.sections).filter(function(k){ return !aiCtl.sections[k]; }).join(", ") || "none")); }catch(e){} return r; };
 }
+v2Init();
 init();
 })();
 
